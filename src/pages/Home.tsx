@@ -241,27 +241,27 @@ export default function Home() {
             animate={{ opacity: 1, scale: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="relative w-64 h-64 md:w-80 md:h-80 lg:w-[22rem] lg:h-[22rem]">
-              {/* Decorative glow ring */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-400/30 to-blue-400/30 blur-2xl scale-110 animate-pulse" />
-              {/* Outer ring */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-400 to-blue-500 p-[3px]">
-                <div className="w-full h-full rounded-full bg-slate-50" />
+            <div className="relative w-64 h-64 md:w-72 md:h-72 lg:w-80 lg:h-80">
+              {/* Decorative glow */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-400/20 to-blue-400/20 blur-2xl scale-125" />
+              {/* Gradient ring */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-400 to-blue-500 p-[3px] shadow-xl shadow-emerald-500/20">
+                <div className="w-full h-full rounded-full overflow-hidden bg-slate-100">
+                  <img
+                    src="/images/hero-profile.jpg"
+                    alt="老J — AI 實驗室創辦人"
+                    className="w-full h-full object-cover object-top scale-110"
+                    loading="eager"
+                  />
+                </div>
               </div>
-              {/* Profile image */}
-              <img
-                src="/images/hero-profile.png"
-                alt="老J — AI 實驗室創辦人"
-                className="absolute inset-[6px] w-[calc(100%-12px)] h-[calc(100%-12px)] object-cover object-top rounded-full"
-                loading="eager"
-              />
               {/* Floating accent badge */}
               <motion.div
-                className="absolute -bottom-2 -right-2 bg-white shadow-lg rounded-2xl px-4 py-2 border border-slate-100"
-                animate={{ y: [0, -6, 0] }}
+                className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-white shadow-lg rounded-2xl px-4 py-2 border border-slate-100 whitespace-nowrap"
+                animate={{ y: [0, -5, 0] }}
                 transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
               >
-                <span className="text-sm font-bold text-slate-800">🚀 AI 變現實戰家</span>
+                <span className="text-sm font-bold text-slate-800">AI 變現實戰家</span>
               </motion.div>
             </div>
           </motion.div>
