@@ -194,8 +194,9 @@ export default function Home() {
             className="absolute top-20 right-0 w-[30rem] h-[30rem] bg-blue-200/60 rounded-full blur-3xl mix-blend-multiply" />
         </div>
 
-        <div className="max-w-4xl mx-auto flex flex-col items-center text-center relative z-10">
-          <motion.div className="w-full flex flex-col items-center" initial="hidden" animate="show"
+        <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16 relative z-10">
+          {/* Left: Text Content */}
+          <motion.div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left" initial="hidden" animate="show"
             variants={{ hidden:{opacity:0}, show:{opacity:1,transition:{staggerChildren:0.15,delayChildren:0.1}} }}>
             <motion.div variants={{ hidden:{opacity:0,y:20}, show:{opacity:1,y:0,transition:{duration:0.6,ease:'easeOut'}} }}
               className="inline-flex items-center gap-2 border border-slate-200/60 bg-white/80 backdrop-blur-md rounded-full px-5 py-2 text-xs font-bold tracking-wider text-slate-700 mb-8 shadow-sm hover:shadow-md transition-shadow">
@@ -207,7 +208,7 @@ export default function Home() {
             </motion.div>
 
             <motion.h1 variants={{ hidden:{opacity:0,y:20}, show:{opacity:1,y:0,transition:{duration:0.6,ease:'easeOut'}} }}
-              className="text-5xl md:text-6xl lg:text-[4.5rem] font-extrabold tracking-tight leading-[1.15] mb-8 text-slate-900">
+              className="text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold tracking-tight leading-[1.15] mb-8 text-slate-900">
               {mainTitle}<br />只教你打造
               <span className="relative whitespace-nowrap inline-block mt-2 md:mt-0 ml-2">
                 <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-blue-600">{highlightText}</span>
@@ -222,7 +223,7 @@ export default function Home() {
             </motion.p>
 
             <motion.div variants={{ hidden:{opacity:0,y:20}, show:{opacity:1,y:0,transition:{duration:0.6,ease:'easeOut'}} }}
-              className="flex flex-wrap justify-center gap-4 items-center">
+              className="flex flex-wrap justify-center lg:justify-start gap-4 items-center">
               <Link to="/tools" className="relative overflow-hidden group bg-slate-900 text-white px-8 py-4 rounded-full font-medium flex items-center gap-2 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-emerald-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <span className="relative flex items-center gap-2">{hero.ctaText} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" /></span>
@@ -232,10 +233,42 @@ export default function Home() {
               </a>
             </motion.div>
           </motion.div>
+
+          {/* Right: Profile Photo */}
+          <motion.div
+            className="relative shrink-0 order-first lg:order-last"
+            initial={{ opacity: 0, scale: 0.85, x: 40 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="relative w-64 h-64 md:w-80 md:h-80 lg:w-[22rem] lg:h-[22rem]">
+              {/* Decorative glow ring */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-400/30 to-blue-400/30 blur-2xl scale-110 animate-pulse" />
+              {/* Outer ring */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-400 to-blue-500 p-[3px]">
+                <div className="w-full h-full rounded-full bg-slate-50" />
+              </div>
+              {/* Profile image */}
+              <img
+                src="/images/hero-profile.png"
+                alt="老J — AI 實驗室創辦人"
+                className="absolute inset-[6px] w-[calc(100%-12px)] h-[calc(100%-12px)] object-cover object-top rounded-full"
+                loading="eager"
+              />
+              {/* Floating accent badge */}
+              <motion.div
+                className="absolute -bottom-2 -right-2 bg-white shadow-lg rounded-2xl px-4 py-2 border border-slate-100"
+                animate={{ y: [0, -6, 0] }}
+                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                <span className="text-sm font-bold text-slate-800">🚀 AI 變現實戰家</span>
+              </motion.div>
+            </div>
+          </motion.div>
         </div>
 
         <motion.div initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0 }} transition={{ delay:1, duration:0.5 }}
-          className="relative z-10 mt-16 flex flex-wrap justify-center gap-x-8 gap-y-2 text-xs text-slate-500 font-medium">
+          className="relative z-10 mt-12 lg:mt-16 flex flex-wrap justify-center gap-x-8 gap-y-2 text-xs text-slate-500 font-medium">
           {['✓ 親身實戰驗證', '✓ 一人公司適用', '✓ 零廢話教學', '✓ 每月持續更新'].map(t => (
             <span key={t}>{t}</span>
           ))}
