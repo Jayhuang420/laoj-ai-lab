@@ -4,6 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import bcrypt from 'bcryptjs';
+import multer from 'multer';
 import db from './db.js';
 import { sendEbookEmail } from './mailer.js';
 
@@ -11,8 +12,33 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = Number(process.env.PORT) || Number(process.env.API_PORT) || 4000;
 const DIST_DIR = path.resolve(__dirname, '..', 'dist');
+const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, '..', 'data');
+const UPLOADS_DIR = path.join(DATA_DIR, 'uploads');
+
+// Ensure uploads directory exists
+if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+
+// Multer config for profile image upload
+const profileUpload = multer({
+  storage: multer.diskStorage({
+    destination: (_req, _file, cb) => cb(null, UPLOADS_DIR),
+    filename: (_req, file, cb) => {
+      const ext = path.extname(file.originalname).toLowerCase() || '.jpg';
+      cb(null, `profile-image-${Date.now()}${ext}`);
+    },
+  }),
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  fileFilter: (_req, file, cb) => {
+    const allowed = /\.(jpg|jpeg|png|webp|gif)$/i;
+    if (allowed.test(path.extname(file.originalname))) cb(null, true);
+    else cb(new Error('只支援 jpg, png, webp, gif 圖片格式'));
+  },
+});
 
 app.use(express.json());
+
+// ─── Serve uploaded files (before Vite static) ──────────────────────────────
+app.use('/uploads', express.static(UPLOADS_DIR, { maxAge: '1h' }));
 
 // ─── Security & SEO Headers ──────────────────────────────────────────────────
 app.use((_req, res, next) => {
@@ -223,6 +249,56 @@ app.put('/api/admin/content/:page/:section', adminAuth, (req, res) => {
      ON CONFLICT(page, section) DO UPDATE SET content = excluded.content, updated_at = excluded.updated_at`
   ).run(page, section, JSON.stringify(content));
   res.json({ success: true, content });
+});
+
+// ─── Admin: Upload Profile Image ─────────────────────────────────────────
+app.post('/api/admin/upload/profile-image', adminAuth, (req, res) => {
+  profileUpload.single('image')(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        res.status(400).json({ error: '圖片大小不可超過 5MB。' });
+      } else {
+        res.status(400).json({ error: `上傳錯誤: ${err.message}` });
+      }
+      return;
+    }
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    if (!req.file) {
+      res.status(400).json({ error: '請選擇一張圖片。' });
+      return;
+    }
+
+    // Remove old profile-image files (keep only the new one)
+    try {
+      const files = fs.readdirSync(UPLOADS_DIR);
+      for (const f of files) {
+        if (f.startsWith('profile-image-') && f !== req.file.filename) {
+          fs.unlinkSync(path.join(UPLOADS_DIR, f));
+        }
+      }
+    } catch { /* ignore cleanup errors */ }
+
+    const imageUrl = `/uploads/${req.file.filename}`;
+
+    // Update intro content with profileImage field
+    const existing = db.prepare("SELECT content FROM site_content WHERE page = 'about' AND section = 'intro'").get() as any;
+    let introData: any = {};
+    if (existing) {
+      try { introData = JSON.parse(existing.content); } catch { /* empty */ }
+    }
+    introData.profileImage = imageUrl;
+
+    db.prepare(
+      `INSERT INTO site_content (page, section, content, updated_at)
+       VALUES ('about', 'intro', ?, datetime('now', '+8 hours'))
+       ON CONFLICT(page, section) DO UPDATE SET content = excluded.content, updated_at = excluded.updated_at`
+    ).run(JSON.stringify(introData));
+
+    res.json({ success: true, imageUrl, intro: introData });
+  });
 });
 
 // ─── Production: Serve Vite build output ─────────────────────────────────────

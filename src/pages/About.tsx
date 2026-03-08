@@ -133,15 +133,23 @@ export default function About() {
 
         <motion.div initial={{ opacity:0, x:30 }} animate={{ opacity:1, x:0 }} transition={{ duration:0.6, delay:0.3 }}
           className="space-y-6">
-          {/* Photo placeholder */}
+          {/* Profile Photo */}
           <div className="aspect-[4/3] bg-gradient-to-br from-slate-100 to-slate-200 rounded-3xl overflow-hidden relative border border-gray-200 flex items-center justify-center">
-            <div className="text-center">
-              <div className="w-20 h-20 bg-slate-300 rounded-full mx-auto mb-3 flex items-center justify-center text-slate-500 text-3xl font-bold">
-                {intro.name.charAt(intro.name.length - 1)}
+            {intro.profileImage ? (
+              <img
+                src={intro.profileImage}
+                alt={intro.name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="text-center">
+                <div className="w-20 h-20 bg-slate-300 rounded-full mx-auto mb-3 flex items-center justify-center text-slate-500 text-3xl font-bold">
+                  {intro.name.charAt(intro.name.length - 1)}
+                </div>
+                <p className="text-slate-500 text-sm font-medium">{intro.name}</p>
+                <p className="text-slate-400 text-xs">{intro.role}</p>
               </div>
-              <p className="text-slate-500 text-sm font-medium">{intro.name}</p>
-              <p className="text-slate-400 text-xs">{intro.role}</p>
-            </div>
+            )}
           </div>
 
           {/* Core Principles */}
