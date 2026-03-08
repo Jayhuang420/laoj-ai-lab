@@ -196,9 +196,8 @@ export default function Home() {
 
         <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16 relative z-10">
           {/* Left: Text Content */}
-          <motion.div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left" initial="hidden" animate="show"
-            variants={{ hidden:{opacity:0}, show:{opacity:1,transition:{staggerChildren:0.15,delayChildren:0.1}} }}>
-            <motion.div variants={{ hidden:{opacity:0,y:20}, show:{opacity:1,y:0,transition:{duration:0.6,ease:'easeOut'}} }}
+          <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left">
+            <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.6, delay:0.1, ease:'easeOut' }}
               className="inline-flex items-center gap-2 border border-slate-200/60 bg-white/80 backdrop-blur-md rounded-full px-5 py-2 text-xs font-bold tracking-wider text-slate-700 mb-8 shadow-sm hover:shadow-md transition-shadow">
               <span className="relative flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
@@ -207,7 +206,7 @@ export default function Home() {
               12年+ 零售業高階經理人 帶你如何使用AI 落地變現
             </motion.div>
 
-            <motion.h1 variants={{ hidden:{opacity:0,y:20}, show:{opacity:1,y:0,transition:{duration:0.6,ease:'easeOut'}} }}
+            <motion.h1 initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.6, delay:0.25, ease:'easeOut' }}
               className="text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold tracking-tight leading-[1.15] mb-8 text-slate-900">
               {mainTitle}<br />只教你打造
               <span className="relative whitespace-nowrap inline-block mt-2 md:mt-0 ml-2">
@@ -217,12 +216,12 @@ export default function Home() {
               </span>。
             </motion.h1>
 
-            <motion.p variants={{ hidden:{opacity:0,y:20}, show:{opacity:1,y:0,transition:{duration:0.6,ease:'easeOut'}} }}
+            <motion.p initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.6, delay:0.4, ease:'easeOut' }}
               className="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl leading-relaxed font-medium">
               {hero.subtitle}
             </motion.p>
 
-            <motion.div variants={{ hidden:{opacity:0,y:20}, show:{opacity:1,y:0,transition:{duration:0.6,ease:'easeOut'}} }}
+            <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.6, delay:0.55, ease:'easeOut' }}
               className="flex flex-wrap justify-center lg:justify-start gap-4 items-center">
               <Link to="/tools" className="relative overflow-hidden group bg-slate-900 text-white px-8 py-4 rounded-full font-medium flex items-center gap-2 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-emerald-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -232,7 +231,7 @@ export default function Home() {
                 <Play className="w-4 h-4 text-emerald-600" /> 領取變現全景地圖
               </a>
             </motion.div>
-          </motion.div>
+          </div>
 
           {/* Right: Profile Photo */}
           <motion.div
