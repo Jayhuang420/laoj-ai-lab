@@ -1,19 +1,23 @@
-FROM node:18-slim
+FROM --platform=linux/amd64 node:20-slim
 
-# Install build tools for better-sqlite3 native addon (fallback if prebuilds miss)
+# Install build tools for native addons (better-sqlite3, @tailwindcss/oxide)
 RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copy package files and install ALL dependencies
-# --include=dev ensures tsx (runtime) and tailwindcss (build) are always installed
+# Copy package files first for layer caching
 COPY package.json package-lock.json ./
-RUN npm ci --include=dev
+
+# Use npm install (not npm ci) to correctly resolve platform-specific
+# optional dependencies for @tailwindcss/oxide native binary.
+# The lockfile was generated on Windows; npm install re-resolves
+# platform-specific packages (linux-x64-gnu) for the current OS.
+RUN npm install --include=dev
 
 # Copy source code
 COPY . .
 
-# Build Vite frontend
+# Build Vite frontend (Tailwind CSS v4 uses @tailwindcss/oxide native binary)
 RUN npm run build
 
 # Create data directory (will be overridden by persistent volume mount)
