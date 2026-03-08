@@ -194,35 +194,44 @@ export default function Home() {
             className="absolute top-20 right-0 w-[30rem] h-[30rem] bg-blue-200/60 rounded-full blur-3xl mix-blend-multiply" />
         </div>
 
+        <style>{`
+          @keyframes heroFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+          @keyframes heroScaleIn { from { opacity: 0; transform: scale(0.85) translateX(40px); } to { opacity: 1; transform: scale(1) translateX(0); } }
+          @keyframes heroUnderline { from { transform: scaleX(0) rotate(-1deg); } to { transform: scaleX(1) rotate(-1deg); } }
+          @keyframes heroBadgeBounce { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-5px); } }
+          .hero-fade { animation: heroFadeIn 0.6s ease-out both; }
+          .hero-scale { animation: heroScaleIn 0.8s cubic-bezier(0.16,1,0.3,1) both; }
+        `}</style>
+
         <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16 relative z-10">
           {/* Left: Text Content */}
           <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left">
-            <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.6, delay:0.1, ease:'easeOut' }}
-              className="inline-flex items-center gap-2 border border-slate-200/60 bg-white/80 backdrop-blur-md rounded-full px-5 py-2 text-xs font-bold tracking-wider text-slate-700 mb-8 shadow-sm hover:shadow-md transition-shadow">
+            <div className="hero-fade inline-flex items-center gap-2 border border-slate-200/60 bg-white/80 backdrop-blur-md rounded-full px-5 py-2 text-xs font-bold tracking-wider text-slate-700 mb-8 shadow-sm hover:shadow-md transition-shadow"
+              style={{ animationDelay: '0.1s' }}>
               <span className="relative flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
               </span>
               12年+ 零售業高階經理人 帶你如何使用AI 落地變現
-            </motion.div>
+            </div>
 
-            <motion.h1 initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.6, delay:0.25, ease:'easeOut' }}
-              className="text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold tracking-tight leading-[1.15] mb-8 text-slate-900">
+            <h1 className="hero-fade text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold tracking-tight leading-[1.15] mb-8 text-slate-900"
+              style={{ animationDelay: '0.25s' }}>
               {mainTitle}<br />只教你打造
               <span className="relative whitespace-nowrap inline-block mt-2 md:mt-0 ml-2">
                 <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-blue-600">{highlightText}</span>
-                <motion.span initial={{ scaleX:0 }} animate={{ scaleX:1 }} transition={{ duration:0.8, delay:0.8, ease:'easeOut' }}
-                  className="absolute bottom-2 left-0 w-full h-3 md:h-4 bg-emerald-100/80 -z-10 transform -rotate-1 origin-left" />
+                <span className="absolute bottom-2 left-0 w-full h-3 md:h-4 bg-emerald-100/80 -z-10 origin-left"
+                  style={{ animation: 'heroUnderline 0.8s ease-out 0.8s both' }} />
               </span>。
-            </motion.h1>
+            </h1>
 
-            <motion.p initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.6, delay:0.4, ease:'easeOut' }}
-              className="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl leading-relaxed font-medium">
+            <p className="hero-fade text-lg md:text-xl text-slate-600 mb-10 max-w-2xl leading-relaxed font-medium"
+              style={{ animationDelay: '0.4s' }}>
               {hero.subtitle}
-            </motion.p>
+            </p>
 
-            <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.6, delay:0.55, ease:'easeOut' }}
-              className="flex flex-wrap justify-center lg:justify-start gap-4 items-center">
+            <div className="hero-fade flex flex-wrap justify-center lg:justify-start gap-4 items-center"
+              style={{ animationDelay: '0.55s' }}>
               <Link to="/tools" className="relative overflow-hidden group bg-slate-900 text-white px-8 py-4 rounded-full font-medium flex items-center gap-2 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-emerald-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <span className="relative flex items-center gap-2">{hero.ctaText} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" /></span>
@@ -230,16 +239,11 @@ export default function Home() {
               <a href="#lead-magnet" className="bg-white/80 backdrop-blur-md border border-slate-200 text-slate-900 px-8 py-4 rounded-full font-medium flex items-center gap-2 hover:bg-slate-50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                 <Play className="w-4 h-4 text-emerald-600" /> 領取變現全景地圖
               </a>
-            </motion.div>
+            </div>
           </div>
 
           {/* Right: Profile Photo */}
-          <motion.div
-            className="relative shrink-0 order-first lg:order-last"
-            initial={{ opacity: 0, scale: 0.85, x: 40 }}
-            animate={{ opacity: 1, scale: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          >
+          <div className="hero-scale relative shrink-0 order-first lg:order-last" style={{ animationDelay: '0.3s' }}>
             <div className="relative w-64 h-64 md:w-72 md:h-72 lg:w-80 lg:h-80">
               {/* Decorative glow */}
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-400/20 to-blue-400/20 blur-2xl scale-125" />
@@ -255,23 +259,20 @@ export default function Home() {
                 </div>
               </div>
               {/* Floating accent badge */}
-              <motion.div
-                className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-white shadow-lg rounded-2xl px-4 py-2 border border-slate-100 whitespace-nowrap"
-                animate={{ y: [0, -5, 0] }}
-                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-              >
+              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-white shadow-lg rounded-2xl px-4 py-2 border border-slate-100 whitespace-nowrap"
+                style={{ animation: 'heroBadgeBounce 3s ease-in-out infinite' }}>
                 <span className="text-sm font-bold text-slate-800">AI 變現實戰家</span>
-              </motion.div>
+              </div>
             </div>
-          </motion.div>
+          </div>
         </div>
 
-        <motion.div initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0 }} transition={{ delay:1, duration:0.5 }}
-          className="relative z-10 mt-12 lg:mt-16 flex flex-wrap justify-center gap-x-8 gap-y-2 text-xs text-slate-500 font-medium">
+        <div className="hero-fade relative z-10 mt-12 lg:mt-16 flex flex-wrap justify-center gap-x-8 gap-y-2 text-xs text-slate-500 font-medium"
+          style={{ animationDelay: '1s' }}>
           {['✓ 親身實戰驗證', '✓ 一人公司適用', '✓ 零廢話教學', '✓ 每月持續更新'].map(t => (
             <span key={t}>{t}</span>
           ))}
-        </motion.div>
+        </div>
       </section>
 
       {/* ── How It Works ──────────────────────────────────────────────────────── */}
