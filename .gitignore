@@ -1,0 +1,12 @@
+node_modules/
+build/
+dist/
+data/
+coverage/
+.claude/
+.DS_Store
+*.log
+.env*
+!.env.example
+test-email.mjs
+metadata.json
