@@ -1,0 +1,11 @@
+node_modules
+dist
+data
+build
+coverage
+.claude
+.git
+.DS_Store
+*.log
+.env*
+!.env.example
