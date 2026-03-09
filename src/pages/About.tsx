@@ -9,6 +9,7 @@ const DEFAULTS = {
   intro: {
     name: '老 J',
     role: 'AI 實驗室創辦人',
+    headline: '從教學影片設計師\n到 AI 自動化一人公司',
     bio: [
       '我深知在資源有限的情況下，如何將未經證實的點子轉化為具備「產品市場媒合度（PMF）」的可規模化業務。',
       '老 J AI 實驗室的成立，是為了分享那些我親身實踐過、真正能降低成本並帶來收益的 AI 工作流。我們拒絕虛榮功能，只專注於解決剛需。',
@@ -101,7 +102,12 @@ export default function About() {
           variants={{ initial:{opacity:0}, animate:{opacity:1,transition:{staggerChildren:0.1,delayChildren:0.1}} }}>
           <motion.p variants={fadeInUp} className="text-xs font-bold tracking-widest text-emerald-600 uppercase mb-4">About Old J</motion.p>
           <motion.h1 variants={fadeInUp} className="text-4xl md:text-5xl font-bold tracking-tight mb-8 leading-tight">
-            從教學影片設計師，<br />到 AI 自動化一人公司。
+            {(intro.headline || '從教學影片設計師\n到 AI 自動化一人公司').split('\n').map((line: string, i: number, arr: string[]) => (
+              <React.Fragment key={i}>
+                {line}
+                {i < arr.length - 1 && <br />}
+              </React.Fragment>
+            ))}
           </motion.h1>
           {intro.bio.map((p: string, i: number) => (
             <motion.p key={i} variants={fadeInUp} className="text-lg text-gray-600 mb-6 leading-relaxed">
@@ -109,25 +115,54 @@ export default function About() {
             </motion.p>
           ))}
 
-          {/* Skills */}
-          <motion.div variants={fadeInUp} className="space-y-4 mt-4">
-            {skills.items.map((s: any, i: number) => (
-              <div key={i}>
-                <div className="flex justify-between text-sm mb-1.5">
-                  <span className="font-medium text-slate-800">{s.name}</span>
-                  <span className="text-gray-400 text-xs">{s.percentage}%</span>
-                </div>
-                <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+          {/* Skills — Animated Circular Chips */}
+          <motion.div variants={fadeInUp} className="mt-6 relative">
+            <svg className="absolute w-0 h-0" aria-hidden="true">
+              <defs>
+                <linearGradient id="skill-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#10b981" />
+                  <stop offset="100%" stopColor="#3b82f6" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div className="flex flex-wrap gap-3">
+              {skills.items.map((s: any, i: number) => {
+                const r = 18;
+                const c = 2 * Math.PI * r;
+                return (
                   <motion.div
-                    initial={{ width: 0 }}
-                    whileInView={{ width: `${s.percentage}%` }}
+                    key={i}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 1, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-                    className="h-full bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full"
-                  />
-                </div>
-              </div>
-            ))}
+                    transition={{ duration: 0.5, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                    whileHover={{ y: -4, scale: 1.04 }}
+                    className="flex items-center gap-3 px-4 py-3 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md hover:border-emerald-200 transition-all cursor-default"
+                  >
+                    <div className="relative w-10 h-10 shrink-0">
+                      <svg className="w-full h-full -rotate-90" viewBox="0 0 40 40">
+                        <circle cx="20" cy="20" r={r} fill="none" stroke="#f1f5f9" strokeWidth="2.5" />
+                        <motion.circle
+                          cx="20" cy="20" r={r} fill="none"
+                          stroke="url(#skill-grad)"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeDasharray={c}
+                          initial={{ strokeDashoffset: c }}
+                          whileInView={{ strokeDashoffset: c * (1 - s.percentage / 100) }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 1.2, delay: 0.3 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                        />
+                      </svg>
+                      <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-slate-600">
+                        {s.percentage}
+                      </span>
+                    </div>
+                    <span className="text-sm font-medium text-slate-800 leading-tight">{s.name}</span>
+                  </motion.div>
+                );
+              })}
+            </div>
           </motion.div>
         </motion.div>
 

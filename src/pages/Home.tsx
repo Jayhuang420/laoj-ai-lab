@@ -10,7 +10,8 @@ import SEO from '../components/SEO';
 const DEFAULTS = {
   hero: {
     badgeText: '12年+ 零售業高階經理人 帶你如何使用AI 落地變現',
-    title: '不談空泛理論，只教你打造高獲利 AI 事業。',
+    title: '不談空泛理論\n只教你打造',
+    titleHighlight: '高獲利 AI 事業',
     subtitle: '專為「一人公司」設計的實戰指南。結合精實創業與 PLG 思維，將 AI 從生產力工具轉化為具備 PMF 的可規模化業務。',
     ctaText: '探索 AI 實戰工具',
     ctaSecondary: '領取變現全景地圖',
@@ -140,10 +141,9 @@ export default function Home() {
     transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
   };
 
-  /* Parse hero title into parts */
-  const mainTitle = hero.title.split('，')[0] + '，';
-  const highlightMatch = hero.title.match(/打造(.+?)(?:[。]|$)/);
-  const highlightText = highlightMatch ? highlightMatch[1] : '高獲利 AI 事業';
+  /* Parse hero title into lines + highlight */
+  const titleLines = (hero.title || '').split('\n');
+  const highlightText = hero.titleHighlight || '高獲利 AI 事業';
 
   /* Trust badges */
   const trustBadges = (hero.trustBadges || '').split(',').map((s: string) => s.trim()).filter(Boolean);
@@ -237,12 +237,17 @@ export default function Home() {
 
             <h1 className="hero-fade text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold tracking-tight leading-[1.15] mb-8 text-slate-900"
               style={{ animationDelay: '0.25s' }}>
-              {mainTitle}<br />只教你打造
+              {titleLines.map((line: string, i: number) => (
+                <React.Fragment key={i}>
+                  {line}
+                  {i < titleLines.length - 1 && <br />}
+                </React.Fragment>
+              ))}
               <span className="relative whitespace-nowrap inline-block mt-2 md:mt-0 ml-2">
                 <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-blue-600">{highlightText}</span>
                 <span className="absolute bottom-2 left-0 w-full h-3 md:h-4 bg-emerald-100/80 -z-10 origin-left"
                   style={{ animation: 'heroUnderline 0.8s ease-out 0.8s both' }} />
-              </span>。
+              </span>
             </h1>
 
             <p className="hero-fade text-lg md:text-xl text-slate-600 mb-10 max-w-2xl leading-relaxed font-medium"

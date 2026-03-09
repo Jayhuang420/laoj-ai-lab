@@ -7,6 +7,7 @@ const DEFAULTS = {
   intro: {
     name: '老 J',
     role: 'AI 實驗室創辦人',
+    headline: '從教學影片設計師\n到 AI 自動化一人公司',
     bio: [
       '我深知在資源有限的情況下，如何將未經證實的點子轉化為具備「產品市場媒合度（PMF）」的可規模化業務。',
       '老 J AI 實驗室的成立，是為了分享那些我親身實踐過、真正能降低成本並帶來收益的 AI 工作流。我們拒絕虛榮功能，只專注於解決剛需。',
@@ -124,6 +125,11 @@ function IntroEditor({ data, onSave, onImageUploaded }: { data: any; onSave: (v:
           <input value={form.role || ''} onChange={e => set('role', e.target.value)}
             className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-slate-400 bg-white" />
         </div>
+      </div>
+      <div>
+        <label className="text-xs font-semibold text-gray-500 mb-1 block">主標題（用換行分行）</label>
+        <textarea value={form.headline || ''} onChange={e => set('headline', e.target.value)} rows={2}
+          className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-slate-400 bg-white resize-none" />
       </div>
       <div>
         <label className="text-xs font-semibold text-gray-500 mb-1 block">自我介紹（每行一段）</label>

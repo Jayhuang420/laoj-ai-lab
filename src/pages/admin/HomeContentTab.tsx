@@ -6,7 +6,8 @@ import { useToast } from '../../context/ToastContext';
 const DEFAULTS = {
   hero: {
     badgeText: '12年+ 零售業高階經理人 帶你如何使用AI 落地變現',
-    title: '不談空泛理論，只教你打造高獲利 AI 事業。',
+    title: '不談空泛理論\n只教你打造',
+    titleHighlight: '高獲利 AI 事業',
     subtitle: '專為「一人公司」設計的實戰指南。結合精實創業與 PLG 思維，將 AI 從生產力工具轉化為具備 PMF 的可規模化業務。',
     ctaText: '探索 AI 實戰工具',
     ctaSecondary: '領取變現全景地圖',
@@ -69,8 +70,8 @@ function SimpleFieldsEditor({ title, sectionKey, data, onSave }: {
   const fields = Object.keys(defaults).filter(k => typeof defaults[k] === 'string');
 
   const labels: Record<string, string> = {
-    badgeText: '標章文字', title: '標題', subtitle: '副標題',
-    ctaText: '主按鈕文字', ctaSecondary: '次按鈕文字',
+    badgeText: '標章文字', title: '標題（用換行分行）', titleHighlight: '標題亮點文字',
+    subtitle: '副標題', ctaText: '主按鈕文字', ctaSecondary: '次按鈕文字',
     photoBadge: '照片標章', trustBadges: '信任標章（逗號分隔）',
     label: '小標籤', sectionTitle: '區塊標題', sectionSubtitle: '區塊副標題',
     buttonText: '按鈕文字', linkText: '連結文字',
@@ -78,7 +79,7 @@ function SimpleFieldsEditor({ title, sectionKey, data, onSave }: {
     privacyText: '隱私說明',
   };
 
-  const textareaFields = ['subtitle', 'sectionSubtitle', 'trustBadges', 'privacyText'];
+  const textareaFields = ['title', 'subtitle', 'sectionSubtitle', 'trustBadges', 'privacyText'];
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4">
