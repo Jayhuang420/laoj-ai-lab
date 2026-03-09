@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Youtube, ShoppingBag, Mail, CheckCircle2, Play,
-         Zap, Target, TrendingUp, Users, MousePointer, Cpu } from 'lucide-react';
+         Zap, Target, TrendingUp, Users, MousePointer, Cpu, Rocket } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, useInView, animate } from 'motion/react';
 import { useToast } from '../context/ToastContext';
@@ -414,6 +414,35 @@ export default function Home() {
             </motion.div>
           ))}
         </div>
+      </section>
+
+      {/* ── Collaboration CTA ─────────────────────────────────────────────────── */}
+      <section aria-label="合作洽談" className="py-20 px-6 max-w-6xl mx-auto">
+        <motion.div {...fadeInUp}
+          className="rounded-3xl bg-slate-900 text-white p-12 md:p-16 relative overflow-hidden">
+          <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(52,211,153,0.08),rgba(96,165,250,0.08))]" />
+          <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 md:gap-12">
+            <div className="flex-1 text-center md:text-left">
+              <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center mb-6 mx-auto md:mx-0">
+                <Rocket className="w-6 h-6" />
+              </div>
+              <h2 className="text-3xl font-bold tracking-tight mb-4">
+                想讓 AI 幫你的事業加速？
+              </h2>
+              <p className="text-gray-300 leading-relaxed max-w-lg">
+                不管是自動化工作流、品牌轉型還是商業模式設計，老 J 都能幫你找到最適合的 AI 解法。預約一次免費諮詢，讓我們聊聊你的需求。
+              </p>
+            </div>
+            <div className="flex-shrink-0">
+              <Link
+                to="/contact"
+                className="inline-flex items-center gap-2 bg-white text-slate-900 px-10 py-4 rounded-full font-medium hover:bg-emerald-50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              >
+                立即預約免費諮詢 <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </motion.div>
       </section>
 
       {/* ── CTA Banner ────────────────────────────────────────────────────────── */}

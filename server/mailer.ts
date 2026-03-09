@@ -294,6 +294,120 @@ function ebookHtml(email: string): string {
 </html>`;
 }
 
+/* ── Inquiry Confirmation Email ────────────────────────────────────────────── */
+function inquiryConfirmationHtml(name: string): string {
+  const appUrl = process.env.APP_URL || 'https://laoj.ai';
+  return `<!DOCTYPE html>
+<html lang="zh-TW"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>諮詢已收到</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#f4f4f0;font-family:'Helvetica Neue',Arial,'PingFang TC','Microsoft JhengHei',sans-serif;color:#1a1a1a;}
+  .wrap{max-width:600px;margin:32px auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 40px rgba(0,0,0,.08);}
+  .header{background:linear-gradient(135deg,#0f172a,#1e3a8a);padding:40px;text-align:center;}
+  .header h1{color:#fff;font-size:24px;font-weight:800;}
+  .header p{color:#93c5fd;font-size:13px;margin-top:8px;}
+  .body{padding:36px 40px;}
+  .body p{font-size:14px;color:#374151;line-height:1.8;margin-bottom:16px;}
+  .body strong{color:#0f172a;}
+  .highlight{background:#f0f6ff;border-left:4px solid #1e3a8a;border-radius:0 10px 10px 0;padding:16px 20px;margin:20px 0;}
+  .highlight p{margin:0;font-size:13px;}
+  .cta{text-align:center;margin:28px 0 8px;}
+  .cta a{display:inline-block;background:#0f172a;color:#fff;padding:14px 32px;border-radius:100px;font-weight:700;font-size:14px;text-decoration:none;}
+  .footer{background:#f8fafc;padding:24px 40px;text-align:center;border-top:1px solid #e2e8f0;}
+  .footer p{font-size:11px;color:#94a3b8;line-height:1.8;}
+  .footer a{color:#60a5fa;text-decoration:none;}
+  @media(max-width:480px){.wrap{margin:0;border-radius:0;}.header,.body{padding:28px 20px;}.footer{padding:20px;}}
+</style></head><body>
+<div class="wrap">
+  <div class="header">
+    <h1>感謝您的諮詢！</h1>
+    <p>老 J AI 實驗室 已收到您的合作需求</p>
+  </div>
+  <div class="body">
+    <p>${name} 您好，</p>
+    <p>感謝您對 <strong>老 J AI 實驗室</strong> 的信任！我們已收到您的合作諮詢，會在 <strong>1-2 個工作天內</strong> 回覆您。</p>
+    <div class="highlight">
+      <p><strong>接下來的流程：</strong></p>
+      <p>1. 老 J 會親自閱讀您的需求<br/>2. 安排合適的時段與您溝通<br/>3. 提供量身定制的 AI 解決方案</p>
+    </div>
+    <p>在等待回覆的期間，歡迎先瀏覽我們的 AI 工具箱，探索更多實用工具。</p>
+    <div class="cta">
+      <a href="${appUrl}/tools">探索 AI 工具箱 →</a>
+    </div>
+  </div>
+  <div class="footer">
+    <p>此信件由 <a href="${appUrl}">老 J AI 實驗室</a> 自動發送<br/>© ${new Date().getFullYear()} 老 J AI 實驗室 · 保留所有權利</p>
+  </div>
+</div></body></html>`;
+}
+
+export async function sendInquiryConfirmation(to: string, name: string): Promise<void> {
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS ||
+      process.env.SMTP_USER === 'your@gmail.com') {
+    console.warn('[mailer] SMTP 未設定，跳過寄送確認信。');
+    return;
+  }
+  const fromName = process.env.SMTP_FROM_NAME || '老 J AI 實驗室';
+  await transporter.sendMail({
+    from: `"${fromName}" <${process.env.SMTP_USER}>`,
+    to,
+    subject: '✅ 我們已收到您的諮詢 — 老 J AI 實驗室',
+    html: inquiryConfirmationHtml(name),
+  });
+  console.log(`[mailer] 諮詢確認信已寄送至 ${to}`);
+}
+
+/* ── Admin Notification Email ─────────────────────────────────────────────── */
+interface InquiryInfo {
+  name: string;
+  email: string;
+  company: string;
+  service_type: string;
+  budget: string;
+  message: string;
+}
+
+export async function sendAdminNotification(inquiry: InquiryInfo): Promise<void> {
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS ||
+      process.env.SMTP_USER === 'your@gmail.com') {
+    console.warn('[mailer] SMTP 未設定，跳過管理員通知。');
+    return;
+  }
+  const adminEmail = process.env.ADMIN_EMAIL || process.env.SMTP_USER;
+  const fromName = process.env.SMTP_FROM_NAME || '老 J AI 實驗室';
+
+  const html = `<!DOCTYPE html>
+<html lang="zh-TW"><head><meta charset="UTF-8"/></head><body style="font-family:Arial,sans-serif;background:#f8fafc;padding:20px;">
+<div style="max-width:600px;margin:0 auto;background:#fff;border-radius:12px;border:1px solid #e2e8f0;overflow:hidden;">
+  <div style="background:#0f172a;color:#fff;padding:24px 32px;">
+    <h2 style="margin:0;font-size:18px;">🔔 新合作諮詢通知</h2>
+  </div>
+  <div style="padding:28px 32px;">
+    <table style="width:100%;border-collapse:collapse;font-size:14px;">
+      <tr><td style="padding:10px 0;color:#6b7280;width:100px;vertical-align:top;">姓名</td><td style="padding:10px 0;font-weight:700;">${inquiry.name}</td></tr>
+      <tr><td style="padding:10px 0;color:#6b7280;vertical-align:top;">Email</td><td style="padding:10px 0;"><a href="mailto:${inquiry.email}" style="color:#1e3a8a;">${inquiry.email}</a></td></tr>
+      <tr><td style="padding:10px 0;color:#6b7280;vertical-align:top;">公司</td><td style="padding:10px 0;">${inquiry.company || '未填寫'}</td></tr>
+      <tr><td style="padding:10px 0;color:#6b7280;vertical-align:top;">服務類型</td><td style="padding:10px 0;"><span style="background:#dbeafe;color:#1e3a8a;padding:2px 10px;border-radius:100px;font-size:12px;font-weight:600;">${inquiry.service_type}</span></td></tr>
+      <tr><td style="padding:10px 0;color:#6b7280;vertical-align:top;">預算</td><td style="padding:10px 0;">${inquiry.budget || '未填寫'}</td></tr>
+      <tr><td style="padding:10px 0;color:#6b7280;vertical-align:top;">訊息</td><td style="padding:10px 0;line-height:1.7;white-space:pre-wrap;">${inquiry.message}</td></tr>
+    </table>
+    <div style="margin-top:24px;text-align:center;">
+      <a href="${process.env.APP_URL || 'https://laoj.ai'}/admin" style="display:inline-block;background:#0f172a;color:#fff;padding:12px 28px;border-radius:100px;font-weight:700;font-size:13px;text-decoration:none;">前往後台管理 →</a>
+    </div>
+  </div>
+</div></body></html>`;
+
+  await transporter.sendMail({
+    from: `"${fromName}" <${process.env.SMTP_USER}>`,
+    to: adminEmail,
+    subject: `[老J AI 實驗室] 新合作諮詢 — ${inquiry.name}`,
+    html,
+  });
+  console.log(`[mailer] 管理員通知已寄送至 ${adminEmail}`);
+}
+
+/* ── Ebook Email ──────────────────────────────────────────────────────────── */
 export async function sendEbookEmail(to: string): Promise<void> {
   if (!process.env.SMTP_USER || !process.env.SMTP_PASS ||
       process.env.SMTP_USER === 'your@gmail.com') {

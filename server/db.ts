@@ -72,6 +72,20 @@ db.exec(`
     created_at INTEGER NOT NULL
   );
 
+  CREATE TABLE IF NOT EXISTS inquiries (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    company TEXT DEFAULT '',
+    service_type TEXT DEFAULT '其他',
+    budget TEXT DEFAULT '',
+    message TEXT DEFAULT '',
+    status TEXT DEFAULT 'new' CHECK(status IN ('new', 'contacted', 'closed')),
+    notion_page_id TEXT DEFAULT '',
+    created_at TEXT NOT NULL DEFAULT (datetime('now', '+8 hours')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now', '+8 hours'))
+  );
+
   CREATE TABLE IF NOT EXISTS blog_posts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     slug TEXT UNIQUE NOT NULL,

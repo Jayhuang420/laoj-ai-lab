@@ -28,6 +28,7 @@ export default function Layout() {
     { to: '/tools', label: 'AI 工具箱' },
     { to: '/blog', label: '部落格' },
     { to: '/about', label: '關於老 J' },
+    { to: '/contact', label: '合作洽談' },
   ];
 
   const isActive = (to: string) =>
@@ -68,9 +69,9 @@ export default function Layout() {
           </div>
 
           <div className="flex items-center gap-3">
-            <a href="/#lead-magnet" className="hidden md:block bg-[#1A1A1A] text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-[#1E3A8A] transition-colors">
-              免費獲取地圖
-            </a>
+            <Link to="/contact" className="hidden md:block bg-[#1A1A1A] text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-[#1E3A8A] transition-colors">
+              免費諮詢
+            </Link>
             {/* Hamburger */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
@@ -106,12 +107,12 @@ export default function Layout() {
                     {label}
                   </Link>
                 ))}
-                <a
-                  href="/#lead-magnet"
+                <Link
+                  to="/contact"
                   className="mt-2 py-3 px-4 rounded-xl bg-[#1E3A8A] text-white text-sm font-medium text-center"
                 >
-                  免費獲取地圖
-                </a>
+                  免費諮詢
+                </Link>
               </div>
             </motion.div>
           )}
@@ -142,6 +143,7 @@ export default function Layout() {
           <a href="https://twitter.com/laojailab" target="_blank" rel="noopener noreferrer" aria-label="Twitter（在新視窗開啟）" className="hover:text-[#1A1A1A] transition-colors">Twitter</a>
           <a href="https://youtube.com/@laojailab" target="_blank" rel="noopener noreferrer" aria-label="YouTube（在新視窗開啟）" className="hover:text-[#1A1A1A] transition-colors">YouTube</a>
           <a href="mailto:contact@laojailab.com" aria-label="寄送 Email 聯繫" className="hover:text-[#1A1A1A] transition-colors">Email</a>
+          <Link to="/contact" className="hover:text-[#1A1A1A] transition-colors">合作洽談</Link>
         </nav>
       </footer>
 

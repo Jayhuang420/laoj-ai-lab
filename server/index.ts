@@ -6,7 +6,8 @@ import { fileURLToPath } from 'url';
 import bcrypt from 'bcryptjs';
 import multer from 'multer';
 import db from './db.js';
-import { sendEbookEmail } from './mailer.js';
+import { sendEbookEmail, sendInquiryConfirmation, sendAdminNotification } from './mailer.js';
+import { createNotionInquiry } from './notion.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -146,6 +147,95 @@ app.post('/api/subscribe', (req, res) => {
       res.status(500).json({ error: '伺服器錯誤，請稍後再試。' });
     }
   }
+});
+
+// ─── Rate Limiter (in-memory) ─────────────────────────────────────────────
+const inquiryRateMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutes
+const RATE_LIMIT_MAX = 3;
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const entry = inquiryRateMap.get(ip);
+  if (!entry || now > entry.resetAt) {
+    inquiryRateMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
+    return true;
+  }
+  if (entry.count >= RATE_LIMIT_MAX) return false;
+  entry.count++;
+  return true;
+}
+
+// ─── Public: Submit Inquiry ──────────────────────────────────────────────
+app.post('/api/inquiries', (req, res) => {
+  const { name, email, company, service_type, budget, message } = req.body ?? {};
+
+  if (!name?.trim() || !email?.trim() || !message?.trim()) {
+    res.status(400).json({ error: '請填寫姓名、Email 與諮詢內容。' });
+    return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    res.status(400).json({ error: '請輸入有效的 Email 地址。' });
+    return;
+  }
+
+  const ip = req.headers['x-forwarded-for']?.toString().split(',')[0]?.trim() || req.socket.remoteAddress || 'unknown';
+  if (!checkRateLimit(ip)) {
+    res.status(429).json({ error: '提交次數過於頻繁，請 15 分鐘後再試。' });
+    return;
+  }
+
+  try {
+    const result = db.prepare(
+      `INSERT INTO inquiries (name, email, company, service_type, budget, message)
+       VALUES (?, ?, ?, ?, ?, ?)`
+    ).run(name.trim(), email.trim().toLowerCase(), company?.trim() || '', service_type || '其他', budget || '', message.trim());
+
+    const inquiryId = result.lastInsertRowid;
+    const inquiry = db.prepare('SELECT * FROM inquiries WHERE id = ?').get(inquiryId) as any;
+
+    res.json({ success: true, message: '諮詢已送出，我們會盡快回覆！' });
+
+    // Fire-and-forget: confirmation email, admin notification, Notion sync
+    sendInquiryConfirmation(email.trim().toLowerCase(), name.trim()).catch((err: Error) =>
+      console.error('[mailer] 確認信寄送失敗:', err.message)
+    );
+    sendAdminNotification({ name: name.trim(), email: email.trim().toLowerCase(), company: company?.trim() || '', service_type: service_type || '其他', budget: budget || '', message: message.trim() }).catch((err: Error) =>
+      console.error('[mailer] 管理員通知失敗:', err.message)
+    );
+    createNotionInquiry({ name: name.trim(), email: email.trim().toLowerCase(), company: company?.trim() || '', service_type: service_type || '其他', budget: budget || '', message: message.trim(), created_at: inquiry?.created_at || new Date().toISOString() }).then((pageId) => {
+      if (pageId) {
+        db.prepare('UPDATE inquiries SET notion_page_id = ? WHERE id = ?').run(pageId, inquiryId);
+      }
+    }).catch((err: Error) =>
+      console.error('[notion] Notion 寫入失敗:', err.message)
+    );
+  } catch (e: any) {
+    console.error('[inquiries] 提交失敗:', e.message);
+    res.status(500).json({ error: '伺服器錯誤，請稍後再試。' });
+  }
+});
+
+// ─── Admin: Inquiries CRUD ──────────────────────────────────────────────
+app.get('/api/admin/inquiries', adminAuth, (_req, res) => {
+  const data = db.prepare('SELECT * FROM inquiries ORDER BY created_at DESC').all();
+  res.json(data);
+});
+
+app.put('/api/admin/inquiries/:id', adminAuth, (req, res) => {
+  const { status } = req.body ?? {};
+  if (!status || !['new', 'contacted', 'closed'].includes(status)) {
+    res.status(400).json({ error: '無效的狀態值。' });
+    return;
+  }
+  db.prepare("UPDATE inquiries SET status = ?, updated_at = datetime('now', '+8 hours') WHERE id = ?").run(status, req.params.id);
+  const inquiry = db.prepare('SELECT * FROM inquiries WHERE id = ?').get(req.params.id);
+  res.json(inquiry);
+});
+
+app.delete('/api/admin/inquiries/:id', adminAuth, (req, res) => {
+  db.prepare('DELETE FROM inquiries WHERE id = ?').run(req.params.id);
+  res.json({ success: true });
 });
 
 // ─── Public: Tools List ───────────────────────────────────────────────────────
@@ -455,8 +545,26 @@ app.get('/robots.txt', (_req, res) => {
 
 app.get('/sitemap.xml', (_req, res) => {
   res.setHeader('Content-Type', 'application/xml; charset=utf-8');
-  res.setHeader('Cache-Control', 'public, max-age=86400');
-  res.sendFile(path.join(seoDir, 'sitemap.xml'));
+  res.setHeader('Cache-Control', 'public, max-age=3600');
+  const today = new Date().toISOString().split('T')[0];
+  const staticPages = [
+    { loc: '/', changefreq: 'weekly', priority: '1.0' },
+    { loc: '/tools', changefreq: 'weekly', priority: '0.9' },
+    { loc: '/blog', changefreq: 'daily', priority: '0.9' },
+    { loc: '/about', changefreq: 'monthly', priority: '0.8' },
+    { loc: '/contact', changefreq: 'monthly', priority: '0.8' },
+  ];
+  let urls = staticPages.map(p =>
+    `  <url><loc>https://laojailab.com${p.loc}</loc><lastmod>${today}</lastmod><changefreq>${p.changefreq}</changefreq><priority>${p.priority}</priority></url>`
+  ).join('\n');
+  try {
+    const posts = db.prepare("SELECT slug, updated_at FROM blog_posts WHERE status = 'published' ORDER BY published_at DESC").all() as { slug: string; updated_at: string }[];
+    for (const post of posts) {
+      const lastmod = post.updated_at ? post.updated_at.split(' ')[0] : today;
+      urls += `\n  <url><loc>https://laojailab.com/blog/${post.slug}</loc><lastmod>${lastmod}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>`;
+    }
+  } catch { /* ignore if blog table issue */ }
+  res.send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>`);
 });
 
 app.get('/llms.txt', (_req, res) => {
