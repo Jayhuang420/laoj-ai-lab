@@ -28,6 +28,16 @@ function getPriority(budget: string): string {
   return '低';
 }
 
+/** 將 SQLite datetime 格式 (YYYY-MM-DD HH:MM:SS) 轉為 ISO-8601 */
+function toISO(dateStr: string): string {
+  if (!dateStr) return new Date().toISOString();
+  // 如果已經是 ISO 格式就直接回傳
+  if (dateStr.includes('T')) return dateStr;
+  // SQLite datetime('now','+8 hours') → "2026-03-09 15:30:00"
+  // 轉成 "2026-03-09T15:30:00+08:00"
+  return dateStr.replace(' ', 'T') + '+08:00';
+}
+
 export async function createNotionInquiry(inquiry: InquiryData): Promise<string | null> {
   if (!notion || !NOTION_DB_ID) {
     console.warn('[notion] Notion 未設定，跳過寫入。');
@@ -65,7 +75,7 @@ export async function createNotionInquiry(inquiry: InquiryData): Promise<string 
           select: { name: priority },
         },
         '提交時間': {
-          date: { start: inquiry.created_at || new Date().toISOString() },
+          date: { start: toISO(inquiry.created_at) },
         },
       },
     });
@@ -74,6 +84,7 @@ export async function createNotionInquiry(inquiry: InquiryData): Promise<string 
     return response.id;
   } catch (err: any) {
     console.error('[notion] 寫入失敗:', err.message);
+    if (err.body) console.error('[notion] 詳細錯誤:', JSON.stringify(err.body));
     return null;
   }
 }
