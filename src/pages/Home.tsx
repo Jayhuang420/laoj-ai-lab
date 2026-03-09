@@ -1,10 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Youtube, ShoppingBag, Mail, CheckCircle2, Play,
-         Zap, Target, TrendingUp, Users, MousePointer, Cpu, Rocket } from 'lucide-react';
+         Zap, Target, TrendingUp, Users, MousePointer, Cpu, Rocket,
+         Music, Dices, Hash, Sparkles, Utensils, BookOpen, Lightbulb, Wrench } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, useInView, animate } from 'motion/react';
 import { useToast } from '../context/ToastContext';
 import SEO from '../components/SEO';
+
+const TOOL_ICON_MAP: Record<string, React.ReactNode> = {
+  Music: <Music className="w-6 h-6" />,
+  Youtube: <Youtube className="w-6 h-6" />,
+  Dices: <Dices className="w-6 h-6" />,
+  Hash: <Hash className="w-6 h-6" />,
+  Sparkles: <Sparkles className="w-6 h-6" />,
+  Utensils: <Utensils className="w-6 h-6" />,
+  BookOpen: <BookOpen className="w-6 h-6" />,
+  Lightbulb: <Lightbulb className="w-6 h-6" />,
+  Wrench: <Wrench className="w-6 h-6" />,
+  ShoppingBag: <ShoppingBag className="w-6 h-6" />,
+};
 
 /* ── Defaults (fallback when API has no data) ─────────────────────────────── */
 const DEFAULTS = {
@@ -88,10 +102,12 @@ export default function Home() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const heroRef = useRef<HTMLElement>(null);
   const [content, setContent] = useState<Record<string, any>>({});
+  const [apiTools, setApiTools] = useState<any[]>([]);
 
-  /* Fetch dynamic content */
+  /* Fetch dynamic content + tools */
   useEffect(() => {
     fetch('/api/content/home').then(r => r.ok ? r.json() : {}).then(setContent).catch(() => {});
+    fetch('/api/tools').then(r => r.ok ? r.json() : []).then((data: any[]) => { if (data.length) setApiTools(data); }).catch(() => {});
   }, []);
 
   const hero = { ...DEFAULTS.hero, ...content.hero };
@@ -376,17 +392,14 @@ export default function Home() {
           <p className="text-gray-500 max-w-2xl">{featuredTools.sectionSubtitle}</p>
         </motion.div>
         <div className="grid md:grid-cols-2 gap-6">
-          {[
-            { icon: <Youtube className="w-6 h-6" />, title: 'YT 音樂頻道 歌詞產生器', desc: '輸入曲風與主題，AI 自動為你產出押韻且具備情感共鳴的歌詞。', url: 'https://jshao-tubeflow.zeabur.app' },
-            { icon: <ShoppingBag className="w-6 h-6" />, title: '台灣彩券賓果賓果預測器', desc: '透過歷史開獎數據與機率模型，輔助分析熱門號碼與冷門號碼趨勢。', url: 'https://bingo-predictor.zeabur.app' },
-          ].map((tool, i) => (
-            <motion.div key={i} {...fadeInUp} transition={{ duration: 0.5, delay: 0.1 * (i + 1), ease:[0.16,1,0.3,1] }}
+          {apiTools.slice(0, 4).map((tool, i) => (
+            <motion.div key={tool.id ?? i} {...fadeInUp} transition={{ duration: 0.5, delay: 0.1 * (i + 1), ease:[0.16,1,0.3,1] }}
               className="group p-8 rounded-3xl border border-gray-100 hover:border-gray-300 hover:shadow-md transition-all bg-white hover:-translate-y-1">
               <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center mb-6 text-[#1A1A1A] group-hover:bg-[#1A1A1A] group-hover:text-white transition-all duration-300">
-                {tool.icon}
+                {TOOL_ICON_MAP[tool.icon_name] || <Wrench className="w-6 h-6" />}
               </div>
               <h3 className="text-xl font-bold mb-3">{tool.title}</h3>
-              <p className="text-gray-600 text-sm leading-relaxed mb-6">{tool.desc}</p>
+              <p className="text-gray-600 text-sm leading-relaxed mb-6">{tool.description}</p>
               <a href={tool.url} target="_blank" rel="noopener noreferrer"
                 className="text-sm font-medium flex items-center gap-1 text-[#1E3A8A] group-hover:gap-2 transition-all">
                 立即使用工具 <ArrowRight className="w-4 h-4" />
