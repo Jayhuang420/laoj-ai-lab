@@ -3,11 +3,26 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion, useScroll, useSpring } from 'motion/react';
 import { Menu, X, ChevronUp } from 'lucide-react';
 
+interface FooterLink { label: string; url: string }
+interface FooterData { brandName: string; copyright: string; links: FooterLink[] }
+
+const FOOTER_DEFAULTS: FooterData = {
+  brandName: '老 J AI 實驗室',
+  copyright: '© {year} Old J AI Lab. All rights reserved.',
+  links: [
+    { label: 'Twitter', url: 'https://twitter.com/laojailab' },
+    { label: 'YouTube', url: 'https://youtube.com/@laojailab' },
+    { label: 'Email', url: 'mailto:contact@laojailab.com' },
+    { label: '合作洽談', url: '/contact' },
+  ],
+};
+
 export default function Layout() {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showTop, setShowTop] = useState(false);
+  const [footer, setFooter] = useState<FooterData>(FOOTER_DEFAULTS);
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
@@ -22,6 +37,13 @@ export default function Layout() {
   }, []);
 
   useEffect(() => { setMenuOpen(false); }, [location.pathname]);
+
+  useEffect(() => {
+    fetch('/api/content/footer')
+      .then(r => r.ok ? r.json() : null)
+      .then(json => { if (json?.main) setFooter({ ...FOOTER_DEFAULTS, ...json.main }); })
+      .catch(() => {});
+  }, []);
 
   const navLinks = [
     { to: '/', label: '首頁' },
@@ -137,13 +159,25 @@ export default function Layout() {
 
       {/* Footer */}
       <footer className="py-12 px-6 max-w-6xl mx-auto w-full border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-6 mt-auto">
-        <div className="font-bold tracking-tight">老 J AI 實驗室</div>
-        <p className="text-sm text-gray-500">© {new Date().getFullYear()} Old J AI Lab. All rights reserved.</p>
+        <div className="font-bold tracking-tight">{footer.brandName}</div>
+        <p className="text-sm text-gray-500">
+          {footer.copyright.replace('{year}', String(new Date().getFullYear()))}
+        </p>
         <nav aria-label="社群連結" className="flex gap-6 text-sm font-medium text-gray-600">
-          <a href="https://twitter.com/laojailab" target="_blank" rel="noopener noreferrer" aria-label="Twitter（在新視窗開啟）" className="hover:text-[#1A1A1A] transition-colors">Twitter</a>
-          <a href="https://youtube.com/@laojailab" target="_blank" rel="noopener noreferrer" aria-label="YouTube（在新視窗開啟）" className="hover:text-[#1A1A1A] transition-colors">YouTube</a>
-          <a href="mailto:contact@laojailab.com" aria-label="寄送 Email 聯繫" className="hover:text-[#1A1A1A] transition-colors">Email</a>
-          <Link to="/contact" className="hover:text-[#1A1A1A] transition-colors">合作洽談</Link>
+          {footer.links.map((link, i) => {
+            const isInternal = link.url.startsWith('/');
+            return isInternal ? (
+              <Link key={i} to={link.url} className="hover:text-[#1A1A1A] transition-colors">
+                {link.label}
+              </Link>
+            ) : (
+              <a key={i} href={link.url} target="_blank" rel="noopener noreferrer"
+                aria-label={`${link.label}（在新視窗開啟）`}
+                className="hover:text-[#1A1A1A] transition-colors">
+                {link.label}
+              </a>
+            );
+          })}
         </nav>
       </footer>
 

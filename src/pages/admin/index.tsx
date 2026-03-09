@@ -12,6 +12,7 @@ import AboutContentTab from './AboutContentTab';
 import BlogTab from './BlogTab';
 import AccountTab from './AccountTab';
 import InquiriesTab from './InquiriesTab';
+import FooterTab from './FooterTab';
 
 const tabs = [
   { id: 'overview', label: '總覽', icon: <BarChart3 className="w-4 h-4" /> },
@@ -21,6 +22,7 @@ const tabs = [
   { id: 'blog', label: '部落格', icon: <PenSquare className="w-4 h-4" /> },
   { id: 'homeContent', label: '首頁管理', icon: <Home className="w-4 h-4" /> },
   { id: 'aboutContent', label: '關於頁管理', icon: <FileText className="w-4 h-4" /> },
+  { id: 'footer', label: '頁尾管理', icon: <FileText className="w-4 h-4" /> },
   { id: 'account', label: '帳號設定', icon: <Settings className="w-4 h-4" /> },
 ];
 
@@ -127,6 +129,7 @@ export default function AdminPage() {
             {activeTab === 'blog' && <BlogTab api={api} />}
             {activeTab === 'homeContent' && <HomeContentTab api={api} />}
             {activeTab === 'aboutContent' && <AboutContentTab api={api} />}
+            {activeTab === 'footer' && <FooterTab api={api} />}
             {activeTab === 'account' && <AccountTab api={api} />}
           </div>
         </AnimatePresence>
