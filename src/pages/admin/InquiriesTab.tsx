@@ -12,6 +12,7 @@ interface Inquiry {
   message: string;
   status: 'new' | 'contacted' | 'closed';
   notion_page_id: string;
+  notion_synced: number;
   created_at: string;
   updated_at: string;
 }
@@ -32,8 +33,8 @@ export default function InquiriesTab({ api }: { api: (url: string, opts?: Reques
   const load = async () => {
     setLoading(true);
     try {
-      const data = await api('/api/admin/inquiries');
-      setInquiries(data);
+      const res = await api('/api/admin/inquiries');
+      if (res.ok) setInquiries(await res.json());
     } catch { /* ignore */ }
     finally { setLoading(false); }
   };
@@ -42,20 +43,23 @@ export default function InquiriesTab({ api }: { api: (url: string, opts?: Reques
 
   const updateStatus = async (id: number, status: string) => {
     try {
-      await api(`/api/admin/inquiries/${id}`, {
+      const res = await api(`/api/admin/inquiries/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
       });
-      setInquiries(prev => prev.map(i => i.id === id ? { ...i, status: status as Inquiry['status'] } : i));
+      if (res.ok) {
+        const updated = await res.json();
+        setInquiries(prev => prev.map(i => i.id === id ? { ...i, status: status as Inquiry['status'], notion_synced: updated.notion_synced } : i));
+      }
     } catch { /* ignore */ }
   };
 
   const deleteInquiry = async (id: number) => {
     if (!confirm('確定要刪除這筆諮詢嗎？')) return;
     try {
-      await api(`/api/admin/inquiries/${id}`, { method: 'DELETE' });
-      setInquiries(prev => prev.filter(i => i.id !== id));
+      const res = await api(`/api/admin/inquiries/${id}`, { method: 'DELETE' });
+      if (res.ok) setInquiries(prev => prev.filter(i => i.id !== id));
     } catch { /* ignore */ }
   };
 
@@ -128,6 +132,11 @@ export default function InquiriesTab({ api }: { api: (url: string, opts?: Reques
                   <span className="text-xs text-gray-400 hidden lg:block">
                     {new Date(inquiry.created_at).toLocaleDateString('zh-TW')}
                   </span>
+                  {inquiry.notion_page_id ? (
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" title="已同步 Notion" />
+                  ) : (
+                    <span className="w-2 h-2 rounded-full bg-gray-300 shrink-0" title="未同步 Notion" />
+                  )}
                   {isExpanded ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
                 </button>
 
@@ -163,19 +172,44 @@ export default function InquiriesTab({ api }: { api: (url: string, opts?: Reques
                             <span className="text-gray-400 text-xs">提交時間</span>
                             <p className="font-medium">{new Date(inquiry.created_at).toLocaleString('zh-TW')}</p>
                           </div>
-                          {inquiry.notion_page_id && (
-                            <div>
-                              <span className="text-gray-400 text-xs">Notion</span>
-                              <a
-                                href={`https://notion.so/${inquiry.notion_page_id.replace(/-/g, '')}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-1 text-blue-600 text-sm hover:underline"
-                              >
-                                查看 <ExternalLink className="w-3 h-3" />
-                              </a>
-                            </div>
-                          )}
+                          <div>
+                            <span className="text-gray-400 text-xs">Notion 同步</span>
+                            {inquiry.notion_page_id ? (
+                              <div className="flex items-center gap-2 mt-0.5">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-medium bg-emerald-50 text-emerald-600">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> 已同步
+                                </span>
+                                <a
+                                  href={`https://notion.so/${inquiry.notion_page_id.replace(/-/g, '')}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center gap-1 text-blue-600 text-xs hover:underline"
+                                >
+                                  開啟 Notion <ExternalLink className="w-3 h-3" />
+                                </a>
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-2 mt-0.5">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-medium bg-gray-100 text-gray-500">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-gray-400" /> 未同步
+                                </span>
+                                <button
+                                  onClick={async () => {
+                                    try {
+                                      const res = await api(`/api/admin/inquiries/${inquiry.id}/sync-notion`, { method: 'POST' });
+                                      if (res.ok) {
+                                        const data = await res.json();
+                                        setInquiries(prev => prev.map(i => i.id === inquiry.id ? { ...i, notion_page_id: data.notion_page_id } : i));
+                                      }
+                                    } catch { /* ignore */ }
+                                  }}
+                                  className="text-xs text-blue-600 hover:underline"
+                                >
+                                  手動同步
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         </div>
 
                         <div>

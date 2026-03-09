@@ -7,7 +7,7 @@ import bcrypt from 'bcryptjs';
 import multer from 'multer';
 import db from './db.js';
 import { sendEbookEmail, sendInquiryConfirmation, sendAdminNotification } from './mailer.js';
-import { createNotionInquiry } from './notion.js';
+import { createNotionInquiry, updateNotionStatus, isNotionEnabled } from './notion.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -229,8 +229,44 @@ app.put('/api/admin/inquiries/:id', adminAuth, (req, res) => {
     return;
   }
   db.prepare("UPDATE inquiries SET status = ?, updated_at = datetime('now', '+8 hours') WHERE id = ?").run(status, req.params.id);
-  const inquiry = db.prepare('SELECT * FROM inquiries WHERE id = ?').get(req.params.id);
-  res.json(inquiry);
+  const inquiry = db.prepare('SELECT * FROM inquiries WHERE id = ?').get(req.params.id) as any;
+
+  // 同步狀態到 Notion（fire-and-forget）
+  if (inquiry?.notion_page_id) {
+    updateNotionStatus(inquiry.notion_page_id, status).catch((err: Error) =>
+      console.error('[notion] 狀態同步失敗:', err.message)
+    );
+  }
+
+  res.json({ ...inquiry, notion_synced: !!inquiry?.notion_page_id });
+});
+
+// 手動同步單筆諮詢到 Notion
+app.post('/api/admin/inquiries/:id/sync-notion', adminAuth, async (req, res) => {
+  const inquiry = db.prepare('SELECT * FROM inquiries WHERE id = ?').get(req.params.id) as any;
+  if (!inquiry) { res.status(404).json({ error: '找不到此諮詢' }); return; }
+  if (inquiry.notion_page_id) { res.json({ notion_page_id: inquiry.notion_page_id, message: '已同步' }); return; }
+  if (!isNotionEnabled()) { res.status(400).json({ error: 'Notion 整合未啟用，請設定 NOTION_TOKEN' }); return; }
+
+  try {
+    const pageId = await createNotionInquiry({
+      name: inquiry.name,
+      email: inquiry.email,
+      company: inquiry.company,
+      service_type: inquiry.service_type,
+      budget: inquiry.budget,
+      message: inquiry.message,
+      created_at: inquiry.created_at,
+    });
+    if (pageId) {
+      db.prepare('UPDATE inquiries SET notion_page_id = ? WHERE id = ?').run(pageId, inquiry.id);
+      res.json({ notion_page_id: pageId, message: '同步成功' });
+    } else {
+      res.status(500).json({ error: 'Notion 寫入失敗' });
+    }
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.delete('/api/admin/inquiries/:id', adminAuth, (req, res) => {

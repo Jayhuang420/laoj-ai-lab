@@ -88,3 +88,36 @@ export async function createNotionInquiry(inquiry: InquiryData): Promise<string 
     return null;
   }
 }
+
+/** Admin 狀態對應 Notion 狀態 */
+const STATUS_TO_NOTION: Record<string, string> = {
+  new: '新諮詢',
+  contacted: '已聯繫',
+  closed: '已結案',
+};
+
+/** 更新 Notion 頁面狀態 */
+export async function updateNotionStatus(pageId: string, status: string): Promise<boolean> {
+  if (!notion) return false;
+  const notionStatus = STATUS_TO_NOTION[status];
+  if (!notionStatus) return false;
+
+  try {
+    await notion.pages.update({
+      page_id: pageId,
+      properties: {
+        '狀態': { select: { name: notionStatus } },
+      },
+    });
+    console.log(`[notion] 已更新頁面 ${pageId} 狀態為 ${notionStatus}`);
+    return true;
+  } catch (err: any) {
+    console.error('[notion] 更新狀態失敗:', err.message);
+    return false;
+  }
+}
+
+/** 檢查 Notion 整合是否啟用 */
+export function isNotionEnabled(): boolean {
+  return !!(notion && NOTION_DB_ID);
+}
