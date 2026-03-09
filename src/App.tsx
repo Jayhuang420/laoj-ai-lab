@@ -8,6 +8,7 @@ import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import Admin from './pages/Admin';
 import Contact from './pages/Contact';
+import NotFound from './pages/NotFound';
 import { ToastProvider } from './context/ToastContext';
 
 /* Track page views */
@@ -37,6 +38,7 @@ export default function App() {
             <Route path="about" element={<About />} />
             <Route path="contact" element={<Contact />} />
             <Route path="admin" element={<Admin />} />
+            <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
       </BrowserRouter>

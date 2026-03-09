@@ -644,6 +644,19 @@ app.get('/llms-full.txt', (_req, res) => {
   res.sendFile(path.join(seoDir, 'llms-full.txt'));
 });
 
+// .well-known routes for AI crawler discovery (standard convention)
+app.get('/.well-known/llms.txt', (_req, res) => {
+  res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=86400');
+  res.sendFile(path.join(seoDir, 'llms.txt'));
+});
+
+app.get('/.well-known/llms-full.txt', (_req, res) => {
+  res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=86400');
+  res.sendFile(path.join(seoDir, 'llms-full.txt'));
+});
+
 app.get('/favicon.svg', (_req, res) => {
   res.setHeader('Content-Type', 'image/svg+xml');
   res.setHeader('Cache-Control', 'public, max-age=604800');

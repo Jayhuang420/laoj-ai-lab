@@ -53,9 +53,17 @@ export default function SEO({
 
       {/* JSON-LD */}
       {jsonLd && (
-        <script type="application/ld+json">
-          {JSON.stringify(Array.isArray(jsonLd) ? jsonLd : jsonLd)}
-        </script>
+        Array.isArray(jsonLd)
+          ? jsonLd.map((item, i) => (
+              <script key={i} type="application/ld+json">
+                {JSON.stringify(item)}
+              </script>
+            ))
+          : (
+            <script type="application/ld+json">
+              {JSON.stringify(jsonLd)}
+            </script>
+          )
       )}
     </Helmet>
   );

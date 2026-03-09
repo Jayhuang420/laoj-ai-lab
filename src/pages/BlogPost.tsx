@@ -143,12 +143,18 @@ export default function BlogPost() {
   }
 
   /* ── JSON-LD ─────────────────────────────────────────────────────────────── */
+  // Strip HTML tags to get plain text for articleBody
+  const plainText = contentHtml.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+  const articleBody = plainText.length > 300 ? plainText.slice(0, 300) + '…' : plainText;
+
   const postJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: post.title,
     description: post.excerpt,
     image: post.cover_image || undefined,
+    articleBody,
+    wordCount: plainText.length,
     author: { '@type': 'Person', name: post.author || '老J' },
     datePublished: post.published_at,
     dateModified: post.updated_at,
@@ -158,6 +164,21 @@ export default function BlogPost() {
       name: '老J AI 實驗室',
       url: 'https://www.oldjailab.com',
     },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://www.oldjailab.com/blog/${post.slug}`,
+    },
+  };
+
+  // BreadcrumbList for rich snippets
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: '首頁', item: 'https://www.oldjailab.com/' },
+      { '@type': 'ListItem', position: 2, name: '部落格', item: 'https://www.oldjailab.com/blog' },
+      { '@type': 'ListItem', position: 3, name: post.title, item: `https://www.oldjailab.com/blog/${post.slug}` },
+    ],
   };
 
   return (
@@ -166,7 +187,8 @@ export default function BlogPost() {
         title={`${post.title} — 老J AI 實驗室`}
         description={post.excerpt || post.title}
         path={`/blog/${post.slug}`}
-        jsonLd={postJsonLd}
+        ogType="article"
+        jsonLd={[postJsonLd, breadcrumbJsonLd]}
       />
 
       {/* ── Header ──────────────────────────────────────────────────────────── */}
