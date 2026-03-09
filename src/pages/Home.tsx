@@ -372,6 +372,14 @@ export default function Home() {
             <p className="text-xs text-slate-500 mt-4 flex items-center gap-1">
               <CheckCircle2 className="w-3 h-3" /> {leadMagnet.privacyText}
             </p>
+            <a
+              href="https://line.me/ti/g2/WBNqN2jcZTzcmIPz1J5LyhEsrjn7mVrosUJHHg?utm_source=invitation&utm_medium=link_copy&utm_campaign=default"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 mt-4 bg-white/10 border border-white/20 text-white px-6 py-3 rounded-full font-medium hover:bg-emerald-500 hover:border-emerald-500 transition-all text-sm"
+            >
+              <Users className="w-4 h-4" /> 加入社群
+            </a>
           </div>
           <div className="w-full md:w-52 aspect-square bg-white/10 border border-white/20 rounded-3xl flex items-center justify-center p-8 relative z-10 shrink-0">
             <div className="text-center">
