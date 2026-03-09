@@ -64,7 +64,7 @@ export default function Blog() {
     '@type': 'Blog',
     name: '老J AI 實驗室 部落格',
     description: '分享 AI 自動化實戰經驗、創業心得與工具教學。',
-    url: 'https://laojailab.com/blog',
+    url: 'https://www.oldjailab.com/blog',
     author: {
       '@type': 'Person',
       name: '老J',

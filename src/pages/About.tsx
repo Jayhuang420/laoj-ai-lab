@@ -76,11 +76,11 @@ export default function About() {
       alternateName: 'Old J',
       jobTitle: 'AI 實驗室創辦人',
       description: '12年零售業高階管理經驗，專注 AI 自動化變現與一人公司商業化路徑設計。從百億級連鎖品牌操盤到 AI 自動化一人公司。',
-      url: 'https://laojailab.com/about',
+      url: 'https://www.oldjailab.com/about',
       worksFor: {
         '@type': 'Organization',
         name: '老J AI 實驗室',
-        url: 'https://laojailab.com',
+        url: 'https://www.oldjailab.com',
       },
       knowsAbout: ['AI 自動化', '精實創業', 'PLG 商業化', 'Prompt Engineering', '零售管理', '電商策略'],
       sameAs: ['https://twitter.com/laojailab', 'https://youtube.com/@laojailab'],

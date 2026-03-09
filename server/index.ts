@@ -620,13 +620,13 @@ app.get('/sitemap.xml', (_req, res) => {
     { loc: '/contact', changefreq: 'monthly', priority: '0.8' },
   ];
   let urls = staticPages.map(p =>
-    `  <url><loc>https://laojailab.com${p.loc}</loc><lastmod>${today}</lastmod><changefreq>${p.changefreq}</changefreq><priority>${p.priority}</priority></url>`
+    `  <url><loc>https://www.oldjailab.com${p.loc}</loc><lastmod>${today}</lastmod><changefreq>${p.changefreq}</changefreq><priority>${p.priority}</priority></url>`
   ).join('\n');
   try {
     const posts = db.prepare("SELECT slug, updated_at FROM blog_posts WHERE status = 'published' ORDER BY published_at DESC").all() as { slug: string; updated_at: string }[];
     for (const post of posts) {
       const lastmod = post.updated_at ? post.updated_at.split(' ')[0] : today;
-      urls += `\n  <url><loc>https://laojailab.com/blog/${post.slug}</loc><lastmod>${lastmod}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>`;
+      urls += `\n  <url><loc>https://www.oldjailab.com/blog/${post.slug}</loc><lastmod>${lastmod}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>`;
     }
   } catch { /* ignore if blog table issue */ }
   res.send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>`);

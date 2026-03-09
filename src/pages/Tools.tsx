@@ -72,7 +72,7 @@ export default function Tools() {
     '@type': 'CollectionPage',
     name: 'AI 工具箱 — 老J AI 實驗室',
     description: '實驗室嚴選、親測有效的高效率 AI 工具。涵蓋內容創作、數據分析、商業應用、生活效率等分類。',
-    url: 'https://laojailab.com/tools',
+    url: 'https://www.oldjailab.com/tools',
     mainEntity: {
       '@type': 'ItemList',
       name: 'AI 工具列表',

@@ -152,11 +152,11 @@ export default function BlogPost() {
     author: { '@type': 'Person', name: post.author || '老J' },
     datePublished: post.published_at,
     dateModified: post.updated_at,
-    url: `https://laojailab.com/blog/${post.slug}`,
+    url: `https://www.oldjailab.com/blog/${post.slug}`,
     publisher: {
       '@type': 'Organization',
       name: '老J AI 實驗室',
-      url: 'https://laojailab.com',
+      url: 'https://www.oldjailab.com',
     },
   };
 

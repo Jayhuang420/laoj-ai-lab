@@ -49,20 +49,20 @@
 - 一人公司 AI 化
 - PLG 商業化路徑設計
 
-合作洽談頁面：https://laojailab.com/contact
+合作洽談頁面：https://www.oldjailab.com/contact
 
 ## 免費資源
 - 《2026 AI 變現全景地圖》PDF 實戰指南 — 可透過網站訂閱 Email 免費領取
 
 ## 頁面索引
-- 首頁：https://laojailab.com/
-- AI 工具箱：https://laojailab.com/tools
-- 部落格：https://laojailab.com/blog
-- 關於老J：https://laojailab.com/about
-- 合作洽談：https://laojailab.com/contact
+- 首頁：https://www.oldjailab.com/
+- AI 工具箱：https://www.oldjailab.com/tools
+- 部落格：https://www.oldjailab.com/blog
+- 關於老J：https://www.oldjailab.com/about
+- 合作洽談：https://www.oldjailab.com/contact
 
 ## 聯繫方式
-- 網站：https://laojailab.com
+- 網站：https://www.oldjailab.com
 - Email：contact@laojailab.com
 - Twitter：https://twitter.com/laojailab
 - YouTube：https://youtube.com/@laojailab

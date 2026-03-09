@@ -171,9 +171,9 @@ export default function Home() {
       '@type': 'WebPage',
       name: '老J AI 實驗室 — AI 變現教學與自動化工具',
       description: '專為一人公司設計的 AI 變現實戰指南。結合精實創業與 PLG 思維，將 AI 從生產力工具轉化為可規模化業務。',
-      url: 'https://laojailab.com/',
+      url: 'https://www.oldjailab.com/',
       inLanguage: 'zh-TW',
-      isPartOf: { '@type': 'WebSite', name: '老J AI 實驗室', url: 'https://laojailab.com' },
+      isPartOf: { '@type': 'WebSite', name: '老J AI 實驗室', url: 'https://www.oldjailab.com' },
       about: {
         '@type': 'Thing',
         name: 'AI 變現',
@@ -195,7 +195,7 @@ export default function Home() {
       price: '0',
       priceCurrency: 'TWD',
       availability: 'https://schema.org/InStock',
-      url: 'https://laojailab.com/#lead-magnet',
+      url: 'https://www.oldjailab.com/#lead-magnet',
       offeredBy: { '@type': 'Organization', name: '老J AI 實驗室' },
     },
   ];

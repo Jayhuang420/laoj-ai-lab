@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 
 const SITE_NAME = '老J AI 實驗室';
-const SITE_URL = 'https://laojailab.com';
+const SITE_URL = 'https://www.oldjailab.com';
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
 
 interface SEOProps {

@@ -34,11 +34,11 @@ const JSON_LD = [
     '@type': 'ContactPage',
     name: '合作洽談 — 老J AI 實驗室',
     description: '與老 J 預約免費諮詢，討論 AI 工作流自動化、品牌轉型、電商策略等合作方案。',
-    url: 'https://laojailab.com/contact',
+    url: 'https://www.oldjailab.com/contact',
     mainEntity: {
       '@type': 'Organization',
       name: '老J AI 實驗室',
-      url: 'https://laojailab.com',
+      url: 'https://www.oldjailab.com',
       email: 'contact@laojailab.com',
       description: '專為一人公司設計的 AI 變現實戰顧問。',
     },

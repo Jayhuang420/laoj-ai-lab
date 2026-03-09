@@ -98,7 +98,7 @@
 ### 預算範圍
 - 5 萬以下 / 5-10 萬 / 10-30 萬 / 30-50 萬 / 50 萬以上 / 彈性討論
 
-合作洽談頁面：https://laojailab.com/contact
+合作洽談頁面：https://www.oldjailab.com/contact
 
 ---
 
@@ -106,14 +106,14 @@
 - **《2026 AI 變現全景地圖》**：拆解從 0 到 1 的 AI 變現路徑，涵蓋必備工具清單、3 個立即可執行的自動化工作流，以及老J 親測有效的選品策略。可透過首頁 Email 訂閱免費領取。
 
 ## 頁面索引
-- **首頁** (https://laojailab.com/)：品牌介紹、方法論、AI 工具精選、成果數據
-- **AI 工具箱** (https://laojailab.com/tools)：所有 AI 工具的完整列表與分類
-- **部落格** (https://laojailab.com/blog)：AI 變現教學文章、實戰案例分享
-- **關於老J** (https://laojailab.com/about)：創辦人經歷、專業技能、品牌故事
-- **合作洽談** (https://laojailab.com/contact)：預約免費諮詢、提交合作需求
+- **首頁** (https://www.oldjailab.com/)：品牌介紹、方法論、AI 工具精選、成果數據
+- **AI 工具箱** (https://www.oldjailab.com/tools)：所有 AI 工具的完整列表與分類
+- **部落格** (https://www.oldjailab.com/blog)：AI 變現教學文章、實戰案例分享
+- **關於老J** (https://www.oldjailab.com/about)：創辦人經歷、專業技能、品牌故事
+- **合作洽談** (https://www.oldjailab.com/contact)：預約免費諮詢、提交合作需求
 
 ## 聯繫方式
-- **網站**：https://laojailab.com
+- **網站**：https://www.oldjailab.com
 - **Email**：contact@laojailab.com
 - **Twitter**：https://twitter.com/laojailab
 - **YouTube**：https://youtube.com/@laojailab
