@@ -482,9 +482,19 @@ export default function Home() {
             </div>
             <h2 className="text-3xl font-bold tracking-tight mb-4">{ctaBanner.title}</h2>
             <p className="text-gray-600 mb-8 max-w-xl mx-auto">{ctaBanner.subtitle}</p>
-            <a href="#lead-magnet" className="inline-flex items-center gap-2 bg-slate-900 text-white px-10 py-4 rounded-full font-medium hover:bg-[#1E3A8A] hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-              <Users className="w-4 h-4" /> {ctaBanner.buttonText}
-            </a>
+            <div className="flex flex-wrap justify-center gap-4">
+              <a href="#lead-magnet" className="inline-flex items-center gap-2 bg-slate-900 text-white px-10 py-4 rounded-full font-medium hover:bg-[#1E3A8A] hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <Users className="w-4 h-4" /> {ctaBanner.buttonText}
+              </a>
+              <a
+                href="https://line.me/ti/g2/WBNqN2jcZTzcmIPz1J5LyhEsrjn7mVrosUJHHg?utm_source=invitation&utm_medium=link_copy&utm_campaign=default"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 border border-slate-300 text-slate-900 px-10 py-4 rounded-full font-medium hover:bg-slate-900 hover:text-white hover:border-slate-900 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              >
+                <Users className="w-4 h-4" /> 加入社群
+              </a>
+            </div>
           </div>
         </motion.div>
       </section>
