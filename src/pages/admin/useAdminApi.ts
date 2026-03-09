@@ -31,15 +31,22 @@ export function useAdminApi() {
   }, [token]);
 
   const api = useCallback(
-    (path: string, opts?: RequestInit) =>
-      fetch(path, {
+    async (path: string, opts?: RequestInit) => {
+      const res = await fetch(path, {
         ...opts,
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
           ...opts?.headers,
         },
-      }),
+      });
+      // Auto-logout on 401 (session expired or server restarted)
+      if (res.status === 401 && path !== '/api/auth/login') {
+        sessionStorage.removeItem(TOKEN_KEY);
+        setToken('');
+      }
+      return res;
+    },
     [token],
   );
 

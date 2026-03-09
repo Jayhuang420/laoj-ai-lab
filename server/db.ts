@@ -65,6 +65,29 @@ db.exec(`
     updated_at TEXT NOT NULL DEFAULT (datetime('now', '+8 hours')),
     UNIQUE(page, section)
   );
+
+  CREATE TABLE IF NOT EXISTS sessions (
+    token TEXT PRIMARY KEY,
+    username TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS blog_posts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    slug TEXT UNIQUE NOT NULL,
+    title TEXT NOT NULL,
+    excerpt TEXT DEFAULT '',
+    content TEXT DEFAULT '',
+    cover_image TEXT DEFAULT '',
+    category TEXT DEFAULT '一般',
+    tags TEXT DEFAULT '[]',
+    status TEXT DEFAULT 'draft' CHECK(status IN ('draft', 'published')),
+    author TEXT DEFAULT '老J',
+    view_count INTEGER DEFAULT 0,
+    created_at TEXT NOT NULL DEFAULT (datetime('now', '+8 hours')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now', '+8 hours')),
+    published_at TEXT
+  );
 `);
 
 // Seed initial tools if empty

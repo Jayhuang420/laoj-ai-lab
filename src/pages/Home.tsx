@@ -9,11 +9,18 @@ import SEO from '../components/SEO';
 /* ── Defaults (fallback when API has no data) ─────────────────────────────── */
 const DEFAULTS = {
   hero: {
+    badgeText: '12年+ 零售業高階經理人 帶你如何使用AI 落地變現',
     title: '不談空泛理論，只教你打造高獲利 AI 事業。',
     subtitle: '專為「一人公司」設計的實戰指南。結合精實創業與 PLG 思維，將 AI 從生產力工具轉化為具備 PMF 的可規模化業務。',
     ctaText: '探索 AI 實戰工具',
+    ctaSecondary: '領取變現全景地圖',
+    photoBadge: 'AI 變現實戰家',
+    trustBadges: '✓ 親身實戰驗證,✓ 一人公司適用,✓ 零廢話教學,✓ 每月持續更新',
   },
   howItWorks: {
+    label: '運作方式',
+    sectionTitle: '三步驟打造 AI 變現引擎',
+    sectionSubtitle: '從驗證到規模化，一套可複製的系統性方法論。',
     steps: [
       { icon: 'Target', title: '找到你的剛需痛點', description: '用精實創業思維，在開始前先驗證市場需求，避免打造沒人要的產品。' },
       { icon: 'Cpu', title: '搭建 AI 自動化工作流', description: '從內容產出、客服到數據分析，讓 AI 擔任你的「虛擬團隊」，大幅降低人力成本。' },
@@ -21,11 +28,22 @@ const DEFAULTS = {
     ],
   },
   leadMagnet: {
+    label: '限時免費領取',
     title: '《2026 AI 變現全景地圖》',
     subtitle: '拆解從 0 到 1 的 AI 變現路徑，涵蓋必備工具清單、3 個立即可執行的自動化工作流，以及老 J 親測有效的選品策略。',
     buttonText: '立即發送給我',
+    boxTitle: 'AI 變現全景地圖',
+    boxSubtitle: 'PDF 實戰指南',
+    privacyText: '承諾不發送垃圾郵件，隨時可取消訂閱。',
+  },
+  featuredTools: {
+    sectionTitle: '熱門 AI 變現工具',
+    sectionSubtitle: '針對不同技能與目標，提供具體可執行的 AI 賦能策略。',
+    linkText: '查看所有 AI 工具',
   },
   stats: {
+    sectionTitle: '一人公司的實戰驗證',
+    sectionSubtitle: '在極簡的架構下，我們用數據說話。',
     items: [
       { number: 300, suffix: '%', label: '內容產出效率提升', sub: '透過 AI 腳本與自動化剪輯' },
       { number: 450, suffix: '%', label: '分潤收益成長', sub: '導入精準選品與自動推廣後' },
@@ -76,9 +94,10 @@ export default function Home() {
   }, []);
 
   const hero = { ...DEFAULTS.hero, ...content.hero };
-  const howItWorks = content.howItWorks?.steps ? content.howItWorks : DEFAULTS.howItWorks;
+  const howItWorks = { ...DEFAULTS.howItWorks, ...content.howItWorks, steps: content.howItWorks?.steps || DEFAULTS.howItWorks.steps };
   const leadMagnet = { ...DEFAULTS.leadMagnet, ...content.leadMagnet };
-  const statsData = content.stats?.items ? content.stats : DEFAULTS.stats;
+  const featuredTools = { ...DEFAULTS.featuredTools, ...content.featuredTools };
+  const statsData = { ...DEFAULTS.stats, ...content.stats, items: content.stats?.items || DEFAULTS.stats.items };
   const ctaBanner = { ...DEFAULTS.ctaBanner, ...content.ctaBanner };
 
   /* Mouse tracking for hero gradient */
@@ -126,6 +145,9 @@ export default function Home() {
   const highlightMatch = hero.title.match(/打造(.+?)(?:[。]|$)/);
   const highlightText = highlightMatch ? highlightMatch[1] : '高獲利 AI 事業';
 
+  /* Trust badges */
+  const trustBadges = (hero.trustBadges || '').split(',').map((s: string) => s.trim()).filter(Boolean);
+
   /* JSON-LD: HomePage + Lead Magnet Offer */
   const homeJsonLd = [
     {
@@ -143,19 +165,17 @@ export default function Home() {
       },
       mainEntity: {
         '@type': 'ItemList',
-        name: '三步驟打造 AI 變現引擎',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: '找到你的剛需痛點', description: '用精實創業思維驗證市場需求' },
-          { '@type': 'ListItem', position: 2, name: '搭建 AI 自動化工作流', description: '讓 AI 擔任虛擬團隊降低人力成本' },
-          { '@type': 'ListItem', position: 3, name: '快速迭代、放大獲利', description: '以 PLG 思維持續優化並規模化' },
-        ],
+        name: howItWorks.sectionTitle,
+        itemListElement: howItWorks.steps.map((s: any, i: number) => ({
+          '@type': 'ListItem', position: i + 1, name: s.title, description: s.description,
+        })),
       },
     },
     {
       '@context': 'https://schema.org',
       '@type': 'Offer',
       name: '2026 AI 變現全景地圖',
-      description: '拆解從 0 到 1 的 AI 變現路徑，涵蓋必備工具清單、3 個立即可執行的自動化工作流。',
+      description: leadMagnet.subtitle,
       price: '0',
       priceCurrency: 'TWD',
       availability: 'https://schema.org/InStock',
@@ -212,7 +232,7 @@ export default function Home() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
               </span>
-              12年+ 零售業高階經理人 帶你如何使用AI 落地變現
+              {hero.badgeText}
             </div>
 
             <h1 className="hero-fade text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold tracking-tight leading-[1.15] mb-8 text-slate-900"
@@ -237,7 +257,7 @@ export default function Home() {
                 <span className="relative flex items-center gap-2">{hero.ctaText} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" /></span>
               </Link>
               <a href="#lead-magnet" className="bg-white/80 backdrop-blur-md border border-slate-200 text-slate-900 px-8 py-4 rounded-full font-medium flex items-center gap-2 hover:bg-slate-50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <Play className="w-4 h-4 text-emerald-600" /> 領取變現全景地圖
+                <Play className="w-4 h-4 text-emerald-600" /> {hero.ctaSecondary}
               </a>
             </div>
           </div>
@@ -261,7 +281,7 @@ export default function Home() {
               {/* Floating accent badge */}
               <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-white shadow-lg rounded-2xl px-4 py-2 border border-slate-100 whitespace-nowrap"
                 style={{ animation: 'heroBadgeBounce 3s ease-in-out infinite' }}>
-                <span className="text-sm font-bold text-slate-800">AI 變現實戰家</span>
+                <span className="text-sm font-bold text-slate-800">{hero.photoBadge}</span>
               </div>
             </div>
           </div>
@@ -269,7 +289,7 @@ export default function Home() {
 
         <div className="hero-fade relative z-10 mt-12 lg:mt-16 flex flex-wrap justify-center gap-x-8 gap-y-2 text-xs text-slate-500 font-medium"
           style={{ animationDelay: '1s' }}>
-          {['✓ 親身實戰驗證', '✓ 一人公司適用', '✓ 零廢話教學', '✓ 每月持續更新'].map(t => (
+          {trustBadges.map((t: string) => (
             <span key={t}>{t}</span>
           ))}
         </div>
@@ -278,9 +298,9 @@ export default function Home() {
       {/* ── How It Works ──────────────────────────────────────────────────────── */}
       <section aria-labelledby="how-it-works-title" className="py-24 px-6 max-w-6xl mx-auto border-t border-gray-100">
         <motion.div {...fadeInUp} className="mb-16 text-center">
-          <p className="text-xs font-bold tracking-widest text-emerald-600 uppercase mb-3">運作方式</p>
-          <h2 id="how-it-works-title" className="text-3xl md:text-4xl font-bold tracking-tight mb-4">三步驟打造 AI 變現引擎</h2>
-          <p className="text-gray-500 max-w-xl mx-auto">從驗證到規模化，一套可複製的系統性方法論。</p>
+          <p className="text-xs font-bold tracking-widest text-emerald-600 uppercase mb-3">{howItWorks.label}</p>
+          <h2 id="how-it-works-title" className="text-3xl md:text-4xl font-bold tracking-tight mb-4">{howItWorks.sectionTitle}</h2>
+          <p className="text-gray-500 max-w-xl mx-auto">{howItWorks.sectionSubtitle}</p>
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-8 relative">
@@ -305,7 +325,7 @@ export default function Home() {
           className="bg-gradient-to-br from-slate-900 to-[#1E3A8A] rounded-[2rem] p-10 md:p-16 flex flex-col md:flex-row items-center justify-between gap-12 relative overflow-hidden">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:24px_24px]" />
           <div className="max-w-xl relative z-10">
-            <p className="text-emerald-400 text-xs font-bold tracking-widest uppercase mb-3">限時免費領取</p>
+            <p className="text-emerald-400 text-xs font-bold tracking-widest uppercase mb-3">{leadMagnet.label}</p>
             <h2 className="text-3xl font-bold mb-4 tracking-tight text-white">{leadMagnet.title}</h2>
             <p className="text-slate-300 mb-8 leading-relaxed text-sm">{leadMagnet.subtitle}</p>
             <form onSubmit={handleSubscribe} aria-label="訂閱電子報" className="flex flex-col sm:flex-row gap-3">
@@ -329,7 +349,7 @@ export default function Home() {
               </button>
             </form>
             <p className="text-xs text-slate-500 mt-4 flex items-center gap-1">
-              <CheckCircle2 className="w-3 h-3" /> 承諾不發送垃圾郵件，隨時可取消訂閱。
+              <CheckCircle2 className="w-3 h-3" /> {leadMagnet.privacyText}
             </p>
           </div>
           <div className="w-full md:w-52 aspect-square bg-white/10 border border-white/20 rounded-3xl flex items-center justify-center p-8 relative z-10 shrink-0">
@@ -337,8 +357,8 @@ export default function Home() {
               <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Mail className="w-7 h-7 text-white" />
               </div>
-              <div className="font-bold text-white text-sm">AI 變現全景地圖</div>
-              <div className="text-xs text-slate-400 mt-1">PDF 實戰指南</div>
+              <div className="font-bold text-white text-sm">{leadMagnet.boxTitle}</div>
+              <div className="text-xs text-slate-400 mt-1">{leadMagnet.boxSubtitle}</div>
             </div>
           </div>
         </motion.div>
@@ -347,8 +367,8 @@ export default function Home() {
       {/* ── Featured Tools ────────────────────────────────────────────────────── */}
       <section id="solutions" aria-labelledby="featured-tools-title" className="py-24 px-6 max-w-6xl mx-auto border-t border-gray-100">
         <motion.div {...fadeInUp} className="mb-16">
-          <h2 id="featured-tools-title" className="text-3xl font-bold tracking-tight mb-4">熱門 AI 變現工具</h2>
-          <p className="text-gray-500 max-w-2xl">針對不同技能與目標，提供具體可執行的 AI 賦能策略。</p>
+          <h2 id="featured-tools-title" className="text-3xl font-bold tracking-tight mb-4">{featuredTools.sectionTitle}</h2>
+          <p className="text-gray-500 max-w-2xl">{featuredTools.sectionSubtitle}</p>
         </motion.div>
         <div className="grid md:grid-cols-2 gap-6">
           {[
@@ -371,7 +391,7 @@ export default function Home() {
         </div>
         <motion.div {...fadeInUp} className="mt-12 text-center">
           <Link to="/tools" className="inline-flex items-center gap-2 text-[#1A1A1A] font-medium border-b border-[#1A1A1A] pb-1 hover:text-[#1E3A8A] hover:border-[#1E3A8A] transition-colors">
-            查看所有 AI 工具 <ArrowRight className="w-4 h-4" />
+            {featuredTools.linkText} <ArrowRight className="w-4 h-4" />
           </Link>
         </motion.div>
       </section>
@@ -379,8 +399,8 @@ export default function Home() {
       {/* ── Stats ─────────────────────────────────────────────────────────────── */}
       <section aria-labelledby="stats-title" className="py-24 px-6 max-w-6xl mx-auto border-t border-gray-100">
         <motion.div {...fadeInUp} className="mb-16 text-center max-w-2xl mx-auto">
-          <h2 id="stats-title" className="text-3xl font-bold tracking-tight mb-4">一人公司的實戰驗證</h2>
-          <p className="text-gray-500">在極簡的架構下，我們用數據說話。</p>
+          <h2 id="stats-title" className="text-3xl font-bold tracking-tight mb-4">{statsData.sectionTitle}</h2>
+          <p className="text-gray-500">{statsData.sectionSubtitle}</p>
         </motion.div>
         <div className="grid md:grid-cols-3 gap-8">
           {statsData.items.map((s: any, i: number) => (

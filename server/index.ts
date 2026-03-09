@@ -48,21 +48,29 @@ app.use((_req, res, next) => {
   next();
 });
 
-// ─── Session Store ────────────────────────────────────────────────────────────
-const sessions = new Map<string, { username: string; createdAt: number }>();
+// ─── Session Store (SQLite-backed, survives server restarts) ─────────────────
 const SESSION_TTL = 24 * 60 * 60 * 1000; // 24 hours
+
+// Prepared statements for session CRUD
+const stmtGetSession = db.prepare('SELECT * FROM sessions WHERE token = ?');
+const stmtInsertSession = db.prepare('INSERT INTO sessions (token, username, created_at) VALUES (?, ?, ?)');
+const stmtDeleteSession = db.prepare('DELETE FROM sessions WHERE token = ?');
+const stmtCleanExpired = db.prepare('DELETE FROM sessions WHERE created_at < ?');
+
+// Clean expired sessions on startup
+stmtCleanExpired.run(Date.now() - SESSION_TTL);
 
 // ─── Auth Middleware ──────────────────────────────────────────────────────────
 function adminAuth(req: express.Request, res: express.Response, next: express.NextFunction) {
   const header = req.headers['authorization'];
   const token = header?.startsWith('Bearer ') ? header.slice(7) : null;
-  if (!token || !sessions.has(token)) {
+  const session = token ? stmtGetSession.get(token) as any : null;
+  if (!token || !session) {
     res.status(401).json({ error: '未授權，請重新登入。' });
     return;
   }
-  const session = sessions.get(token)!;
-  if (Date.now() - session.createdAt > SESSION_TTL) {
-    sessions.delete(token);
+  if (Date.now() - session.created_at > SESSION_TTL) {
+    stmtDeleteSession.run(token);
     res.status(401).json({ error: '登入已過期，請重新登入。' });
     return;
   }
@@ -82,7 +90,7 @@ app.post('/api/auth/login', (req, res) => {
     return;
   }
   const token = crypto.randomUUID();
-  sessions.set(token, { username: user.username, createdAt: Date.now() });
+  stmtInsertSession.run(token, user.username, Date.now());
   res.json({ token, username: user.username });
 });
 
@@ -90,7 +98,7 @@ app.post('/api/auth/login', (req, res) => {
 app.post('/api/auth/logout', (req, res) => {
   const header = req.headers['authorization'];
   const token = header?.startsWith('Bearer ') ? header.slice(7) : null;
-  if (token) sessions.delete(token);
+  if (token) stmtDeleteSession.run(token);
   res.json({ success: true });
 });
 
@@ -298,6 +306,125 @@ app.post('/api/admin/upload/profile-image', adminAuth, (req, res) => {
     ).run(JSON.stringify(introData));
 
     res.json({ success: true, imageUrl, intro: introData });
+  });
+});
+
+// ─── Multer config for blog cover image ──────────────────────────────────────
+const blogUpload = multer({
+  storage: multer.diskStorage({
+    destination: (_req, _file, cb) => cb(null, UPLOADS_DIR),
+    filename: (_req, file, cb) => {
+      const ext = path.extname(file.originalname).toLowerCase() || '.jpg';
+      cb(null, `blog-cover-${Date.now()}${ext}`);
+    },
+  }),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    const allowed = /\.(jpg|jpeg|png|webp|gif)$/i;
+    if (allowed.test(path.extname(file.originalname))) cb(null, true);
+    else cb(new Error('只支援 jpg, png, webp, gif 圖片格式'));
+  },
+});
+
+// ─── Public: Blog Posts ──────────────────────────────────────────────────────
+app.get('/api/blog', (_req, res) => {
+  const posts = db.prepare(
+    `SELECT id, slug, title, excerpt, cover_image, category, tags, author, view_count, created_at, published_at
+     FROM blog_posts WHERE status = 'published'
+     ORDER BY published_at DESC`
+  ).all();
+  res.json(posts);
+});
+
+app.get('/api/blog/:slug', (req, res) => {
+  const post = db.prepare(
+    `SELECT * FROM blog_posts WHERE slug = ? AND status = 'published'`
+  ).get(req.params.slug) as any;
+  if (!post) { res.status(404).json({ error: '找不到此文章。' }); return; }
+  // Increment view count
+  db.prepare('UPDATE blog_posts SET view_count = view_count + 1 WHERE id = ?').run(post.id);
+  post.view_count += 1;
+  res.json(post);
+});
+
+// ─── Admin: Blog CRUD ────────────────────────────────────────────────────────
+app.get('/api/admin/blog', adminAuth, (_req, res) => {
+  const posts = db.prepare('SELECT * FROM blog_posts ORDER BY created_at DESC').all();
+  res.json(posts);
+});
+
+app.get('/api/admin/blog/:id', adminAuth, (req, res) => {
+  const post = db.prepare('SELECT * FROM blog_posts WHERE id = ?').get(req.params.id);
+  if (!post) { res.status(404).json({ error: '找不到此文章。' }); return; }
+  res.json(post);
+});
+
+app.post('/api/admin/blog', adminAuth, (req, res) => {
+  const { title, slug, excerpt, content, cover_image, category, tags, status, author } = req.body ?? {};
+  if (!title) { res.status(400).json({ error: '文章標題為必填' }); return; }
+  const finalSlug = slug || title.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]+/gi, '-').replace(/(^-|-$)/g, '') || `post-${Date.now()}`;
+
+  try {
+    const publishedAt = status === 'published' ? new Date().toISOString() : null;
+    const result = db.prepare(
+      `INSERT INTO blog_posts (title, slug, excerpt, content, cover_image, category, tags, status, author, published_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    ).run(title, finalSlug, excerpt || '', content || '', cover_image || '', category || '一般',
+      JSON.stringify(tags || []), status || 'draft', author || '老J', publishedAt);
+    const post = db.prepare('SELECT * FROM blog_posts WHERE id = ?').get(result.lastInsertRowid);
+    res.json(post);
+  } catch (e: any) {
+    if (e.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+      res.status(409).json({ error: '此文章網址代稱已存在，請使用其他代稱。' });
+    } else {
+      res.status(500).json({ error: '伺服器錯誤，請稍後再試。' });
+    }
+  }
+});
+
+app.put('/api/admin/blog/:id', adminAuth, (req, res) => {
+  const { title, slug, excerpt, content, cover_image, category, tags, status, author } = req.body ?? {};
+  const existing = db.prepare('SELECT * FROM blog_posts WHERE id = ?').get(req.params.id) as any;
+  if (!existing) { res.status(404).json({ error: '找不到此文章。' }); return; }
+
+  // Set published_at when first published
+  let publishedAt = existing.published_at;
+  if (status === 'published' && !existing.published_at) {
+    publishedAt = new Date().toISOString();
+  }
+
+  try {
+    db.prepare(
+      `UPDATE blog_posts SET title=?, slug=?, excerpt=?, content=?, cover_image=?, category=?, tags=?,
+       status=?, author=?, published_at=?, updated_at=datetime('now', '+8 hours') WHERE id=?`
+    ).run(title, slug, excerpt, content, cover_image, category, JSON.stringify(tags || []),
+      status, author, publishedAt, req.params.id);
+    const post = db.prepare('SELECT * FROM blog_posts WHERE id = ?').get(req.params.id);
+    res.json(post);
+  } catch (e: any) {
+    if (e.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+      res.status(409).json({ error: '此文章網址代稱已存在。' });
+    } else {
+      res.status(500).json({ error: '伺服器錯誤。' });
+    }
+  }
+});
+
+app.delete('/api/admin/blog/:id', adminAuth, (req, res) => {
+  db.prepare('DELETE FROM blog_posts WHERE id = ?').run(req.params.id);
+  res.json({ success: true });
+});
+
+// Blog cover image upload
+app.post('/api/admin/upload/blog-cover', adminAuth, (req, res) => {
+  blogUpload.single('image')(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      res.status(400).json({ error: err.code === 'LIMIT_FILE_SIZE' ? '圖片不可超過 5MB。' : `上傳錯誤: ${err.message}` });
+      return;
+    }
+    if (err) { res.status(400).json({ error: err.message }); return; }
+    if (!req.file) { res.status(400).json({ error: '請選擇一張圖片。' }); return; }
+    res.json({ success: true, imageUrl: `/uploads/${req.file.filename}` });
   });
 });
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { BarChart3, Users, Wrench, Home, FileText, Settings, LogOut, Lock } from 'lucide-react';
+import { BarChart3, Users, Wrench, Home, FileText, PenSquare, Settings, LogOut, Lock } from 'lucide-react';
 import { useAdminApi } from './useAdminApi';
 import { useToast } from '../../context/ToastContext';
 import SEO from '../../components/SEO';
@@ -9,12 +9,14 @@ import SubscribersTab from './SubscribersTab';
 import ToolsTab from './ToolsTab';
 import HomeContentTab from './HomeContentTab';
 import AboutContentTab from './AboutContentTab';
+import BlogTab from './BlogTab';
 import AccountTab from './AccountTab';
 
 const tabs = [
   { id: 'overview', label: '總覽', icon: <BarChart3 className="w-4 h-4" /> },
   { id: 'subscribers', label: '訂閱者', icon: <Users className="w-4 h-4" /> },
   { id: 'tools', label: '工具管理', icon: <Wrench className="w-4 h-4" /> },
+  { id: 'blog', label: '部落格', icon: <PenSquare className="w-4 h-4" /> },
   { id: 'homeContent', label: '首頁管理', icon: <Home className="w-4 h-4" /> },
   { id: 'aboutContent', label: '關於頁管理', icon: <FileText className="w-4 h-4" /> },
   { id: 'account', label: '帳號設定', icon: <Settings className="w-4 h-4" /> },
@@ -119,6 +121,7 @@ export default function AdminPage() {
             {activeTab === 'overview' && <OverviewTab api={api} />}
             {activeTab === 'subscribers' && <SubscribersTab api={api} />}
             {activeTab === 'tools' && <ToolsTab api={api} />}
+            {activeTab === 'blog' && <BlogTab api={api} />}
             {activeTab === 'homeContent' && <HomeContentTab api={api} />}
             {activeTab === 'aboutContent' && <AboutContentTab api={api} />}
             {activeTab === 'account' && <AccountTab api={api} />}

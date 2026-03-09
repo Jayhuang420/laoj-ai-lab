@@ -26,6 +26,7 @@ export default function Layout() {
   const navLinks = [
     { to: '/', label: '首頁' },
     { to: '/tools', label: 'AI 工具箱' },
+    { to: '/blog', label: '部落格' },
     { to: '/about', label: '關於老 J' },
   ];
 

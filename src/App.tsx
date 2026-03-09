@@ -4,6 +4,8 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import Tools from './pages/Tools';
 import About from './pages/About';
+import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
 import Admin from './pages/Admin';
 import { ToastProvider } from './context/ToastContext';
 
@@ -29,6 +31,8 @@ export default function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="tools" element={<Tools />} />
+            <Route path="blog" element={<Blog />} />
+            <Route path="blog/:slug" element={<BlogPost />} />
             <Route path="about" element={<About />} />
             <Route path="admin" element={<Admin />} />
           </Route>
