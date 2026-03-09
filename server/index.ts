@@ -554,6 +554,35 @@ app.post('/api/admin/upload/blog-cover', adminAuth, (req, res) => {
   });
 });
 
+// Blog inline image upload
+const blogImageUpload = multer({
+  storage: multer.diskStorage({
+    destination: (_req, _file, cb) => cb(null, UPLOADS_DIR),
+    filename: (_req, file, cb) => {
+      const ext = path.extname(file.originalname).toLowerCase() || '.jpg';
+      cb(null, `blog-img-${Date.now()}-${crypto.randomBytes(4).toString('hex')}${ext}`);
+    },
+  }),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    const allowed = /\.(jpg|jpeg|png|webp|gif)$/i;
+    if (allowed.test(path.extname(file.originalname))) cb(null, true);
+    else cb(new Error('只支援 jpg, png, webp, gif 圖片格式'));
+  },
+});
+
+app.post('/api/admin/upload/blog-image', adminAuth, (req, res) => {
+  blogImageUpload.single('image')(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      res.status(400).json({ error: err.code === 'LIMIT_FILE_SIZE' ? '圖片不可超過 5MB。' : `上傳錯誤: ${err.message}` });
+      return;
+    }
+    if (err) { res.status(400).json({ error: err.message }); return; }
+    if (!req.file) { res.status(400).json({ error: '請選擇一張圖片。' }); return; }
+    res.json({ success: true, url: `/uploads/${req.file.filename}` });
+  });
+});
+
 // ─── Production: Serve Vite build output ─────────────────────────────────────
 if (fs.existsSync(DIST_DIR)) {
   // Static assets (JS, CSS, images) with long cache

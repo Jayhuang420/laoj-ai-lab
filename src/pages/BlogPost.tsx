@@ -91,6 +91,10 @@ export default function BlogPost() {
 
   const contentHtml = useMemo(() => {
     if (!post?.content) return '';
+    const trimmed = post.content.trim();
+    // New articles saved as HTML from TipTap start with '<'
+    if (trimmed.startsWith('<')) return trimmed;
+    // Legacy articles: convert Markdown → HTML
     return renderMarkdown(post.content);
   }, [post?.content]);
 

@@ -3,6 +3,7 @@ import {
   Plus, Edit3, Trash2, Eye, EyeOff, Save, X, Upload, Image as ImageIcon,
   ArrowLeft, Clock, Tag, Folder, FileText, Search, BarChart3,
 } from 'lucide-react';
+import RichTextEditor from '../../components/RichTextEditor';
 
 interface BlogPost {
   id: number;
@@ -234,16 +235,14 @@ export default function BlogTab({ api }: { api: (path: string, opts?: RequestIni
                 className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-slate-400 bg-white resize-none" />
             </div>
 
-            {/* Content */}
+            {/* Content — Rich Text Editor */}
             <div>
-              <label className="text-xs font-semibold text-gray-500 mb-1.5 block">
-                文章內容 <span className="text-gray-400 font-normal">(支援 Markdown 語法)</span>
-              </label>
-              <textarea value={editing.content}
-                onChange={e => setEditing({ ...editing, content: e.target.value })}
-                rows={20}
-                placeholder={'# 標題\n\n在這裡撰寫你的文章內容…\n\n支援 **粗體**、*斜體*、`程式碼`、清單等 Markdown 語法。'}
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-slate-400 bg-white resize-y font-mono leading-relaxed" />
+              <label className="text-xs font-semibold text-gray-500 mb-1.5 block">文章內容</label>
+              <RichTextEditor
+                key={editing.id || 'new'}
+                content={editing.content}
+                onChange={(html) => setEditing(prev => prev ? { ...prev, content: html } : prev)}
+              />
             </div>
           </div>
 
