@@ -212,7 +212,7 @@ export default function Home() {
       <section
         ref={heroRef}
         aria-label="品牌主視覺"
-        className="relative pt-28 pb-24 lg:pt-36 lg:pb-32 px-6 overflow-hidden bg-slate-50"
+        className="relative pt-28 pb-16 lg:pt-36 lg:pb-20 px-6 overflow-hidden bg-slate-50"
       >
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] bg-[size:32px_32px] opacity-40 [mask-image:linear-gradient(to_bottom,white,transparent)]" />
 
@@ -308,7 +308,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="hero-fade relative z-10 mt-12 lg:mt-16 flex flex-wrap justify-center gap-x-8 gap-y-2 text-xs text-slate-500 font-medium"
+        <div className="hero-fade relative z-10 mt-10 lg:mt-12 flex flex-wrap justify-center gap-x-8 gap-y-2 text-xs text-slate-500 font-medium"
           style={{ animationDelay: '1s' }}>
           {trustBadges.map((t: string) => (
             <span key={t}>{t}</span>
@@ -317,8 +317,8 @@ export default function Home() {
       </section>
 
       {/* ── How It Works ──────────────────────────────────────────────────────── */}
-      <section aria-labelledby="how-it-works-title" className="py-24 px-6 max-w-6xl mx-auto border-t border-gray-100">
-        <motion.div {...fadeInUp} className="mb-16 text-center">
+      <section aria-labelledby="how-it-works-title" className="py-14 px-6 max-w-6xl mx-auto border-t border-gray-100">
+        <motion.div {...fadeInUp} className="mb-10 text-center">
           <p className="text-xs font-bold tracking-widest text-emerald-600 uppercase mb-3">{howItWorks.label}</p>
           <h2 id="how-it-works-title" className="text-3xl md:text-4xl font-bold tracking-tight mb-4">{howItWorks.sectionTitle}</h2>
           <p className="text-gray-500 max-w-xl mx-auto">{howItWorks.sectionSubtitle}</p>
@@ -341,9 +341,9 @@ export default function Home() {
       </section>
 
       {/* ── Lead Magnet ───────────────────────────────────────────────────────── */}
-      <section id="lead-magnet" aria-label="免費下載 AI 變現全景地圖" className="py-8 px-6 max-w-6xl mx-auto">
+      <section id="lead-magnet" aria-label="免費下載 AI 變現全景地圖" className="py-6 px-6 max-w-6xl mx-auto">
         <motion.div {...fadeInUp}
-          className="bg-gradient-to-br from-slate-900 to-[#1E3A8A] rounded-[2rem] p-10 md:p-16 flex flex-col md:flex-row items-center justify-between gap-12 relative overflow-hidden">
+          className="bg-gradient-to-br from-slate-900 to-[#1E3A8A] rounded-[2rem] p-10 md:p-14 flex flex-col md:flex-row items-center justify-between gap-10 relative overflow-hidden">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:24px_24px]" />
           <div className="max-w-xl relative z-10">
             <p className="text-emerald-400 text-xs font-bold tracking-widest uppercase mb-3">{leadMagnet.label}</p>
@@ -386,8 +386,8 @@ export default function Home() {
       </section>
 
       {/* ── Featured Tools ────────────────────────────────────────────────────── */}
-      <section id="solutions" aria-labelledby="featured-tools-title" className="py-24 px-6 max-w-6xl mx-auto border-t border-gray-100">
-        <motion.div {...fadeInUp} className="mb-16">
+      <section id="solutions" aria-labelledby="featured-tools-title" className="py-14 px-6 max-w-6xl mx-auto border-t border-gray-100">
+        <motion.div {...fadeInUp} className="mb-10">
           <h2 id="featured-tools-title" className="text-3xl font-bold tracking-tight mb-4">{featuredTools.sectionTitle}</h2>
           <p className="text-gray-500 max-w-2xl">{featuredTools.sectionSubtitle}</p>
         </motion.div>
@@ -407,7 +407,7 @@ export default function Home() {
             </motion.div>
           ))}
         </div>
-        <motion.div {...fadeInUp} className="mt-12 text-center">
+        <motion.div {...fadeInUp} className="mt-8 text-center">
           <Link to="/tools" className="inline-flex items-center gap-2 text-[#1A1A1A] font-medium border-b border-[#1A1A1A] pb-1 hover:text-[#1E3A8A] hover:border-[#1E3A8A] transition-colors">
             {featuredTools.linkText} <ArrowRight className="w-4 h-4" />
           </Link>
@@ -415,8 +415,8 @@ export default function Home() {
       </section>
 
       {/* ── Stats ─────────────────────────────────────────────────────────────── */}
-      <section aria-labelledby="stats-title" className="py-24 px-6 max-w-6xl mx-auto border-t border-gray-100">
-        <motion.div {...fadeInUp} className="mb-16 text-center max-w-2xl mx-auto">
+      <section aria-labelledby="stats-title" className="py-14 px-6 max-w-6xl mx-auto border-t border-gray-100">
+        <motion.div {...fadeInUp} className="mb-10 text-center max-w-2xl mx-auto">
           <h2 id="stats-title" className="text-3xl font-bold tracking-tight mb-4">{statsData.sectionTitle}</h2>
           <p className="text-gray-500">{statsData.sectionSubtitle}</p>
         </motion.div>
@@ -435,9 +435,9 @@ export default function Home() {
       </section>
 
       {/* ── Collaboration CTA ─────────────────────────────────────────────────── */}
-      <section aria-label="合作洽談" className="py-20 px-6 max-w-6xl mx-auto">
+      <section aria-label="合作洽談" className="py-10 px-6 max-w-6xl mx-auto">
         <motion.div {...fadeInUp}
-          className="rounded-3xl bg-slate-900 text-white p-12 md:p-16 relative overflow-hidden">
+          className="rounded-3xl bg-slate-900 text-white p-10 md:p-14 relative overflow-hidden">
           <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(52,211,153,0.08),rgba(96,165,250,0.08))]" />
           <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 md:gap-12">
             <div className="flex-1 text-center md:text-left">
@@ -464,9 +464,9 @@ export default function Home() {
       </section>
 
       {/* ── CTA Banner ────────────────────────────────────────────────────────── */}
-      <section aria-label="加入行動呼籲" className="py-16 px-6 max-w-6xl mx-auto mb-8">
+      <section aria-label="加入行動呼籲" className="py-10 px-6 max-w-6xl mx-auto mb-6">
         <motion.div {...fadeInUp}
-          className="rounded-3xl border border-gray-100 bg-slate-50 p-12 md:p-16 text-center relative overflow-hidden">
+          className="rounded-3xl border border-gray-100 bg-slate-50 p-10 md:p-14 text-center relative overflow-hidden">
           <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(52,211,153,0.04),rgba(96,165,250,0.04))]" />
           <div className="relative z-10">
             <div className="w-12 h-12 bg-slate-900 text-white rounded-2xl flex items-center justify-center mx-auto mb-6">
