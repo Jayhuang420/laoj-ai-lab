@@ -663,10 +663,133 @@ app.get('/favicon.svg', (_req, res) => {
   res.sendFile(path.join(seoDir, 'favicon.svg'));
 });
 
+// ─── Dynamic Rendering for SEO (inject route-specific content) ───────────────
+const SITE_URL = 'https://www.oldjailab.com';
+
+interface RouteSeo {
+  title: string;
+  description: string;
+  path: string;
+  content: string; // visible text for search engines
+}
+
+function getStaticRouteSeo(pathname: string): RouteSeo | null {
+  const routes: Record<string, RouteSeo> = {
+    '/': {
+      title: '老J AI 實驗室 | AI 變現教學・自動化工具・一人公司實戰',
+      description: '老J AI 實驗室：12年零售高管轉型 AI 創業，專為一人公司設計的 AI 變現實戰指南。提供精實創業思維、AI 自動化工作流、PLG 商業化路徑，助你打造高獲利 AI 事業。',
+      path: '/',
+      content: `<h1>老J AI 實驗室</h1>
+        <p>專為一人公司設計的 AI 變現實戰指南</p>
+        <p>12年零售業高管轉型 AI 創業，結合精實創業思維、AI 自動化工作流、PLG 商業化路徑，助你打造高獲利 AI 事業。</p>
+        <h2>為什麼選擇老J AI 實驗室？</h2>
+        <p>精準定位你的 AI 利基市場，打造自動化 AI 工作流，建立可規模化的 PLG 商業模式。</p>
+        <nav><a href="/tools">AI 工具箱</a> | <a href="/blog">部落格</a> | <a href="/about">關於老J</a> | <a href="/contact">合作洽談</a></nav>`,
+    },
+    '/tools': {
+      title: 'AI 工具箱 — 嚴選高效率 AI 變現工具 | 老J AI 實驗室',
+      description: '精選 AI 工具推薦，涵蓋內容創作、自動化、數據分析等領域，每款工具皆經老J實測，附帶實戰使用心得。',
+      path: '/tools',
+      content: `<h1>AI 工具箱</h1><p>嚴選高效率 AI 變現工具，每款工具皆經老J實測，附帶實戰使用心得與評分。</p>`,
+    },
+    '/blog': {
+      title: '部落格 — AI 變現實戰筆記 | 老J AI 實驗室',
+      description: '老J AI 實驗室部落格：分享 AI 變現實戰經驗、自動化工作流教學、一人公司經營心得。',
+      path: '/blog',
+      content: `<h1>部落格</h1><p>AI 變現實戰筆記，分享 AI 自動化、精實創業、一人公司經營心得。</p>`,
+    },
+    '/about': {
+      title: '關於老J — 12年零售高管轉型 AI 創業 | 老J AI 實驗室',
+      description: '老J，12年零售業高階管理經驗，現專注 AI 自動化變現與一人公司商業化路徑設計。',
+      path: '/about',
+      content: `<h1>關於老J</h1><p>12年零售業高階管理經驗，專注 AI 自動化變現與一人公司商業化路徑設計。</p>`,
+    },
+    '/contact': {
+      title: '合作洽談 | 老J AI 實驗室',
+      description: '與老J AI 實驗室合作洽談，無論是 AI 顧問諮詢、企業培訓或商業合作，歡迎聯繫。',
+      path: '/contact',
+      content: `<h1>合作洽談</h1><p>無論是 AI 顧問諮詢、企業培訓或商業合作，歡迎聯繫老J AI 實驗室。</p>`,
+    },
+  };
+  return routes[pathname] || null;
+}
+
+function getBlogPostSeo(slug: string): RouteSeo | null {
+  try {
+    const post = db.prepare("SELECT title, excerpt, content FROM blog_posts WHERE slug = ? AND status = 'published'").get(slug) as { title: string; excerpt: string; content: string } | undefined;
+    if (!post) return null;
+    // Strip HTML from content for plain text preview
+    const plainText = (post.content || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+    const preview = plainText.slice(0, 300);
+    return {
+      title: `${post.title} — 老J AI 實驗室`,
+      description: post.excerpt || preview.slice(0, 160),
+      path: `/blog/${slug}`,
+      content: `<article><h1>${post.title}</h1><p>${post.excerpt || ''}</p><p>${preview}</p></article>`,
+    };
+  } catch { return null; }
+}
+
+function injectSeo(html: string, seo: RouteSeo): string {
+  // Replace title
+  html = html.replace(
+    /<title>.*?<\/title>/,
+    `<title>${seo.title}</title>`
+  );
+  // Replace meta description
+  html = html.replace(
+    /<meta name="description" content="[^"]*" \/>/,
+    `<meta name="description" content="${seo.description.replace(/"/g, '&quot;')}" />`
+  );
+  // Replace canonical
+  html = html.replace(
+    /<link rel="canonical" href="[^"]*" \/>/,
+    `<link rel="canonical" href="${SITE_URL}${seo.path}" />`
+  );
+  // Replace og:url
+  html = html.replace(
+    /<meta property="og:url" content="[^"]*" \/>/,
+    `<meta property="og:url" content="${SITE_URL}${seo.path}" />`
+  );
+  // Replace og:title
+  html = html.replace(
+    /<meta property="og:title" content="[^"]*" \/>/,
+    `<meta property="og:title" content="${seo.title.replace(/"/g, '&quot;')}" />`
+  );
+  // Replace og:description
+  html = html.replace(
+    /<meta property="og:description" content="[^"]*" \/>/,
+    `<meta property="og:description" content="${seo.description.replace(/"/g, '&quot;')}" />`
+  );
+  // Inject visible content for search engine bots (hidden from users by React hydration)
+  html = html.replace(
+    '<div id="root"></div>',
+    `<div id="root"></div>\n    <noscript>${seo.content}</noscript>`
+  );
+  return html;
+}
+
 // ─── SPA Catch-All (must be LAST route) ──────────────────────────────────────
 if (fs.existsSync(DIST_DIR)) {
-  app.get('*', (_req, res) => {
-    res.sendFile(path.join(DIST_DIR, 'index.html'));
+  const indexHtml = fs.readFileSync(path.join(DIST_DIR, 'index.html'), 'utf-8');
+
+  app.get('*', (req, res) => {
+    const pathname = req.path;
+
+    // Try static routes first, then blog posts
+    let seo = getStaticRouteSeo(pathname);
+    if (!seo) {
+      const blogMatch = pathname.match(/^\/blog\/(.+)$/);
+      if (blogMatch) seo = getBlogPostSeo(blogMatch[1]);
+    }
+
+    if (seo) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.send(injectSeo(indexHtml, seo));
+    } else {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.send(indexHtml);
+    }
   });
 }
 
