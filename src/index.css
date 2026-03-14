@@ -71,6 +71,15 @@
   border-radius: 0.75rem;
   border: none;
 }
+.ProseMirror .embed-wrapper {
+  margin: 1rem 0;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.ProseMirror .embed-wrapper iframe {
+  max-width: 100%;
+  border: none;
+}
 
 /* ── Front-end: prose-custom (renders both old Markdown HTML & new TipTap HTML) ── */
 .prose-custom h1 { font-size: 1.875rem; font-weight: 700; color: #0f172a; margin: 3rem 0 1.5rem; }
@@ -133,5 +142,16 @@
   width: 100%;
   aspect-ratio: 16 / 9;
   border-radius: 0.75rem;
+  border: none;
+}
+.prose-custom div[data-embed],
+.prose-custom .embed-wrapper {
+  margin: 1.5rem 0;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.prose-custom div[data-embed] iframe,
+.prose-custom .embed-wrapper iframe {
+  max-width: 100%;
   border: none;
 }

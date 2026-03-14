@@ -5,11 +5,12 @@ import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import Youtube from '@tiptap/extension-youtube';
 import VideoNode from './VideoNode';
+import EmbedNode from './EmbedNode';
 import {
   Bold, Italic, Strikethrough, Heading2, Heading3,
   List, ListOrdered, Quote, Code2, Minus,
   Link2, ImagePlus, Undo2, Redo2, Upload, Globe,
-  X, Video,
+  X, Video, Code,
 } from 'lucide-react';
 
 /* ── Types ─────────────────────────────────────────────────────────────────── */
@@ -55,6 +56,7 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
   const [showImageModal, setShowImageModal] = useState(false);
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [showVideoModal, setShowVideoModal] = useState(false);
+  const [showEmbedModal, setShowEmbedModal] = useState(false);
 
   const editor = useEditor({
     extensions: [
@@ -77,6 +79,7 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
       VideoNode.configure({
         HTMLAttributes: { class: 'blog-video' },
       }),
+      EmbedNode,
     ],
     content,
     onUpdate: ({ editor: ed }) => {
@@ -143,6 +146,10 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
         <TBtn onClick={() => setShowVideoModal(true)}
           icon={Video} title="插入影片" />
 
+        {/* Embed */}
+        <TBtn onClick={() => setShowEmbedModal(true)}
+          icon={Code} title="嵌入程式碼" />
+
         <Sep />
 
         {/* Undo / Redo */}
@@ -171,6 +178,14 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
         <VideoModal
           editor={editor}
           onClose={() => setShowVideoModal(false)}
+        />
+      )}
+
+      {/* ── Embed Modal ────────────────────────────────────────────────────── */}
+      {showEmbedModal && (
+        <EmbedModal
+          editor={editor}
+          onClose={() => setShowEmbedModal(false)}
         />
       )}
 
@@ -436,6 +451,57 @@ function VideoModal({ editor, onClose }: { editor: any; onClose: () => void }) {
             </button>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+/* ── Embed Modal ───────────────────────────────────────────────────────────── */
+function EmbedModal({ editor, onClose }: { editor: any; onClose: () => void }) {
+  const [code, setCode] = useState('');
+  const [error, setError] = useState('');
+
+  const handleInsert = () => {
+    const trimmed = code.trim();
+    if (!trimmed) return;
+    // Basic validation: must contain iframe, embed, blockquote, or video tag
+    if (!/<(iframe|embed|blockquote|video|div|script)\b/i.test(trimmed)) {
+      setError('請貼上有效的嵌入程式碼（如 iframe、embed 等）');
+      return;
+    }
+    editor.chain().focus().setEmbed({ html: trimmed }).run();
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="font-bold text-gray-900">嵌入程式碼</h3>
+          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600 p-1">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {error && <p className="text-xs text-red-500 mb-3">{error}</p>}
+
+        <div className="space-y-3">
+          <textarea
+            value={code}
+            onChange={e => { setCode(e.target.value); setError(''); }}
+            rows={6}
+            placeholder={'貼上嵌入程式碼，例如：\n<iframe src="https://www.facebook.com/plugins/video.php?..." ...></iframe>'}
+            autoFocus
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-mono focus:outline-none focus:border-slate-400 resize-none"
+          />
+          <p className="text-xs text-gray-400">支援 Facebook、Instagram、Twitter、Vimeo 等平台的嵌入程式碼</p>
+          <button type="button"
+            onClick={handleInsert}
+            disabled={!code.trim()}
+            className="w-full bg-slate-900 text-white py-3 rounded-xl text-sm font-medium hover:bg-slate-800 transition-colors disabled:opacity-40">
+            插入嵌入內容
+          </button>
+        </div>
       </div>
     </div>
   );

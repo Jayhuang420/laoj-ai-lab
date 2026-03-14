@@ -95,7 +95,7 @@ export default function BlogPost() {
     // New articles saved as HTML from TipTap start with '<'
     if (trimmed.startsWith('<')) {
       // Fix escaped video tags from old insertContent bug
-      return trimmed
+      let html = trimmed
         .replace(
           /&lt;div data-video-wrapper="true"&gt;\s*&lt;video([^]*?)&gt;\s*&lt;\/video&gt;\s*&lt;\/div&gt;/g,
           (_m, attrs) => {
@@ -110,6 +110,20 @@ export default function BlogPost() {
             return `<video controls playsinline class="blog-video" src="${src}"></video>`;
           }
         );
+      // Render embed nodes: replace data-embed-html attribute with actual HTML content
+      html = html.replace(
+        /<div[^>]*data-embed-html="([^"]*)"[^>]*>[\s\S]*?<\/div>/g,
+        (_m, encodedHtml) => {
+          const decoded = encodedHtml
+            .replace(/&amp;/g, '&')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&quot;/g, '"')
+            .replace(/&#39;/g, "'");
+          return `<div class="embed-wrapper">${decoded}</div>`;
+        }
+      );
+      return html;
     }
     // Legacy articles: convert Markdown → HTML
     return renderMarkdown(post.content);
