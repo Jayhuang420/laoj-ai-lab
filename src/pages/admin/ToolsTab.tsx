@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { motion } from 'motion/react';
-import { Trash2, Plus, RefreshCw, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Trash2, Plus, Pencil, ToggleLeft, ToggleRight } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
 
 interface Tool { id: number; title: string; description: string; url: string; icon_name: string; category: string; is_active: number; sort_order: number; }
@@ -141,8 +141,13 @@ export default function ToolsTab({ api }: { api: (path: string, opts?: RequestIn
                   {tool.is_active ? <ToggleRight className="w-5 h-5 text-emerald-500" /> : <ToggleLeft className="w-5 h-5" />}
                 </button>
                 <button onClick={() => setEditingTool(editingTool && (editingTool as Tool).id === tool.id ? null : tool)}
-                  className="p-2 rounded-xl hover:bg-gray-100 transition-colors text-gray-400 hover:text-slate-700">
-                  <RefreshCw className="w-4 h-4" />
+                  title="編輯"
+                  className={`p-2 rounded-xl transition-colors ${
+                    editingTool && (editingTool as Tool).id === tool.id
+                      ? 'bg-slate-900 text-white hover:bg-slate-800'
+                      : 'hover:bg-gray-100 text-gray-400 hover:text-slate-700'
+                  }`}>
+                  <Pencil className="w-4 h-4" />
                 </button>
                 <button onClick={() => deleteTool(tool.id)}
                   className="p-2 rounded-xl hover:bg-red-50 transition-colors text-gray-300 hover:text-red-500">

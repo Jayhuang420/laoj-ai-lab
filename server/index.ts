@@ -583,6 +583,35 @@ app.post('/api/admin/upload/blog-image', adminAuth, (req, res) => {
   });
 });
 
+// Blog inline video upload
+const blogVideoUpload = multer({
+  storage: multer.diskStorage({
+    destination: (_req, _file, cb) => cb(null, UPLOADS_DIR),
+    filename: (_req, file, cb) => {
+      const ext = path.extname(file.originalname).toLowerCase() || '.mp4';
+      cb(null, `blog-vid-${Date.now()}-${crypto.randomBytes(4).toString('hex')}${ext}`);
+    },
+  }),
+  limits: { fileSize: 100 * 1024 * 1024 }, // 100MB
+  fileFilter: (_req, file, cb) => {
+    const allowed = /\.(mp4|webm|ogg|mov)$/i;
+    if (allowed.test(path.extname(file.originalname))) cb(null, true);
+    else cb(new Error('只支援 mp4, webm, ogg, mov 影片格式'));
+  },
+});
+
+app.post('/api/admin/upload/blog-video', adminAuth, (req, res) => {
+  blogVideoUpload.single('video')(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      res.status(400).json({ error: err.code === 'LIMIT_FILE_SIZE' ? '影片不可超過 100MB。' : `上傳錯誤: ${err.message}` });
+      return;
+    }
+    if (err) { res.status(400).json({ error: err.message }); return; }
+    if (!req.file) { res.status(400).json({ error: '請選擇一個影片檔案。' }); return; }
+    res.json({ success: true, url: `/uploads/${req.file.filename}` });
+  });
+});
+
 // ─── Production: Serve Vite build output ─────────────────────────────────────
 if (fs.existsSync(DIST_DIR)) {
   // Static assets (JS, CSS, images) with long cache

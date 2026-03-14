@@ -8,6 +8,23 @@ interface Stats {
   recentViews: any[]; topTools: any[];
 }
 
+/** 將長 blog URL 簡化為可讀的短標題 */
+function formatPagePath(raw: string): string {
+  try {
+    const decoded = decodeURIComponent(raw);
+    // 如果是 blog 文章路徑，提取標題部分
+    if (decoded.startsWith('/blog/') && decoded.length > 10) {
+      const slug = decoded.replace('/blog/', '');
+      // 把 slug 中的 - 換成空格，截取前 30 字
+      const title = slug.replace(/-/g, ' ');
+      return title.length > 35 ? `📝 ${title.slice(0, 35)}…` : `📝 ${title}`;
+    }
+    return decoded;
+  } catch {
+    return raw;
+  }
+}
+
 function StatsCard({ icon, label, value, color }: { icon: React.ReactNode; label: string; value: number | string; color: string }) {
   return (
     <div className={`rounded-2xl border p-6 flex items-center gap-5 ${color}`}>
@@ -47,7 +64,7 @@ export default function OverviewTab({ api }: { api: (path: string, opts?: Reques
           <h3 className="font-bold mb-4 text-sm">7日頁面瀏覽</h3>
           {stats.recentViews.length ? stats.recentViews.map((v: any, i: number) => (
             <div key={i} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
-              <span className="text-sm text-gray-600">{v.page}</span>
+              <span className="text-sm text-gray-600 truncate max-w-[70%]" title={decodeURIComponent(v.page)}>{formatPagePath(v.page)}</span>
               <span className="text-sm font-bold">{v.count}</span>
             </div>
           )) : <p className="text-gray-400 text-sm">尚無數據</p>}

@@ -3,11 +3,12 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
+import Youtube from '@tiptap/extension-youtube';
 import {
   Bold, Italic, Strikethrough, Heading2, Heading3,
   List, ListOrdered, Quote, Code2, Minus,
   Link2, ImagePlus, Undo2, Redo2, Upload, Globe,
-  X,
+  X, Video,
 } from 'lucide-react';
 
 /* ── Types ─────────────────────────────────────────────────────────────────── */
@@ -52,6 +53,7 @@ function Sep() {
 export default function RichTextEditor({ content, onChange }: RichTextEditorProps) {
   const [showImageModal, setShowImageModal] = useState(false);
   const [showLinkModal, setShowLinkModal] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(false);
 
   const editor = useEditor({
     extensions: [
@@ -66,6 +68,11 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
       Link.configure({
         openOnClick: false,
         HTMLAttributes: { target: '_blank', rel: 'noopener noreferrer' },
+      }),
+      Youtube.configure({
+        inline: false,
+        ccLanguage: 'zh-TW',
+        HTMLAttributes: { class: 'rounded-xl my-4 w-full aspect-video' },
       }),
     ],
     content,
@@ -129,6 +136,10 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
         <TBtn onClick={() => setShowImageModal(true)}
           icon={ImagePlus} title="插入圖片" />
 
+        {/* Video */}
+        <TBtn onClick={() => setShowVideoModal(true)}
+          icon={Video} title="插入影片" />
+
         <Sep />
 
         {/* Undo / Redo */}
@@ -149,6 +160,14 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
             editor.chain().focus().setImage({ src: url }).run();
             setShowImageModal(false);
           }}
+        />
+      )}
+
+      {/* ── Video Modal ────────────────────────────────────────────────────── */}
+      {showVideoModal && (
+        <VideoModal
+          editor={editor}
+          onClose={() => setShowVideoModal(false)}
         />
       )}
 
@@ -254,6 +273,165 @@ function ImageModal({ onClose, onInsert }: { onClose: () => void; onInsert: (url
               disabled={!url.trim()}
               className="w-full bg-slate-900 text-white py-3 rounded-xl text-sm font-medium hover:bg-slate-800 transition-colors disabled:opacity-40">
               插入圖片
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ── Video Modal ───────────────────────────────────────────────────────────── */
+function VideoModal({ editor, onClose }: { editor: any; onClose: () => void }) {
+  const [tab, setTab] = useState<'upload' | 'youtube'>('youtube');
+  const [url, setUrl] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [error, setError] = useState('');
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const isYoutubeUrl = (u: string) =>
+    /(?:youtube\.com\/(?:watch|embed|shorts)|youtu\.be\/)/.test(u);
+
+  const handleInsertYoutube = () => {
+    const trimmed = url.trim();
+    if (!trimmed) return;
+    if (isYoutubeUrl(trimmed)) {
+      editor.chain().focus().setYoutubeVideo({ src: trimmed }).run();
+      onClose();
+    } else {
+      // 非 YouTube 連結，當作一般影片網址插入 <video> 標籤
+      insertVideoHtml(trimmed);
+    }
+  };
+
+  const insertVideoHtml = (videoUrl: string) => {
+    editor.chain().focus().insertContent(
+      `<div data-video-wrapper="true"><video controls playsinline style="width:100%;max-width:100%;border-radius:12px;margin:16px 0;" src="${videoUrl}"></video></div>`
+    ).run();
+    onClose();
+  };
+
+  const handleUpload = useCallback(async (file: File) => {
+    setUploading(true);
+    setUploadProgress(0);
+    setError('');
+    try {
+      const form = new FormData();
+      form.append('video', file);
+      const token = sessionStorage.getItem('laoj_admin_token') || '';
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', '/api/admin/upload/blog-video');
+      xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) {
+          setUploadProgress(Math.round((e.loaded / e.total) * 100));
+        }
+      };
+
+      xhr.onload = () => {
+        setUploading(false);
+        if (xhr.status === 200) {
+          const data = JSON.parse(xhr.responseText);
+          if (data.url) {
+            insertVideoHtml(data.url);
+          } else {
+            setError(data.error || '上傳失敗');
+          }
+        } else {
+          try {
+            const data = JSON.parse(xhr.responseText);
+            setError(data.error || '上傳失敗');
+          } catch {
+            setError('上傳失敗');
+          }
+        }
+      };
+
+      xhr.onerror = () => {
+        setUploading(false);
+        setError('網路錯誤，請稍後再試');
+      };
+
+      xhr.send(form);
+    } catch {
+      setUploading(false);
+      setError('網路錯誤，請稍後再試');
+    }
+  }, [editor, onClose]);
+
+  return (
+    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="font-bold text-gray-900">插入影片</h3>
+          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600 p-1">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex gap-2 mb-5">
+          <button type="button"
+            onClick={() => setTab('youtube')}
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              tab === 'youtube' ? 'bg-slate-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}>
+            <Globe className="w-3.5 h-3.5" /> 影片連結
+          </button>
+          <button type="button"
+            onClick={() => setTab('upload')}
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              tab === 'upload' ? 'bg-slate-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}>
+            <Upload className="w-3.5 h-3.5" /> 上傳影片
+          </button>
+        </div>
+
+        {error && <p className="text-xs text-red-500 mb-3">{error}</p>}
+
+        {tab === 'youtube' ? (
+          <div className="space-y-3">
+            <input
+              type="url"
+              value={url}
+              onChange={e => setUrl(e.target.value)}
+              placeholder="https://www.youtube.com/watch?v=... 或影片網址"
+              autoFocus
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-slate-400"
+              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleInsertYoutube(); } }}
+            />
+            <p className="text-xs text-gray-400">支援 YouTube 連結或其他影片網址</p>
+            <button type="button"
+              onClick={handleInsertYoutube}
+              disabled={!url.trim()}
+              className="w-full bg-slate-900 text-white py-3 rounded-xl text-sm font-medium hover:bg-slate-800 transition-colors disabled:opacity-40">
+              插入影片
+            </button>
+          </div>
+        ) : (
+          <div>
+            <input ref={fileRef} type="file" accept="video/mp4,video/webm,video/ogg,video/quicktime" className="hidden"
+              onChange={e => { if (e.target.files?.[0]) handleUpload(e.target.files[0]); }} />
+            <button type="button"
+              onClick={() => fileRef.current?.click()}
+              disabled={uploading}
+              className="w-full border-2 border-dashed border-gray-200 rounded-xl py-10 text-center hover:border-slate-400 hover:bg-gray-50 transition-colors disabled:opacity-50">
+              <Video className="w-8 h-8 mx-auto mb-2 text-gray-300" />
+              {uploading ? (
+                <div className="space-y-2">
+                  <span className="text-sm text-gray-500">上傳中… {uploadProgress}%</span>
+                  <div className="w-48 mx-auto bg-gray-200 rounded-full h-2">
+                    <div className="bg-slate-900 h-2 rounded-full transition-all" style={{ width: `${uploadProgress}%` }} />
+                  </div>
+                </div>
+              ) : (
+                <span className="text-sm text-gray-500">
+                  點擊選擇影片（MP4 / WebM / OGG / MOV，最大 100MB）
+                </span>
+              )}
             </button>
           </div>
         )}
