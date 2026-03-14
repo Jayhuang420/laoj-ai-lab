@@ -93,7 +93,24 @@ export default function BlogPost() {
     if (!post?.content) return '';
     const trimmed = post.content.trim();
     // New articles saved as HTML from TipTap start with '<'
-    if (trimmed.startsWith('<')) return trimmed;
+    if (trimmed.startsWith('<')) {
+      // Fix escaped video tags from old insertContent bug
+      return trimmed
+        .replace(
+          /&lt;div data-video-wrapper="true"&gt;\s*&lt;video([^]*?)&gt;\s*&lt;\/video&gt;\s*&lt;\/div&gt;/g,
+          (_m, attrs) => {
+            const src = attrs.match(/src="([^"]+)"/)?.[1] || '';
+            return `<video controls playsinline class="blog-video" src="${src}"></video>`;
+          }
+        )
+        .replace(
+          /&lt;video([^]*?)&gt;\s*&lt;\/video&gt;/g,
+          (_m, attrs) => {
+            const src = attrs.match(/src="([^"]+)"/)?.[1] || '';
+            return `<video controls playsinline class="blog-video" src="${src}"></video>`;
+          }
+        );
+    }
     // Legacy articles: convert Markdown → HTML
     return renderMarkdown(post.content);
   }, [post?.content]);
