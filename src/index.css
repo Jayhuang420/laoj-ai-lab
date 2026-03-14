@@ -54,6 +54,23 @@
 .ProseMirror strong { font-weight: 700; color: #0f172a; }
 .ProseMirror em { font-style: italic; }
 .ProseMirror s  { text-decoration: line-through; color: #9ca3af; }
+.ProseMirror video.blog-video {
+  width: 100%;
+  max-width: 100%;
+  border-radius: 0.75rem;
+  margin: 1rem 0;
+}
+.ProseMirror div[data-youtube-video] {
+  position: relative;
+  width: 100%;
+  margin: 1rem 0;
+}
+.ProseMirror div[data-youtube-video] iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 0.75rem;
+  border: none;
+}
 
 /* ── Front-end: prose-custom (renders both old Markdown HTML & new TipTap HTML) ── */
 .prose-custom h1 { font-size: 1.875rem; font-weight: 700; color: #0f172a; margin: 3rem 0 1.5rem; }
@@ -99,3 +116,22 @@
 .prose-custom strong { font-weight: 700; color: #0f172a; }
 .prose-custom em { font-style: italic; }
 .prose-custom s, .prose-custom del { text-decoration: line-through; color: #9ca3af; }
+.prose-custom video {
+  width: 100%;
+  max-width: 100%;
+  border-radius: 0.75rem;
+  margin: 1.5rem 0;
+}
+.prose-custom div[data-youtube-video],
+.prose-custom .youtube-video-wrapper {
+  position: relative;
+  width: 100%;
+  margin: 1.5rem 0;
+}
+.prose-custom div[data-youtube-video] iframe,
+.prose-custom iframe[src*="youtube"] {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 0.75rem;
+  border: none;
+}

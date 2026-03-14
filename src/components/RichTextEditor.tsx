@@ -4,6 +4,7 @@ import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import Youtube from '@tiptap/extension-youtube';
+import VideoNode from './VideoNode';
 import {
   Bold, Italic, Strikethrough, Heading2, Heading3,
   List, ListOrdered, Quote, Code2, Minus,
@@ -72,7 +73,9 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
       Youtube.configure({
         inline: false,
         ccLanguage: 'zh-TW',
-        HTMLAttributes: { class: 'rounded-xl my-4 w-full aspect-video' },
+      }),
+      VideoNode.configure({
+        HTMLAttributes: { class: 'blog-video' },
       }),
     ],
     content,
@@ -301,14 +304,12 @@ function VideoModal({ editor, onClose }: { editor: any; onClose: () => void }) {
       onClose();
     } else {
       // 非 YouTube 連結，當作一般影片網址插入 <video> 標籤
-      insertVideoHtml(trimmed);
+      insertVideo(trimmed);
     }
   };
 
-  const insertVideoHtml = (videoUrl: string) => {
-    editor.chain().focus().insertContent(
-      `<div data-video-wrapper="true"><video controls playsinline style="width:100%;max-width:100%;border-radius:12px;margin:16px 0;" src="${videoUrl}"></video></div>`
-    ).run();
+  const insertVideo = (videoUrl: string) => {
+    editor.chain().focus().setVideo({ src: videoUrl }).run();
     onClose();
   };
 
@@ -336,7 +337,7 @@ function VideoModal({ editor, onClose }: { editor: any; onClose: () => void }) {
         if (xhr.status === 200) {
           const data = JSON.parse(xhr.responseText);
           if (data.url) {
-            insertVideoHtml(data.url);
+            insertVideo(data.url);
           } else {
             setError(data.error || '上傳失敗');
           }
