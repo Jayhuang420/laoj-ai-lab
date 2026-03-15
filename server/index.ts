@@ -661,28 +661,99 @@ app.get('/sitemap.xml', (_req, res) => {
   res.send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>`);
 });
 
+// Dynamic llms.txt — includes latest blog posts and tools from DB
+function generateLlmsTxt(): string {
+  let tools: { title: string; url: string; description: string; category: string }[] = [];
+  let posts: { title: string; slug: string; excerpt: string; published_at: string }[] = [];
+  try {
+    tools = db.prepare("SELECT title, url, description, category FROM tools WHERE status = 'published' ORDER BY sort_order ASC").all() as any[];
+  } catch { /* ignore */ }
+  try {
+    posts = db.prepare("SELECT title, slug, excerpt, published_at FROM blog_posts WHERE status = 'published' ORDER BY published_at DESC LIMIT 20").all() as any[];
+  } catch { /* ignore */ }
+
+  const toolLines = tools.map((t, i) => `${i + 1}. **${t.title}** — ${t.description}（${t.category}）`).join('\n');
+  const postLines = posts.map(p => `- [${p.title}](https://www.oldjailab.com/blog/${p.slug}) — ${p.excerpt?.slice(0, 80) || ''}`).join('\n');
+
+  return `# 老J AI 實驗室 (Old J AI Lab)
+
+> 專為「一人公司」設計的 AI 變現實戰指南。結合精實創業與 PLG 思維，將 AI 從生產力工具轉化為具備 PMF 的可規模化業務。
+
+## 關於老J AI 實驗室
+
+老J AI 實驗室由擁有 12 年以上零售業高階管理經驗的「老J」創立。從百億級連鎖品牌操盤到 AI 自動化一人公司，老J 以親身實戰驗證的方法論，幫助創業者和一人公司用 AI 打造高效率的自動化獲利系統。
+
+### 核心理念
+- **問題導向**：拒絕虛榮功能，只解決客戶的「剛需」
+- **具體可執行**：所有建議必須包含行動步驟與 AI 協作工具
+- **0到1的速度感**：優先 MVP 路徑，快速迭代獲取市場反饋
+
+### 三步驟方法論
+1. **找到剛需痛點**：用精實創業思維，驗證市場需求
+2. **搭建 AI 自動化工作流**：讓 AI 擔任虛擬團隊，降低人力成本
+3. **快速迭代、放大獲利**：透過數據反饋持續優化，規模化成功工作流
+
+## 提供的 AI 工具（共 ${tools.length} 個）
+
+${toolLines || '（暫無工具）'}
+
+## 最新文章（共 ${posts.length} 篇）
+
+${postLines || '（暫無文章）'}
+
+## 創辦人經歷
+
+- **2011–2018**：連鎖零售集團，從門市主管晉升至區域總監，操盤 150+ 門市
+- **2018–2022**：主導集團電商業務從零打造，整合 O2O 策略
+- **2022–2024**：投入 GPT、Claude 等大型語言模型商業應用開發
+- **2024–至今**：創立老J AI 實驗室，聚焦一人公司 AI 化與 PLG 商業化路徑
+
+## 合作諮詢服務
+
+老J 提供以下專業諮詢服務，可透過網站表單預約免費諮詢：
+- AI 工作流自動化
+- 品牌數位轉型策略
+- 電商策略規劃
+- 一人公司 AI 化
+- PLG 商業化路徑設計
+
+合作洽談頁面：https://www.oldjailab.com/contact
+
+## 頁面索引
+- 首頁：https://www.oldjailab.com/
+- AI 工具箱：https://www.oldjailab.com/tools
+- 部落格：https://www.oldjailab.com/blog
+- 關於老J：https://www.oldjailab.com/about
+- 合作洽談：https://www.oldjailab.com/contact
+
+## 聯繫方式
+- 網站：https://www.oldjailab.com
+- Email：contact@laojailab.com
+`;
+}
+
 app.get('/llms.txt', (_req, res) => {
   res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-  res.setHeader('Cache-Control', 'public, max-age=86400');
-  res.sendFile(path.join(seoDir, 'llms.txt'));
+  res.setHeader('Cache-Control', 'public, max-age=3600');
+  res.send(generateLlmsTxt());
 });
 
 app.get('/llms-full.txt', (_req, res) => {
   res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-  res.setHeader('Cache-Control', 'public, max-age=86400');
+  res.setHeader('Cache-Control', 'public, max-age=3600');
   res.sendFile(path.join(seoDir, 'llms-full.txt'));
 });
 
 // .well-known routes for AI crawler discovery (standard convention)
 app.get('/.well-known/llms.txt', (_req, res) => {
   res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-  res.setHeader('Cache-Control', 'public, max-age=86400');
-  res.sendFile(path.join(seoDir, 'llms.txt'));
+  res.setHeader('Cache-Control', 'public, max-age=3600');
+  res.send(generateLlmsTxt());
 });
 
 app.get('/.well-known/llms-full.txt', (_req, res) => {
   res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-  res.setHeader('Cache-Control', 'public, max-age=86400');
+  res.setHeader('Cache-Control', 'public, max-age=3600');
   res.sendFile(path.join(seoDir, 'llms-full.txt'));
 });
 
@@ -719,77 +790,91 @@ function getStaticRouteSeo(pathname: string): RouteSeo | null {
       title: 'AI 工具箱 — 嚴選高效率 AI 變現工具 | 老J AI 實驗室',
       description: '精選 AI 工具推薦，涵蓋內容創作、自動化、數據分析等領域，每款工具皆經老J實測，附帶實戰使用心得。',
       path: '/tools',
-      content: `<h1>AI 工具箱</h1><p>嚴選高效率 AI 變現工具，每款工具皆經老J實測，附帶實戰使用心得與評分。</p>`,
+      content: `<h1>AI 工具箱</h1>
+        <p>嚴選高效率 AI 變現工具，每款工具皆經老J實測，附帶實戰使用心得與評分。</p>
+        <p>涵蓋分類：內容創作、數據分析、命理占卜、商業應用、生活效率、學習資源。</p>
+        <nav><a href="/">首頁</a> &gt; <a href="/tools">AI 工具箱</a></nav>`,
     },
     '/blog': {
       title: '部落格 — AI 變現實戰筆記 | 老J AI 實驗室',
       description: '老J AI 實驗室部落格：分享 AI 變現實戰經驗、自動化工作流教學、一人公司經營心得。',
       path: '/blog',
-      content: `<h1>部落格</h1><p>AI 變現實戰筆記，分享 AI 自動化、精實創業、一人公司經營心得。</p>`,
+      content: `<h1>部落格</h1>
+        <p>AI 變現實戰筆記，分享 AI 自動化、精實創業、一人公司經營心得。</p>
+        <p>涵蓋主題：AI 應用、工具介紹、Vibe Coding 教學、技術教學、創業實戰。</p>
+        <nav><a href="/">首頁</a> &gt; <a href="/blog">部落格</a></nav>`,
     },
     '/about': {
       title: '關於老J — 12年零售高管轉型 AI 創業 | 老J AI 實驗室',
       description: '老J，12年零售業高階管理經驗，現專注 AI 自動化變現與一人公司商業化路徑設計。',
       path: '/about',
-      content: `<h1>關於老J</h1><p>12年零售業高階管理經驗，專注 AI 自動化變現與一人公司商業化路徑設計。</p>`,
+      content: `<h1>關於老J</h1>
+        <p>12年零售業高階管理經驗，從百億級連鎖品牌操盤到 AI 自動化一人公司。</p>
+        <p>專長：精實創業/MVP思維、AI工作流自動化、零售電商品牌策略、PLG商業化路徑設計、Prompt Engineering。</p>
+        <nav><a href="/">首頁</a> &gt; <a href="/about">關於老J</a></nav>`,
     },
     '/contact': {
       title: '合作洽談 | 老J AI 實驗室',
       description: '與老J AI 實驗室合作洽談，無論是 AI 顧問諮詢、企業培訓或商業合作，歡迎聯繫。',
       path: '/contact',
-      content: `<h1>合作洽談</h1><p>無論是 AI 顧問諮詢、企業培訓或商業合作，歡迎聯繫老J AI 實驗室。</p>`,
+      content: `<h1>合作洽談</h1>
+        <p>與老J預約免費諮詢，討論 AI 工作流自動化、品牌數位轉型、電商策略、一人公司 AI 化等合作方案。</p>
+        <p>服務項目：AI工作流自動化、品牌數位轉型策略、電商策略規劃、一人公司AI化、PLG商業化路徑設計。</p>
+        <nav><a href="/">首頁</a> &gt; <a href="/contact">合作洽談</a></nav>`,
     },
   };
   return routes[pathname] || null;
 }
 
-function getBlogPostSeo(slug: string): RouteSeo | null {
+function getBlogPostSeo(slug: string): RouteSeo & { coverImage?: string; publishedAt?: string; modifiedAt?: string; category?: string; author?: string } | null {
   try {
-    const post = db.prepare("SELECT title, excerpt, content FROM blog_posts WHERE slug = ? AND status = 'published'").get(slug) as { title: string; excerpt: string; content: string } | undefined;
+    const post = db.prepare("SELECT title, excerpt, content, cover_image, published_at, updated_at, category, author FROM blog_posts WHERE slug = ? AND status = 'published'").get(slug) as {
+      title: string; excerpt: string; content: string; cover_image: string;
+      published_at: string; updated_at: string; category: string; author: string;
+    } | undefined;
     if (!post) return null;
-    // Strip HTML from content for plain text preview
     const plainText = (post.content || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
     const preview = plainText.slice(0, 300);
     return {
       title: `${post.title} — 老J AI 實驗室`,
       description: post.excerpt || preview.slice(0, 160),
       path: `/blog/${slug}`,
-      content: `<article><h1>${post.title}</h1><p>${post.excerpt || ''}</p><p>${preview}</p></article>`,
+      content: `<article><h1>${post.title}</h1><p>${post.excerpt || ''}</p><p>${preview}</p>
+        <nav><a href="/">首頁</a> &gt; <a href="/blog">部落格</a> &gt; ${post.title}</nav></article>`,
+      coverImage: post.cover_image,
+      publishedAt: post.published_at,
+      modifiedAt: post.updated_at,
+      category: post.category,
+      author: post.author || '老J',
     };
   } catch { return null; }
 }
 
 function injectSeo(html: string, seo: RouteSeo): string {
+  const fullUrl = `${SITE_URL}${seo.path}`;
+  const descEscaped = seo.description.replace(/"/g, '&quot;');
+  const titleEscaped = seo.title.replace(/"/g, '&quot;');
+
   // Replace title
-  html = html.replace(
-    /<title>.*?<\/title>/,
-    `<title>${seo.title}</title>`
-  );
+  html = html.replace(/<title>.*?<\/title>/, `<title>${seo.title}</title>`);
   // Replace meta description
-  html = html.replace(
-    /<meta name="description" content="[^"]*" \/>/,
-    `<meta name="description" content="${seo.description.replace(/"/g, '&quot;')}" />`
-  );
+  html = html.replace(/<meta name="description" content="[^"]*" \/>/, `<meta name="description" content="${descEscaped}" />`);
   // Replace canonical
-  html = html.replace(
-    /<link rel="canonical" href="[^"]*" \/>/,
-    `<link rel="canonical" href="${SITE_URL}${seo.path}" />`
-  );
+  html = html.replace(/<link rel="canonical" href="[^"]*" \/>/, `<link rel="canonical" href="${fullUrl}" />`);
   // Replace og:url
-  html = html.replace(
-    /<meta property="og:url" content="[^"]*" \/>/,
-    `<meta property="og:url" content="${SITE_URL}${seo.path}" />`
-  );
+  html = html.replace(/<meta property="og:url" content="[^"]*" \/>/, `<meta property="og:url" content="${fullUrl}" />`);
   // Replace og:title
-  html = html.replace(
-    /<meta property="og:title" content="[^"]*" \/>/,
-    `<meta property="og:title" content="${seo.title.replace(/"/g, '&quot;')}" />`
-  );
+  html = html.replace(/<meta property="og:title" content="[^"]*" \/>/, `<meta property="og:title" content="${titleEscaped}" />`);
   // Replace og:description
-  html = html.replace(
-    /<meta property="og:description" content="[^"]*" \/>/,
-    `<meta property="og:description" content="${seo.description.replace(/"/g, '&quot;')}" />`
-  );
+  html = html.replace(/<meta property="og:description" content="[^"]*" \/>/, `<meta property="og:description" content="${descEscaped}" />`);
+  // Replace twitter:title and twitter:description
+  html = html.replace(/<meta name="twitter:title" content="[^"]*" \/>/, `<meta name="twitter:title" content="${titleEscaped}" />`);
+  html = html.replace(/<meta name="twitter:description" content="[^"]*" \/>/, `<meta name="twitter:description" content="${descEscaped}" />`);
+
+  // Inject hreflang tags before </head>
+  const hreflangTags = `\n    <link rel="alternate" hreflang="zh-TW" href="${fullUrl}" />\n    <link rel="alternate" hreflang="x-default" href="${fullUrl}" />`;
+  html = html.replace('</head>', `${hreflangTags}\n  </head>`);
+
   // Inject visible content for search engine bots (hidden from users by React hydration)
   html = html.replace(
     '<div id="root"></div>',
@@ -806,15 +891,37 @@ if (fs.existsSync(DIST_DIR)) {
     const pathname = req.path;
 
     // Try static routes first, then blog posts
-    let seo = getStaticRouteSeo(pathname);
+    let seo: RouteSeo | null = getStaticRouteSeo(pathname);
+    let blogSeo: ReturnType<typeof getBlogPostSeo> = null;
     if (!seo) {
       const blogMatch = pathname.match(/^\/blog\/(.+)$/);
-      if (blogMatch) seo = getBlogPostSeo(blogMatch[1]);
+      if (blogMatch) {
+        blogSeo = getBlogPostSeo(blogMatch[1]);
+        seo = blogSeo;
+      }
     }
 
     if (seo) {
+      let result = injectSeo(indexHtml, seo);
+      // Inject article-specific OG tags for blog posts
+      if (blogSeo) {
+        const articleMeta: string[] = [];
+        // Change og:type to article
+        result = result.replace(/<meta property="og:type" content="[^"]*" \/>/, '<meta property="og:type" content="article" />');
+        if (blogSeo.publishedAt) articleMeta.push(`<meta property="article:published_time" content="${blogSeo.publishedAt}" />`);
+        if (blogSeo.modifiedAt) articleMeta.push(`<meta property="article:modified_time" content="${blogSeo.modifiedAt}" />`);
+        if (blogSeo.author) articleMeta.push(`<meta property="article:author" content="${blogSeo.author}" />`);
+        if (blogSeo.category) articleMeta.push(`<meta property="article:section" content="${blogSeo.category}" />`);
+        if (blogSeo.coverImage) {
+          result = result.replace(/<meta property="og:image" content="[^"]*" \/>/, `<meta property="og:image" content="${blogSeo.coverImage}" />`);
+          result = result.replace(/<meta name="twitter:image" content="[^"]*" \/>/, `<meta name="twitter:image" content="${blogSeo.coverImage}" />`);
+        }
+        if (articleMeta.length) {
+          result = result.replace('</head>', `    ${articleMeta.join('\n    ')}\n  </head>`);
+        }
+      }
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.send(injectSeo(indexHtml, seo));
+      res.send(result);
     } else {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.send(indexHtml);

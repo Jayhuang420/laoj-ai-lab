@@ -43,6 +43,14 @@ const JSON_LD = [
       description: '專為一人公司設計的 AI 變現實戰顧問。',
     },
   },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: '首頁', item: 'https://www.oldjailab.com/' },
+      { '@type': 'ListItem', position: 2, name: '合作洽談', item: 'https://www.oldjailab.com/contact' },
+    ],
+  },
 ];
 
 export default function Contact() {

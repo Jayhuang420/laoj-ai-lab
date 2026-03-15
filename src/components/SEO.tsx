@@ -12,6 +12,16 @@ interface SEOProps {
   ogImage?: string;
   noindex?: boolean;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  /** article:published_time (ISO 8601) */
+  publishedTime?: string;
+  /** article:modified_time (ISO 8601) */
+  modifiedTime?: string;
+  /** article:author */
+  articleAuthor?: string;
+  /** article:section (category) */
+  articleSection?: string;
+  /** article:tag (array) */
+  articleTags?: string[];
 }
 
 export default function SEO({
@@ -22,6 +32,11 @@ export default function SEO({
   ogImage = DEFAULT_OG_IMAGE,
   noindex = false,
   jsonLd,
+  publishedTime,
+  modifiedTime,
+  articleAuthor,
+  articleSection,
+  articleTags,
 }: SEOProps) {
   const fullTitle = title
     ? `${title} | ${SITE_NAME}`
@@ -36,6 +51,11 @@ export default function SEO({
       <link rel="canonical" href={url} />
       {noindex && <meta name="robots" content="noindex, nofollow" />}
 
+      {/* Language */}
+      <html lang="zh-TW" />
+      <link rel="alternate" hrefLang="zh-TW" href={url} />
+      <link rel="alternate" hrefLang="x-default" href={url} />
+
       {/* Open Graph */}
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
@@ -44,6 +64,23 @@ export default function SEO({
       <meta property="og:image" content={ogImage} />
       <meta property="og:site_name" content={SITE_NAME} />
       <meta property="og:locale" content="zh_TW" />
+
+      {/* Article-specific OG tags */}
+      {ogType === 'article' && publishedTime && (
+        <meta property="article:published_time" content={publishedTime} />
+      )}
+      {ogType === 'article' && modifiedTime && (
+        <meta property="article:modified_time" content={modifiedTime} />
+      )}
+      {ogType === 'article' && articleAuthor && (
+        <meta property="article:author" content={articleAuthor} />
+      )}
+      {ogType === 'article' && articleSection && (
+        <meta property="article:section" content={articleSection} />
+      )}
+      {ogType === 'article' && articleTags && articleTags.map((tag, i) => (
+        <meta key={`at-${i}`} property="article:tag" content={tag} />
+      ))}
 
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />

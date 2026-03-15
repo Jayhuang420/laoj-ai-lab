@@ -250,7 +250,13 @@ export default function BlogPost() {
         description={post.excerpt || post.title}
         path={`/blog/${post.slug}`}
         ogType="article"
+        ogImage={post.cover_image || undefined}
         jsonLd={[postJsonLd, breadcrumbJsonLd]}
+        publishedTime={post.published_at || undefined}
+        modifiedTime={post.updated_at || undefined}
+        articleAuthor={post.author || '老J'}
+        articleSection={post.category}
+        articleTags={parsedTags}
       />
 
       {/* ── Header ──────────────────────────────────────────────────────────── */}

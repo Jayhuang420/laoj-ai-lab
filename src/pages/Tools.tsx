@@ -66,32 +66,42 @@ export default function Tools() {
     return matchCat && matchQuery;
   });
 
-  /* JSON-LD: SoftwareApplication ItemList */
-  const toolsJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'CollectionPage',
-    name: 'AI 工具箱 — 老J AI 實驗室',
-    description: '實驗室嚴選、親測有效的高效率 AI 工具。涵蓋內容創作、數據分析、商業應用、生活效率等分類。',
-    url: 'https://www.oldjailab.com/tools',
-    mainEntity: {
-      '@type': 'ItemList',
-      name: 'AI 工具列表',
-      numberOfItems: tools.length,
-      itemListElement: tools.map((t, i) => ({
-        '@type': 'ListItem',
-        position: i + 1,
-        item: {
-          '@type': 'SoftwareApplication',
-          name: t.title,
-          description: t.description,
-          url: t.url,
-          applicationCategory: t.category,
-          operatingSystem: 'Web',
-          offers: { '@type': 'Offer', price: '0', priceCurrency: 'TWD' },
-        },
-      })),
+  /* JSON-LD: SoftwareApplication ItemList + BreadcrumbList */
+  const toolsJsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: 'AI 工具箱 — 老J AI 實驗室',
+      description: '實驗室嚴選、親測有效的高效率 AI 工具。涵蓋內容創作、數據分析、商業應用、生活效率等分類。',
+      url: 'https://www.oldjailab.com/tools',
+      mainEntity: {
+        '@type': 'ItemList',
+        name: 'AI 工具列表',
+        numberOfItems: tools.length,
+        itemListElement: tools.map((t, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          item: {
+            '@type': 'SoftwareApplication',
+            name: t.title,
+            description: t.description,
+            url: t.url,
+            applicationCategory: t.category,
+            operatingSystem: 'Web',
+            offers: { '@type': 'Offer', price: '0', priceCurrency: 'TWD' },
+          },
+        })),
+      },
     },
-  };
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: '首頁', item: 'https://www.oldjailab.com/' },
+        { '@type': 'ListItem', position: 2, name: 'AI 工具箱', item: 'https://www.oldjailab.com/tools' },
+      ],
+    },
+  ];
 
   return (
     <div className="py-12 px-6 max-w-6xl mx-auto">

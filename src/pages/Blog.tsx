@@ -59,17 +59,35 @@ export default function Blog() {
   };
 
   /* ── JSON-LD ─────────────────────────────────────────────────────────────── */
-  const blogJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Blog',
-    name: '老J AI 實驗室 部落格',
-    description: '分享 AI 自動化實戰經驗、創業心得與工具教學。',
-    url: 'https://www.oldjailab.com/blog',
-    author: {
-      '@type': 'Person',
-      name: '老J',
+  const blogJsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Blog',
+      name: '老J AI 實驗室 部落格',
+      description: '分享 AI 自動化實戰經驗、創業心得與工具教學。',
+      url: 'https://www.oldjailab.com/blog',
+      inLanguage: 'zh-TW',
+      author: { '@type': 'Person', name: '老J' },
+      publisher: { '@type': 'Organization', name: '老J AI 實驗室', url: 'https://www.oldjailab.com' },
+      blogPost: posts.slice(0, 10).map(p => ({
+        '@type': 'BlogPosting',
+        headline: p.title,
+        description: p.excerpt,
+        url: `https://www.oldjailab.com/blog/${p.slug}`,
+        datePublished: p.published_at,
+        image: p.cover_image || undefined,
+        author: { '@type': 'Person', name: p.author || '老J' },
+      })),
     },
-  };
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: '首頁', item: 'https://www.oldjailab.com/' },
+        { '@type': 'ListItem', position: 2, name: '部落格', item: 'https://www.oldjailab.com/blog' },
+      ],
+    },
+  ];
 
   return (
     <article className="py-20 px-6 max-w-6xl mx-auto">

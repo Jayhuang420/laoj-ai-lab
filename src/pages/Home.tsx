@@ -164,7 +164,7 @@ export default function Home() {
   /* Trust badges */
   const trustBadges = (hero.trustBadges || '').split(',').map((s: string) => s.trim()).filter(Boolean);
 
-  /* JSON-LD: HomePage + Lead Magnet Offer */
+  /* JSON-LD: HomePage + Lead Magnet Offer + FAQPage */
   const homeJsonLd = [
     {
       '@context': 'https://schema.org',
@@ -186,6 +186,10 @@ export default function Home() {
           '@type': 'ListItem', position: i + 1, name: s.title, description: s.description,
         })),
       },
+      speakable: {
+        '@type': 'SpeakableSpecification',
+        cssSelector: ['h1', '.hero-subtitle'],
+      },
     },
     {
       '@context': 'https://schema.org',
@@ -197,6 +201,44 @@ export default function Home() {
       availability: 'https://schema.org/InStock',
       url: 'https://www.oldjailab.com/#lead-magnet',
       offeredBy: { '@type': 'Organization', name: '老J AI 實驗室' },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: '老J AI 實驗室是什麼？',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: '老J AI 實驗室是專為一人公司設計的 AI 變現實戰平台，由擁有 12 年零售高階管理經驗的老J創立，提供 AI 自動化工作流教學、精實創業思維與 PLG 商業化路徑設計。',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: '老J AI 實驗室提供哪些 AI 工具？',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: '實驗室提供多種免費 AI 工具，包含 YT 音樂頻道歌詞產生器、台灣彩券分析器、紫微斗數/塔羅牌占卜、餐飲業點餐系統、記帳工具等，全部經老J親身實測。',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: '如何開始用 AI 打造一人公司？',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: '老J的三步驟方法論：1. 找到剛需痛點——用精實創業思維驗證市場需求。2. 搭建 AI 自動化工作流——讓 AI 擔任虛擬團隊。3. 快速迭代、放大獲利——透過 PLG 思維持續優化並規模化。',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: '可以預約免費諮詢嗎？',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: '可以！透過合作洽談頁面填寫表單即可預約免費諮詢，服務包含 AI 工作流自動化、品牌數位轉型、電商策略規劃等，1-2 個工作天內回覆。',
+          },
+        },
+      ],
     },
   ];
 

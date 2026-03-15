@@ -66,26 +66,36 @@ export default function About() {
   const principles = content.principles?.items ? content.principles : DEFAULTS.principles;
   const timeline = content.timeline?.items ? content.timeline : DEFAULTS.timeline;
 
-  /* JSON-LD: ProfilePage + Person */
-  const aboutJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'ProfilePage',
-    mainEntity: {
-      '@type': 'Person',
-      name: '老J',
-      alternateName: 'Old J',
-      jobTitle: 'AI 實驗室創辦人',
-      description: '12年零售業高階管理經驗，專注 AI 自動化變現與一人公司商業化路徑設計。從百億級連鎖品牌操盤到 AI 自動化一人公司。',
-      url: 'https://www.oldjailab.com/about',
-      worksFor: {
-        '@type': 'Organization',
-        name: '老J AI 實驗室',
-        url: 'https://www.oldjailab.com',
+  /* JSON-LD: ProfilePage + Person + BreadcrumbList */
+  const aboutJsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'ProfilePage',
+      mainEntity: {
+        '@type': 'Person',
+        name: '老J',
+        alternateName: 'Old J',
+        jobTitle: 'AI 實驗室創辦人',
+        description: '12年零售業高階管理經驗，專注 AI 自動化變現與一人公司商業化路徑設計。從百億級連鎖品牌操盤到 AI 自動化一人公司。',
+        url: 'https://www.oldjailab.com/about',
+        worksFor: {
+          '@type': 'Organization',
+          name: '老J AI 實驗室',
+          url: 'https://www.oldjailab.com',
+        },
+        knowsAbout: ['AI 自動化', '精實創業', 'PLG 商業化', 'Prompt Engineering', '零售管理', '電商策略'],
+        sameAs: ['https://twitter.com/laojailab', 'https://youtube.com/@laojailab'],
       },
-      knowsAbout: ['AI 自動化', '精實創業', 'PLG 商業化', 'Prompt Engineering', '零售管理', '電商策略'],
-      sameAs: ['https://twitter.com/laojailab', 'https://youtube.com/@laojailab'],
     },
-  };
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: '首頁', item: 'https://www.oldjailab.com/' },
+        { '@type': 'ListItem', position: 2, name: '關於老J', item: 'https://www.oldjailab.com/about' },
+      ],
+    },
+  ];
 
   return (
     <article className="py-20 px-6 max-w-6xl mx-auto">
