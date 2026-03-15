@@ -185,6 +185,7 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
       {showEmbedModal && (
         <EmbedModal
           editor={editor}
+          onChange={onChange}
           onClose={() => setShowEmbedModal(false)}
         />
       )}
@@ -457,7 +458,7 @@ function VideoModal({ editor, onClose }: { editor: any; onClose: () => void }) {
 }
 
 /* ── Embed Modal ───────────────────────────────────────────────────────────── */
-function EmbedModal({ editor, onClose }: { editor: any; onClose: () => void }) {
+function EmbedModal({ editor, onChange, onClose }: { editor: any; onChange: (html: string) => void; onClose: () => void }) {
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
 
@@ -473,6 +474,10 @@ function EmbedModal({ editor, onClose }: { editor: any; onClose: () => void }) {
       type: 'embed',
       attrs: { html: trimmed },
     });
+    // Force sync: manually trigger onChange with latest HTML
+    setTimeout(() => {
+      onChange(editor.getHTML());
+    }, 100);
     onClose();
   };
 
