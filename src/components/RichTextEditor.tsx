@@ -469,7 +469,10 @@ function EmbedModal({ editor, onClose }: { editor: any; onClose: () => void }) {
       setError('請貼上有效的嵌入程式碼（如 iframe、embed 等）');
       return;
     }
-    editor.chain().focus().setEmbed({ html: trimmed }).run();
+    editor.commands.insertContent({
+      type: 'embed',
+      attrs: { html: trimmed },
+    });
     onClose();
   };
 
