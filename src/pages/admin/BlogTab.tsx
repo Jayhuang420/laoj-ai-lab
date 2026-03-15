@@ -103,10 +103,22 @@ export default function BlogTab({ api }: { api: (path: string, opts?: RequestIni
         author: editing.author || '老J',
       };
 
+      // Debug: log content being saved
+      const hasEmbed = (body.content || '').includes('data-embed-b64');
+      console.log('[SAVE DEBUG] content length:', (body.content || '').length, 'hasEmbed:', hasEmbed);
+      if (hasEmbed) console.log('[SAVE DEBUG] embed found in content to save ✓');
+
       const url = isNew ? '/api/admin/blog' : `/api/admin/blog/${editing.id}`;
       const method = isNew ? 'POST' : 'PUT';
       const res = await api(url, { method, body: JSON.stringify(body) });
       if (res.ok) {
+        const savedPost = await res.json();
+        const savedHasEmbed = (savedPost.content || '').includes('data-embed-b64');
+        console.log('[SAVE DEBUG] response content length:', (savedPost.content || '').length, 'hasEmbed:', savedHasEmbed);
+        if (!savedHasEmbed && hasEmbed) {
+          console.error('[SAVE DEBUG] ⚠️ EMBED WAS LOST! Content sent had embed but response does not!');
+          alert('⚠️ 嵌入碼可能未正確儲存，請檢查 Console');
+        }
         await loadPosts();
         setEditing(null);
         setIsNew(false);
