@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ArrowLeft, Clock, Eye, User, Folder, Tag, Share2 } from 'lucide-react';
@@ -71,6 +71,7 @@ function renderMarkdown(md: string): string {
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const contentRef = useRef<HTMLDivElement>(null);
   const [post, setPost] = useState<BlogPostData | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
@@ -110,24 +111,42 @@ export default function BlogPost() {
             return `<video controls playsinline class="blog-video" src="${src}"></video>`;
           }
         );
-      // Render embed nodes: replace data-embed-html attribute with actual HTML content
-      html = html.replace(
-        /<div[^>]*data-embed-html="([^"]*)"[^>]*>[\s\S]*?<\/div>/g,
-        (_m, encodedHtml) => {
-          const decoded = encodedHtml
-            .replace(/&amp;/g, '&')
-            .replace(/&lt;/g, '<')
-            .replace(/&gt;/g, '>')
-            .replace(/&quot;/g, '"')
-            .replace(/&#39;/g, "'");
-          return `<div class="embed-wrapper">${decoded}</div>`;
-        }
-      );
-      return html;
+      // Render embed nodes: use DOMParser to correctly extract data-embed-html
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      doc.querySelectorAll('div[data-embed-html]').forEach(el => {
+        const raw = el.getAttribute('data-embed-html') || '';
+        const wrapper = doc.createElement('div');
+        wrapper.className = 'embed-wrapper';
+        wrapper.innerHTML = raw;
+        el.replaceWith(wrapper);
+      });
+      return doc.body.innerHTML;
     }
     // Legacy articles: convert Markdown → HTML
     return renderMarkdown(post.content);
   }, [post?.content]);
+
+  // Re-execute embedded scripts (Facebook SDK, Instagram, etc.)
+  useEffect(() => {
+    if (!contentRef.current) return;
+    const container = contentRef.current;
+    // Find all script tags inside embed wrappers and re-create them so the browser executes them
+    container.querySelectorAll('.embed-wrapper script').forEach(oldScript => {
+      const newScript = document.createElement('script');
+      Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+      newScript.textContent = oldScript.textContent;
+      oldScript.parentNode?.replaceChild(newScript, oldScript);
+    });
+    // Re-parse Facebook embeds if FB SDK is loaded
+    if ((window as any).FB) {
+      (window as any).FB.XFBML.parse(container);
+    }
+    // Re-parse Instagram embeds
+    if ((window as any).instgrm) {
+      (window as any).instgrm.Embeds.process(container);
+    }
+  }, [contentHtml]);
 
   const parsedTags = useMemo(() => {
     if (!post?.tags) return [];
@@ -270,7 +289,7 @@ export default function BlogPost() {
       {/* ── Content ──────────────────────────────────────────────────────────── */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
         className="max-w-3xl mx-auto">
-        <div className="prose-custom" dangerouslySetInnerHTML={{ __html: contentHtml }} />
+        <div className="prose-custom" ref={contentRef} dangerouslySetInnerHTML={{ __html: contentHtml }} />
 
         {/* ── Tags ───────────────────────────────────────────────────────────── */}
         {parsedTags.length > 0 && (

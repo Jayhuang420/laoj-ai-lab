@@ -40,7 +40,7 @@ const EmbedNode = Node.create<EmbedOptions>({
   },
 
   renderHTML({ HTMLAttributes }) {
-    return ['div', { ...HTMLAttributes, 'data-embed': 'true', class: 'embed-wrapper' }, 0];
+    return ['div', { ...HTMLAttributes, 'data-embed': 'true', class: 'embed-wrapper' }];
   },
 
   addNodeView() {
