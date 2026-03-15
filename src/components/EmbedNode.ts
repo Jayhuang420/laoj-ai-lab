@@ -12,6 +12,18 @@ declare module '@tiptap/core' {
   }
 }
 
+// Use base64 to avoid HTML attribute encoding issues
+function toBase64(str: string): string {
+  return btoa(unescape(encodeURIComponent(str)));
+}
+function fromBase64(b64: string): string {
+  try {
+    return decodeURIComponent(escape(atob(b64)));
+  } catch {
+    return '';
+  }
+}
+
 const EmbedNode = Node.create<EmbedOptions>({
   name: 'embed',
   group: 'block',
@@ -27,16 +39,26 @@ const EmbedNode = Node.create<EmbedOptions>({
     return {
       html: {
         default: '',
-        parseHTML: (element: HTMLElement) => element.getAttribute('data-embed-html') || element.innerHTML,
+        parseHTML: (element: HTMLElement) => {
+          const b64 = element.getAttribute('data-embed-b64');
+          if (b64) return fromBase64(b64);
+          // Fallback: old format
+          const raw = element.getAttribute('data-embed-html');
+          if (raw) return raw;
+          return element.innerHTML;
+        },
         renderHTML: (attributes: Record<string, any>) => ({
-          'data-embed-html': attributes.html,
+          'data-embed-b64': toBase64(attributes.html),
         }),
       },
     };
   },
 
   parseHTML() {
-    return [{ tag: 'div[data-embed-html]' }];
+    return [
+      { tag: 'div[data-embed-b64]' },
+      { tag: 'div[data-embed-html]' },
+    ];
   },
 
   renderHTML({ HTMLAttributes }) {
@@ -47,7 +69,6 @@ const EmbedNode = Node.create<EmbedOptions>({
     return ({ node }) => {
       const dom = document.createElement('div');
       dom.setAttribute('data-embed', 'true');
-      dom.setAttribute('data-embed-html', node.attrs.html);
       dom.classList.add('embed-wrapper');
       dom.contentEditable = 'false';
       dom.innerHTML = node.attrs.html;

@@ -111,9 +111,21 @@ export default function BlogPost() {
             return `<video controls playsinline class="blog-video" src="${src}"></video>`;
           }
         );
-      // Render embed nodes: use DOMParser to correctly extract data-embed-html
+      // Render embed nodes: decode base64 content
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
+      // Handle new base64 format
+      doc.querySelectorAll('div[data-embed-b64]').forEach(el => {
+        const b64 = el.getAttribute('data-embed-b64') || '';
+        try {
+          const decoded = decodeURIComponent(escape(atob(b64)));
+          const wrapper = doc.createElement('div');
+          wrapper.className = 'embed-wrapper';
+          wrapper.innerHTML = decoded;
+          el.replaceWith(wrapper);
+        } catch { /* skip invalid */ }
+      });
+      // Handle old format (fallback)
       doc.querySelectorAll('div[data-embed-html]').forEach(el => {
         const raw = el.getAttribute('data-embed-html') || '';
         const wrapper = doc.createElement('div');
