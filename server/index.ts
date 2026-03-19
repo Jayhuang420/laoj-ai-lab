@@ -729,7 +729,7 @@ ${postLines || '（暫無文章）'}
 
 ## 聯繫方式
 - 網站：https://www.oldjailab.com
-- Email：contact@laojailab.com
+- Email：jshao0420@gmail.com
 `;
 }
 

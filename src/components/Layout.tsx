@@ -10,7 +10,7 @@ const FOOTER_DEFAULTS: FooterData = {
   brandName: '老 J AI 實驗室',
   copyright: '© {year} Old J AI Lab. All rights reserved.',
   links: [
-    { label: 'Email', url: 'mailto:contact@laojailab.com' },
+    { label: 'Email', url: 'mailto:jshao0420@gmail.com' },
     { label: '合作洽談', url: '/contact' },
     { label: 'Threads', url: 'https://www.threads.net/@oldjailab' },
     { label: 'FB粉專《老J AI實驗室》', url: 'https://www.facebook.com/oldjailab' },

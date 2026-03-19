@@ -39,7 +39,7 @@ const JSON_LD = [
       '@type': 'Organization',
       name: '老J AI 實驗室',
       url: 'https://www.oldjailab.com',
-      email: 'contact@laojailab.com',
+      email: 'jshao0420@gmail.com',
       description: '專為一人公司設計的 AI 變現實戰顧問。',
     },
   },

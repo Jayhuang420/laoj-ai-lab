@@ -9,7 +9,7 @@ const DEFAULTS = {
   links: [
     { label: 'Twitter', url: 'https://twitter.com/laojailab' },
     { label: 'YouTube', url: 'https://youtube.com/@laojailab' },
-    { label: 'Email', url: 'mailto:contact@laojailab.com' },
+    { label: 'Email', url: 'mailto:jshao0420@gmail.com' },
     { label: '合作洽談', url: '/contact' },
   ],
 };
