@@ -8,6 +8,7 @@ import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import Admin from './pages/Admin';
 import Contact from './pages/Contact';
+import Privacy from './pages/Privacy';
 import NotFound from './pages/NotFound';
 import { ToastProvider } from './context/ToastContext';
 
@@ -37,6 +38,7 @@ export default function App() {
             <Route path="blog/:slug" element={<BlogPost />} />
             <Route path="about" element={<About />} />
             <Route path="contact" element={<Contact />} />
+            <Route path="privacy" element={<Privacy />} />
             <Route path="admin" element={<Admin />} />
             <Route path="*" element={<NotFound />} />
           </Route>

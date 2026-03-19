@@ -647,6 +647,7 @@ app.get('/sitemap.xml', (_req, res) => {
     { loc: '/blog', changefreq: 'daily', priority: '0.9' },
     { loc: '/about', changefreq: 'monthly', priority: '0.8' },
     { loc: '/contact', changefreq: 'monthly', priority: '0.8' },
+    { loc: '/privacy', changefreq: 'yearly', priority: '0.3' },
   ];
   let urls = staticPages.map(p =>
     `  <url><loc>https://www.oldjailab.com${p.loc}</loc><lastmod>${today}</lastmod><changefreq>${p.changefreq}</changefreq><priority>${p.priority}</priority></url>`
@@ -821,6 +822,16 @@ function getStaticRouteSeo(pathname: string): RouteSeo | null {
         <p>與老J預約免費諮詢，討論 AI 工作流自動化、品牌數位轉型、電商策略、一人公司 AI 化等合作方案。</p>
         <p>服務項目：AI工作流自動化、品牌數位轉型策略、電商策略規劃、一人公司AI化、PLG商業化路徑設計。</p>
         <nav><a href="/">首頁</a> &gt; <a href="/contact">合作洽談</a></nav>`,
+    },
+    '/privacy': {
+      title: '隱私權政策 | 老J AI 實驗室',
+      description: '老J AI 實驗室的隱私權政策：Cookie 使用說明、Google AdSense 廣告投放政策、個人資料保護方式。',
+      path: '/privacy',
+      content: `<h1>隱私權政策</h1>
+        <p>本隱私權政策說明老J AI 實驗室如何蒐集、使用、儲存及保護您的個人資料。</p>
+        <p>本網站使用 Cookie 提升瀏覽體驗，並使用 Google Analytics 分析流量及 Google AdSense 投放廣告。</p>
+        <p>我們不會將您的個人資料出售、交換或出租給任何第三方。</p>
+        <nav><a href="/">首頁</a> &gt; <a href="/privacy">隱私權政策</a></nav>`,
     },
   };
   return routes[pathname] || null;
