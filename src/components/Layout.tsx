@@ -42,7 +42,17 @@ export default function Layout() {
   useEffect(() => {
     fetch('/api/content/footer')
       .then(r => r.ok ? r.json() : null)
-      .then(json => { if (json?.main) setFooter({ ...FOOTER_DEFAULTS, ...json.main }); })
+      .then(json => {
+        if (json?.main) {
+          const merged = { ...FOOTER_DEFAULTS, ...json.main };
+          // Always ensure privacy link is present in footer
+          const hasPrivacy = (merged.links || []).some((l: FooterLink) => l.url === '/privacy');
+          if (!hasPrivacy) {
+            merged.links = [...(merged.links || []), { label: '隱私權政策', url: '/privacy' }];
+          }
+          setFooter(merged);
+        }
+      })
       .catch(() => {});
   }, []);
 
