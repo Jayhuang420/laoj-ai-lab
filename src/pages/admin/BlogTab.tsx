@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Plus, Edit3, Trash2, Eye, EyeOff, Save, X, Upload, Image as ImageIcon,
-  ArrowLeft, Clock, Tag, Folder, FileText, Search, BarChart3,
+  ArrowLeft, Clock, Tag, Folder, FileText, Search, BarChart3, Wand2,
 } from 'lucide-react';
 import RichTextEditor from '../../components/RichTextEditor';
+import CoverGenerator from '../../components/CoverGenerator';
 
 interface BlogPost {
   id: number;
@@ -45,6 +46,7 @@ export default function BlogTab({ api }: { api: (path: string, opts?: RequestIni
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'draft' | 'published'>('all');
   const [coverUploading, setCoverUploading] = useState(false);
+  const [showCoverGen, setShowCoverGen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   /* ── Load Posts ─────────────────────────────────────────────────────────── */
@@ -173,6 +175,29 @@ export default function BlogTab({ api }: { api: (path: string, opts?: RequestIni
     setCoverUploading(false);
   };
 
+  /* ── Use Generated Cover ─────────────────────────────────────────────────── */
+  const useGeneratedCover = async (blob: Blob) => {
+    setCoverUploading(true);
+    setShowCoverGen(false);
+    try {
+      const file = new File([blob], `cover-${Date.now()}.png`, { type: 'image/png' });
+      const formData = new FormData();
+      formData.append('image', file);
+      const res = await fetch('/api/admin/upload/blog-cover', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('laoj_admin_token')}` },
+        body: formData,
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setEditing(prev => prev ? { ...prev, cover_image: data.imageUrl } : prev);
+      } else {
+        alert('封面上傳失敗');
+      }
+    } catch { alert('封面上傳失敗'); }
+    setCoverUploading(false);
+  };
+
   /* ── Tag Input Handler ──────────────────────────────────────────────────── */
   const tagsArray = (() => {
     if (!editing) return [];
@@ -283,10 +308,24 @@ export default function BlogTab({ api }: { api: (path: string, opts?: RequestIni
               )}
               <input ref={fileInputRef} type="file" accept="image/*" className="hidden"
                 onChange={e => { if (e.target.files?.[0]) uploadCover(e.target.files[0]); e.target.value = ''; }} />
-              <button onClick={() => fileInputRef.current?.click()} disabled={coverUploading}
-                className="w-full flex items-center justify-center gap-2 text-sm border border-gray-200 rounded-xl py-2.5 hover:bg-gray-50 transition-colors disabled:opacity-60">
-                <Upload className="w-4 h-4" /> {coverUploading ? '上傳中…' : '上傳圖片'}
-              </button>
+              <div className="flex gap-2">
+                <button onClick={() => fileInputRef.current?.click()} disabled={coverUploading}
+                  className="flex-1 flex items-center justify-center gap-2 text-sm border border-gray-200 rounded-xl py-2.5 hover:bg-gray-50 transition-colors disabled:opacity-60">
+                  <Upload className="w-4 h-4" /> {coverUploading ? '上傳中…' : '上傳圖片'}
+                </button>
+                <button onClick={() => setShowCoverGen(true)} disabled={coverUploading}
+                  className="flex-1 flex items-center justify-center gap-2 text-sm bg-slate-900 text-white rounded-xl py-2.5 hover:bg-slate-800 transition-colors disabled:opacity-60">
+                  <Wand2 className="w-4 h-4" /> 生成封面
+                </button>
+              </div>
+              {showCoverGen && (
+                <CoverGenerator
+                  title={editing.title}
+                  category={editing.category}
+                  onUse={useGeneratedCover}
+                  onClose={() => setShowCoverGen(false)}
+                />
+              )}
             </div>
 
             {/* Category */}
