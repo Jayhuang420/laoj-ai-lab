@@ -637,6 +637,12 @@ app.get('/robots.txt', (_req, res) => {
   res.sendFile(path.join(seoDir, 'robots.txt'));
 });
 
+app.get('/ads.txt', (_req, res) => {
+  res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=86400');
+  res.sendFile(path.join(seoDir, 'ads.txt'));
+});
+
 app.get('/sitemap.xml', (_req, res) => {
   res.setHeader('Content-Type', 'application/xml; charset=utf-8');
   res.setHeader('Cache-Control', 'public, max-age=3600');
