@@ -49,7 +49,15 @@ export default function SubscribersTab({ api }: { api: (path: string, opts?: Req
               <tr key={s.id} className="border-b border-gray-50 hover:bg-slate-50/50 transition-colors">
                 <td className="px-6 py-4 font-medium">{s.email}</td>
                 <td className="px-6 py-4 text-gray-500 text-xs">{s.created_at}</td>
-                <td className="px-6 py-4"><span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">{s.source}</span></td>
+                <td className="px-6 py-4">
+                  <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+                    s.source === '部落格訂閱'
+                      ? 'bg-blue-50 text-blue-700'
+                      : s.source === '2026變現指南'
+                      ? 'bg-amber-50 text-amber-700'
+                      : 'bg-gray-100 text-gray-600'
+                  }`}>{s.source || 'website'}</span>
+                </td>
                 <td className="px-4 py-4">
                   <button onClick={() => deleteSub(s.id)} className="p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
                     <Trash2 className="w-4 h-4" />

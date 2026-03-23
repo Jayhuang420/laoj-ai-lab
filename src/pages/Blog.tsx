@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Clock, Eye, ArrowRight, Search, Tag, Folder } from 'lucide-react';
 import SEO from '../components/SEO';
+import BlogSubscribe from '../components/BlogSubscribe';
 
 interface BlogPost {
   id: number;
@@ -212,6 +213,12 @@ export default function Blog() {
           ))}
         </div>
       )}
+
+      {/* ── Subscribe CTA ────────────────────────────────────────────────────── */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
+        className="mt-16">
+        <BlogSubscribe variant="inline" />
+      </motion.div>
     </article>
   );
 }

@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 import bcrypt from 'bcryptjs';
 import multer from 'multer';
 import db from './db.js';
-import { sendEbookEmail, sendInquiryConfirmation, sendAdminNotification } from './mailer.js';
+import { sendEbookEmail, sendInquiryConfirmation, sendAdminNotification, sendNewPostNotification } from './mailer.js';
 import { createNotionInquiry, updateNotionStatus, isNotionEnabled } from './notion.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -128,18 +128,26 @@ app.put('/api/admin/account', adminAuth, (req, res) => {
 
 // ─── Public: Subscribe ────────────────────────────────────────────────────────
 app.post('/api/subscribe', (req, res) => {
-  const { email } = req.body ?? {};
+  const { email, source } = req.body ?? {};
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     res.status(400).json({ error: '請輸入有效的 Email 地址。' });
     return;
   }
+  const validSources = ['2026變現指南', '部落格訂閱'];
+  const finalSource = validSources.includes(source) ? source : '2026變現指南';
   try {
     const normalizedEmail = email.toLowerCase().trim();
-    db.prepare('INSERT INTO subscribers (email) VALUES (?)').run(normalizedEmail);
-    res.json({ success: true, message: '🎉 訂閱成功！《AI 變現全景地圖》將發送至您的信箱。' });
-    sendEbookEmail(normalizedEmail).catch((err: Error) =>
-      console.error('[mailer] 寄送失敗:', err.message)
-    );
+    db.prepare('INSERT INTO subscribers (email, source) VALUES (?, ?)').run(normalizedEmail, finalSource);
+    const msg = finalSource === '部落格訂閱'
+      ? '訂閱成功！有新文章時我們會寄信通知你。'
+      : '🎉 訂閱成功！《AI 變現全景地圖》將發送至您的信箱。';
+    res.json({ success: true, message: msg });
+    // 變現指南訂閱者才寄電子書
+    if (finalSource === '2026變現指南') {
+      sendEbookEmail(normalizedEmail).catch((err: Error) =>
+        console.error('[mailer] 寄送失敗:', err.message)
+      );
+    }
   } catch (e: any) {
     if (e.code === 'SQLITE_CONSTRAINT_UNIQUE') {
       res.status(409).json({ error: '此 Email 已訂閱過了，感謝您的支持！' });
@@ -148,6 +156,25 @@ app.post('/api/subscribe', (req, res) => {
     }
   }
 });
+
+// ─── Notify Subscribers on New Post ──────────────────────────────────────────
+async function notifySubscribers(post: { title: string; slug: string; excerpt: string; cover_image: string; category: string; author: string }) {
+  const subscribers = db.prepare('SELECT email FROM subscribers').all() as { email: string }[];
+  if (subscribers.length === 0) return;
+  const appUrl = process.env.APP_URL || 'https://www.oldjailab.com';
+  const postUrl = `${appUrl}/blog/${post.slug}`;
+  console.log(`[notify] 推播新文章「${post.title}」給 ${subscribers.length} 位訂閱者…`);
+  for (const sub of subscribers) {
+    sendNewPostNotification(sub.email, {
+      title: post.title,
+      excerpt: post.excerpt,
+      coverImage: post.cover_image,
+      postUrl,
+      category: post.category,
+      author: post.author || '老J',
+    }).catch(err => console.error(`[notify] 寄送失敗 ${sub.email}:`, err.message));
+  }
+}
 
 // ─── Rate Limiter (in-memory) ─────────────────────────────────────────────
 const inquiryRateMap = new Map<string, { count: number; resetAt: number }>();
@@ -497,8 +524,12 @@ app.post('/api/admin/blog', adminAuth, (req, res) => {
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).run(title, finalSlug, excerpt || '', content || '', cover_image || '', category || '一般',
       JSON.stringify(tags || []), status || 'draft', author || '老J', publishedAt);
-    const post = db.prepare('SELECT * FROM blog_posts WHERE id = ?').get(result.lastInsertRowid);
+    const post = db.prepare('SELECT * FROM blog_posts WHERE id = ?').get(result.lastInsertRowid) as any;
     res.json(post);
+    // 新文章直接發布時，通知所有訂閱者
+    if (status === 'published' && post) {
+      notifySubscribers(post).catch(err => console.error('[notify] 推播失敗:', err.message));
+    }
   } catch (e: any) {
     if (e.code === 'SQLITE_CONSTRAINT_UNIQUE') {
       res.status(409).json({ error: '此文章網址代稱已存在，請使用其他代稱。' });
@@ -515,7 +546,8 @@ app.put('/api/admin/blog/:id', adminAuth, (req, res) => {
 
   // Set published_at when first published
   let publishedAt = existing.published_at;
-  if (status === 'published' && !existing.published_at) {
+  const isFirstPublish = status === 'published' && !existing.published_at;
+  if (isFirstPublish) {
     publishedAt = new Date().toISOString();
   }
 
@@ -525,8 +557,12 @@ app.put('/api/admin/blog/:id', adminAuth, (req, res) => {
        status=?, author=?, published_at=?, updated_at=datetime('now', '+8 hours') WHERE id=?`
     ).run(title, slug, excerpt, content, cover_image, category, JSON.stringify(tags || []),
       status, author, publishedAt, req.params.id);
-    const post = db.prepare('SELECT * FROM blog_posts WHERE id = ?').get(req.params.id);
+    const post = db.prepare('SELECT * FROM blog_posts WHERE id = ?').get(req.params.id) as any;
     res.json(post);
+    // 草稿 → 發布 時通知所有訂閱者
+    if (isFirstPublish && post) {
+      notifySubscribers(post).catch(err => console.error('[notify] 推播失敗:', err.message));
+    }
   } catch (e: any) {
     if (e.code === 'SQLITE_CONSTRAINT_UNIQUE') {
       res.status(409).json({ error: '此文章網址代稱已存在。' });

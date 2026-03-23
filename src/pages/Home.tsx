@@ -141,7 +141,7 @@ export default function Home() {
       const res = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, source: '2026變現指南' }),
       });
       const data = await res.json();
       if (res.ok) { showToast(data.message, 'success'); setEmail(''); }

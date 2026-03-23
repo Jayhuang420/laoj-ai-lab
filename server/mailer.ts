@@ -407,6 +407,97 @@ export async function sendAdminNotification(inquiry: InquiryInfo): Promise<void>
   console.log(`[mailer] 管理員通知已寄送至 ${adminEmail}`);
 }
 
+/* ── New Post Notification Email ──────────────────────────────────────────── */
+interface NewPostInfo {
+  title: string;
+  excerpt: string;
+  coverImage: string;
+  postUrl: string;
+  category: string;
+  author: string;
+}
+
+function newPostHtml(post: NewPostInfo): string {
+  const appUrl = process.env.APP_URL || 'https://www.oldjailab.com';
+  const coverSection = post.coverImage
+    ? `<div style="border-radius:12px;overflow:hidden;margin-bottom:24px;"><img src="${appUrl}${post.coverImage}" alt="${post.title}" style="display:block;width:100%;height:auto;border-radius:12px;" /></div>`
+    : '';
+  return `<!DOCTYPE html>
+<html lang="zh-TW"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="color-scheme" content="light dark"/><title>新文章通知</title>
+<style>
+  :root{color-scheme:light dark;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#f4f4f0;font-family:'Helvetica Neue',Arial,'PingFang TC','Microsoft JhengHei',sans-serif;color:#1a1a1a;}
+  .wrap{max-width:640px;margin:32px auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 40px rgba(0,0,0,.08);}
+  @media(max-width:480px){.wrap{margin:0;border-radius:0;}.cover{padding:32px 20px !important;}.body{padding:24px 20px !important;}.footer{padding:20px !important;}}
+  @media(prefers-color-scheme:dark){
+    body{background:#111318 !important;}
+    .wrap{background:#1a1d27 !important;box-shadow:0 4px 40px rgba(0,0,0,.4) !important;}
+    .body{background:#1a1d27 !important;}
+    .body p,.body .excerpt{color:#cbd5e1 !important;}
+    .cat-badge{background:#1e293b !important;color:#93c5fd !important;}
+    .divider{border-top-color:#2d3548 !important;}
+    .footer{background:#141720 !important;border-top-color:#2d3548 !important;}
+    .footer p{color:#64748b !important;}
+    .footer a{color:#60a5fa !important;}
+  }
+</style></head><body>
+<div class="wrap">
+
+  <!-- Brand Header -->
+  <div class="cover" style="background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 60%,#1d4ed8 100%);padding:40px;text-align:center;">
+    <div style="display:inline-block;background:rgba(255,255,255,.15);color:#93c5fd;font-size:11px;font-weight:700;letter-spacing:2px;padding:6px 16px;border-radius:100px;margin-bottom:16px;text-transform:uppercase;">新文章上線</div>
+    <h1 style="color:#ffffff;font-size:26px;font-weight:800;line-height:1.3;margin-bottom:8px;">老 J AI 實驗室</h1>
+    <p style="color:#93c5fd;font-size:13px;">AI 自動化 · 工具實測 · 一人公司實戰</p>
+  </div>
+
+  <!-- Body -->
+  <div class="body" style="padding:36px 40px;background:#ffffff;">
+    <p style="font-size:15px;color:#374151;margin-bottom:24px;line-height:1.7;">
+      嗨！老 J 剛發布了一篇新文章，快來看看吧 👇
+    </p>
+
+    ${coverSection}
+
+    <span class="cat-badge" style="display:inline-block;background:#dbeafe;color:#1e3a8a;font-size:11px;font-weight:600;padding:4px 12px;border-radius:100px;margin-bottom:12px;">${post.category}</span>
+
+    <h2 style="font-size:22px;font-weight:800;color:#0f172a;line-height:1.35;margin-bottom:12px;">${post.title}</h2>
+
+    <p class="excerpt" style="font-size:14px;color:#64748b;line-height:1.8;margin-bottom:28px;">${post.excerpt || ''}</p>
+
+    <div style="text-align:center;margin-bottom:8px;">
+      <a href="${post.postUrl}" style="display:inline-block;background:linear-gradient(135deg,#0f172a,#1e3a8a);color:#ffffff;font-weight:700;font-size:15px;padding:16px 40px;border-radius:100px;text-decoration:none;">閱讀全文 →</a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer" style="background:#f8fafc;padding:24px 40px;text-align:center;border-top:1px solid #e2e8f0;">
+    <p style="font-size:11px;color:#94a3b8;line-height:1.8;">
+      你收到這封信，是因為你訂閱了 <a href="${appUrl}" style="color:#60a5fa;text-decoration:none;">老 J AI 實驗室</a> 的文章通知。<br/>
+      © ${new Date().getFullYear()} 老 J AI 實驗室 · 保留所有權利
+    </p>
+  </div>
+
+</div></body></html>`;
+}
+
+export async function sendNewPostNotification(to: string, post: NewPostInfo): Promise<void> {
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS ||
+      process.env.SMTP_USER === 'your@gmail.com') {
+    console.warn('[mailer] SMTP 未設定，跳過新文章通知。');
+    return;
+  }
+  const fromName = process.env.SMTP_FROM_NAME || '老 J AI 實驗室';
+  await transporter.sendMail({
+    from: `"${fromName}" <${process.env.SMTP_USER}>`,
+    to,
+    subject: `📬 新文章：${post.title} — 老 J AI 實驗室`,
+    html: newPostHtml(post),
+  });
+  console.log(`[mailer] 新文章通知已寄送至 ${to}`);
+}
+
 /* ── Ebook Email ──────────────────────────────────────────────────────────── */
 export async function sendEbookEmail(to: string): Promise<void> {
   if (!process.env.SMTP_USER || !process.env.SMTP_PASS ||
