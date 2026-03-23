@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Youtube, ShoppingBag, Mail, CheckCircle2, Play,
          Zap, Target, TrendingUp, Users, MousePointer, Cpu, Rocket,
-         Music, Dices, Hash, Sparkles, Utensils, BookOpen, Lightbulb, Wrench } from 'lucide-react';
+         Music, Dices, Hash, Sparkles, Utensils, BookOpen, Lightbulb, Wrench,
+         Clock, Folder, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, useInView, animate } from 'motion/react';
 import { useToast } from '../context/ToastContext';
@@ -103,11 +104,13 @@ export default function Home() {
   const heroRef = useRef<HTMLElement>(null);
   const [content, setContent] = useState<Record<string, any>>({});
   const [apiTools, setApiTools] = useState<any[]>([]);
+  const [latestPosts, setLatestPosts] = useState<any[]>([]);
 
-  /* Fetch dynamic content + tools */
+  /* Fetch dynamic content + tools + blog posts */
   useEffect(() => {
     fetch('/api/content/home').then(r => r.ok ? r.json() : {}).then(setContent).catch(() => {});
     fetch('/api/tools').then(r => r.ok ? r.json() : []).then((data: any[]) => { if (data.length) setApiTools(data); }).catch(() => {});
+    fetch('/api/blog').then(r => r.ok ? r.json() : []).then((data: any[]) => setLatestPosts(data.slice(0, 3))).catch(() => {});
   }, []);
 
   const hero = { ...DEFAULTS.hero, ...content.hero };
@@ -381,6 +384,59 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* ── Latest Blog Posts ──────────────────────────────────────────────────── */}
+      {latestPosts.length > 0 && (
+        <section aria-labelledby="latest-posts-title" className="py-14 px-6 max-w-6xl mx-auto border-t border-gray-100">
+          <motion.div {...fadeInUp} className="flex items-end justify-between mb-10">
+            <div>
+              <p className="text-xs font-bold tracking-widest text-blue-600 uppercase mb-2">Blog</p>
+              <h2 id="latest-posts-title" className="text-3xl font-bold tracking-tight">最新文章</h2>
+            </div>
+            <Link to="/blog" className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-slate-900 hover:text-[#1E3A8A] transition-colors">
+              查看全部文章 <ArrowRight className="w-4 h-4" />
+            </Link>
+          </motion.div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {latestPosts.map((post, i) => (
+              <motion.article key={post.id} {...fadeInUp} transition={{ duration: 0.5, delay: 0.1 * (i + 1), ease: [0.16, 1, 0.3, 1] }}>
+                <Link to={`/blog/${post.slug}`}
+                  className="group block bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-gray-200 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+                  {post.cover_image ? (
+                    <div className="aspect-video overflow-hidden">
+                      <img src={post.cover_image} alt={post.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    </div>
+                  ) : (
+                    <div className="aspect-video bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+                      <span className="text-4xl font-bold text-slate-200">{post.title.charAt(0)}</span>
+                    </div>
+                  )}
+                  <div className="p-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg">
+                        <Folder className="w-3 h-3" /> {post.category}
+                      </span>
+                      <span className="text-xs text-gray-400 flex items-center gap-1">
+                        <Clock className="w-3 h-3" /> {post.published_at ? new Date(post.published_at).toLocaleDateString('zh-TW') : ''}
+                      </span>
+                    </div>
+                    <h3 className="font-bold text-lg text-slate-900 mb-2 line-clamp-2 group-hover:text-[#1E3A8A] transition-colors">
+                      {post.title}
+                    </h3>
+                    {post.excerpt && (
+                      <p className="text-sm text-gray-500 line-clamp-2 leading-relaxed">{post.excerpt}</p>
+                    )}
+                  </div>
+                </Link>
+              </motion.article>
+            ))}
+          </div>
+          <Link to="/blog" className="sm:hidden flex items-center justify-center gap-2 mt-6 text-sm font-medium text-slate-900 hover:text-[#1E3A8A] transition-colors">
+            查看全部文章 <ArrowRight className="w-4 h-4" />
+          </Link>
+        </section>
+      )}
 
       {/* ── Lead Magnet ───────────────────────────────────────────────────────── */}
       <section id="lead-magnet" aria-label="免費下載 AI 變現全景地圖" className="py-6 px-6 max-w-6xl mx-auto">
