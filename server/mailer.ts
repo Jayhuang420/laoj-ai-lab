@@ -41,20 +41,20 @@ function ebookHtml(email: string): string {
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<meta name="color-scheme" content="light dark"/>
-<meta name="supported-color-schemes" content="light dark"/>
+<meta name="color-scheme" content="light"/>
+<meta name="supported-color-schemes" content="light"/>
 <title>《2026 AI 變現全景地圖》</title>
 <style>
-  :root{color-scheme:light dark;}
+  :root{color-scheme:light;}
   *{margin:0;padding:0;box-sizing:border-box;}
-  body{background:#f4f4f0;font-family:'Helvetica Neue',Arial,'PingFang TC','Microsoft JhengHei',sans-serif;color:#1a1a1a;}
+  body{background:#f0f4f8;font-family:'Helvetica Neue',Arial,'PingFang TC','Microsoft JhengHei',sans-serif;color:#1a1a1a;}
   .wrap{max-width:680px;margin:32px auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 40px rgba(0,0,0,.08);}
-  .cover{background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 60%,#1d4ed8 100%);padding:56px 40px 48px;text-align:center;}
-  .cover-badge{display:inline-block;background:rgba(255,255,255,.15);color:#93c5fd;font-size:11px;font-weight:700;letter-spacing:2px;padding:6px 14px;border-radius:100px;margin-bottom:24px;text-transform:uppercase;}
-  .cover-title{color:#ffffff;font-size:32px;font-weight:800;line-height:1.2;margin-bottom:10px;}
-  .cover-sub{color:#93c5fd;font-size:15px;margin-bottom:32px;}
-  .cover-divider{width:48px;height:3px;background:linear-gradient(90deg,#60a5fa,#818cf8);border-radius:2px;margin:0 auto 28px;}
-  .cover-meta{color:rgba(255,255,255,.6);font-size:12px;}
+  .cover{background:#ffffff;border-top:4px solid #1e3a8a;border-bottom:1px solid #e2e8f0;padding:56px 40px 48px;text-align:center;}
+  .cover-badge{display:inline-block;background:#dbeafe;color:#1e3a8a;font-size:11px;font-weight:700;letter-spacing:2px;padding:6px 14px;border-radius:100px;margin-bottom:24px;text-transform:uppercase;}
+  .cover-title{color:#0f172a;font-size:32px;font-weight:800;line-height:1.2;margin-bottom:10px;}
+  .cover-sub{color:#475569;font-size:15px;margin-bottom:32px;}
+  .cover-divider{width:48px;height:3px;background:linear-gradient(90deg,#1e3a8a,#3b82f6);border-radius:2px;margin:0 auto 28px;}
+  .cover-meta{color:#94a3b8;font-size:12px;}
   .body{padding:40px;background:#ffffff;}
   .greeting{font-size:15px;color:#374151;margin-bottom:28px;line-height:1.7;}
   .greeting strong{color:#1e3a8a;}
@@ -70,10 +70,10 @@ function ebookHtml(email: string): string {
   .strategy-emoji{font-size:22px;margin-bottom:8px;}
   .strategy-title{font-weight:700;font-size:14px;color:#0f172a;margin-bottom:6px;}
   .strategy-body{font-size:13px;color:#374151;line-height:1.7;}
-  .cta-wrap{background:linear-gradient(135deg,#0f172a,#1e3a8a);border-radius:14px;padding:36px;text-align:center;margin-top:8px;}
-  .cta-title{color:#ffffff;font-size:20px;font-weight:800;margin-bottom:10px;}
-  .cta-sub{color:#93c5fd;font-size:13px;margin-bottom:24px;line-height:1.6;}
-  .cta-btn{display:inline-block;background:#ffffff;color:#1e3a8a;font-weight:700;font-size:14px;padding:14px 32px;border-radius:100px;text-decoration:none;}
+  .cta-wrap{background:#f0f6ff;border:1px solid #dbeafe;border-radius:14px;padding:36px;text-align:center;margin-top:8px;}
+  .cta-title{color:#0f172a;font-size:20px;font-weight:800;margin-bottom:10px;}
+  .cta-sub{color:#475569;font-size:13px;margin-bottom:24px;line-height:1.6;}
+  .cta-btn{display:inline-block;background:#1e3a8a;color:#ffffff;font-weight:700;font-size:14px;padding:14px 32px;border-radius:100px;text-decoration:none;}
   .footer{background:#f8fafc;padding:28px 40px;text-align:center;border-top:1px solid #e2e8f0;}
   .footer p{font-size:11px;color:#94a3b8;line-height:1.8;}
   .footer a{color:#60a5fa;text-decoration:none;}
@@ -89,50 +89,46 @@ function ebookHtml(email: string): string {
     .footer{padding:20px;}
     .cta-wrap{padding:28px 20px;}
   }
-  /* ─── Dark Mode (Apple Mail, iOS Mail, Outlook iOS) ─── */
+  /* ─── Force Light Mode (Apple Mail iOS dark mode override) ─── */
   @media (prefers-color-scheme:dark){
-    body{background:#111318 !important;color:#e2e8f0 !important;}
-    .wrap{background:#1a1d27 !important;box-shadow:0 4px 40px rgba(0,0,0,.4) !important;}
-    .body{background:#1a1d27 !important;}
-    .greeting{color:#cbd5e1 !important;}
-    .greeting strong{color:#93c5fd !important;}
-    .section-body{color:#cbd5e1 !important;}
-    .section-body p{color:#cbd5e1 !important;}
-    .section-body strong{color:#e2e8f0 !important;}
-    .box{background:#1e293b !important;border-left-color:#3b82f6 !important;}
-    .box-title{color:#93c5fd !important;}
-    ul.list li{color:#cbd5e1 !important;}
-    ul.list li strong{color:#e2e8f0 !important;}
-    .tool-item{background:#1e293b !important;border-color:#334155 !important;}
-    .tool-name{color:#f1f5f9 !important;}
-    .tool-desc{color:#94a3b8 !important;}
-    .tool-tag{background:#1e3a5f !important;color:#93c5fd !important;}
-    .strategy{background:#1e293b !important;border-color:#334155 !important;}
-    .strategy-title{color:#f1f5f9 !important;}
-    .strategy-body{color:#cbd5e1 !important;}
-    .strategy-body strong{color:#e2e8f0 !important;}
-    .cta-wrap{background:linear-gradient(135deg,#0c1220,#162d6b) !important;}
-    .cta-btn{background:#ffffff !important;color:#1e3a8a !important;}
-    .footer{background:#141720 !important;border-top-color:#2d3548 !important;}
-    .footer p{color:#64748b !important;}
-    .footer a{color:#60a5fa !important;}
-    .tag{background:#1e293b !important;color:#94a3b8 !important;}
-    .divider{border-top-color:#2d3548 !important;}
-    h1,h2,h3,h4,h5,h6{color:#f1f5f9 !important;}
-    .sec-num{background:#2563eb !important;color:#ffffff !important;}
-    .sec-title{color:#f1f5f9 !important;}
-    .step-num{background:#2563eb !important;color:#ffffff !important;}
-    .step-title{color:#f1f5f9 !important;}
-    .step-body{color:#cbd5e1 !important;}
-    .step-body strong{color:#e2e8f0 !important;}
-    .box-green{background:#132b1a !important;border-left-color:#22c55e !important;}
-    .box-green .box-title{color:#4ade80 !important;}
+    html,body{background-color:#f0f4f8 !important;color:#1a1a1a !important;}
+    .wrap{background-color:#ffffff !important;}
+    .cover{background-color:#ffffff !important;}
+    .body{background-color:#ffffff !important;color:#1a1a1a !important;}
+    .greeting{color:#374151 !important;}
+    .greeting strong{color:#1e3a8a !important;}
+    .section-body{color:#374151 !important;}
+    .section-body p{color:#374151 !important;}
+    .box{background-color:#f0f6ff !important;}
+    .box-title{color:#1e3a8a !important;}
+    ul.list li{color:#374151 !important;}
+    .tool-item{background-color:#f8fafc !important;border-color:#e2e8f0 !important;}
+    .tool-name{color:#0f172a !important;}
+    .tool-desc{color:#64748b !important;}
+    .tool-tag{background-color:#dbeafe !important;color:#1e3a8a !important;}
+    .strategy{background-color:#ffffff !important;border-color:#e2e8f0 !important;}
+    .strategy-title{color:#0f172a !important;}
+    .strategy-body{color:#374151 !important;}
+    .cta-wrap{background-color:#f0f6ff !important;border-color:#dbeafe !important;}
+    .cta-title{color:#0f172a !important;}
+    .cta-sub{color:#475569 !important;}
+    .cta-btn{background-color:#1e3a8a !important;color:#ffffff !important;}
+    .footer{background-color:#f8fafc !important;border-top-color:#e2e8f0 !important;}
+    .footer p{color:#94a3b8 !important;}
+    .tag{background-color:#f1f5f9 !important;color:#475569 !important;}
+    .divider{border-top-color:#f1f5f9 !important;}
+    h1,h2,h3,h4,h5,h6{color:#0f172a !important;}
+    .sec-num{background-color:#1e3a8a !important;color:#ffffff !important;}
+    .sec-title{color:#0f172a !important;}
+    .step-num{background-color:#1e3a8a !important;color:#ffffff !important;}
+    .step-title{color:#0f172a !important;}
+    .step-body{color:#374151 !important;}
   }
 </style>
-<!--[if mso]><style>body{background:#f4f4f0!important;}</style><![endif]-->
+<!--[if mso]><style>body{background:#f0f4f8!important;}</style><![endif]-->
 </head>
-<body>
-<div class="wrap">
+<body bgcolor="#f0f4f8" style="margin:0;padding:0;background-color:#f0f4f8;">
+<div class="wrap" style="max-width:680px;margin:32px auto;background-color:#ffffff;border-radius:16px;overflow:hidden;">
 
   <!-- Cover -->
   <div class="cover">
@@ -424,32 +420,33 @@ function newPostHtml(post: NewPostInfo): string {
     : '';
   return `<!DOCTYPE html>
 <html lang="zh-TW"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<meta name="color-scheme" content="light dark"/><title>新文章通知</title>
+<meta name="color-scheme" content="light"/><title>新文章通知</title>
 <style>
-  :root{color-scheme:light dark;}
+  :root{color-scheme:light;}
   *{margin:0;padding:0;box-sizing:border-box;}
-  body{background:#f4f4f0;font-family:'Helvetica Neue',Arial,'PingFang TC','Microsoft JhengHei',sans-serif;color:#1a1a1a;}
+  body{background:#f0f4f8;font-family:'Helvetica Neue',Arial,'PingFang TC','Microsoft JhengHei',sans-serif;color:#1a1a1a;}
   .wrap{max-width:640px;margin:32px auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 40px rgba(0,0,0,.08);}
   @media(max-width:480px){.wrap{margin:0;border-radius:0;}.cover{padding:32px 20px !important;}.body{padding:24px 20px !important;}.footer{padding:20px !important;}}
+  /* ─── Force Light Mode (Apple Mail iOS dark mode override) ─── */
   @media(prefers-color-scheme:dark){
-    body{background:#111318 !important;}
-    .wrap{background:#1a1d27 !important;box-shadow:0 4px 40px rgba(0,0,0,.4) !important;}
-    .body{background:#1a1d27 !important;}
-    .body p,.body .excerpt{color:#cbd5e1 !important;}
-    .cat-badge{background:#1e293b !important;color:#93c5fd !important;}
-    .divider{border-top-color:#2d3548 !important;}
-    .footer{background:#141720 !important;border-top-color:#2d3548 !important;}
-    .footer p{color:#64748b !important;}
-    .footer a{color:#60a5fa !important;}
+    html,body{background-color:#f0f4f8 !important;color:#1a1a1a !important;}
+    .wrap{background-color:#ffffff !important;}
+    .body{background-color:#ffffff !important;color:#374151 !important;}
+    .body p{color:#374151 !important;}
+    .excerpt{color:#64748b !important;}
+    .cat-badge{background-color:#dbeafe !important;color:#1e3a8a !important;}
+    .footer{background-color:#f8fafc !important;border-top-color:#e2e8f0 !important;}
+    .footer p{color:#94a3b8 !important;}
+    h2{color:#0f172a !important;}
   }
-</style></head><body>
-<div class="wrap">
+</style></head><body bgcolor="#f0f4f8" style="margin:0;padding:0;background-color:#f0f4f8;">
+<div class="wrap" style="max-width:640px;margin:32px auto;background-color:#ffffff;border-radius:16px;overflow:hidden;">
 
   <!-- Brand Header -->
-  <div class="cover" style="background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 60%,#1d4ed8 100%);padding:40px;text-align:center;">
-    <div style="display:inline-block;background:rgba(255,255,255,.15);color:#93c5fd;font-size:11px;font-weight:700;letter-spacing:2px;padding:6px 16px;border-radius:100px;margin-bottom:16px;text-transform:uppercase;">新文章上線</div>
-    <h1 style="color:#ffffff;font-size:26px;font-weight:800;line-height:1.3;margin-bottom:8px;">老 J AI 實驗室</h1>
-    <p style="color:#93c5fd;font-size:13px;">AI 自動化 · 工具實測 · 一人公司實戰</p>
+  <div class="cover" style="background:#ffffff;border-top:4px solid #1e3a8a;border-bottom:1px solid #e2e8f0;padding:40px;text-align:center;">
+    <div style="display:inline-block;background:#dbeafe;color:#1e3a8a;font-size:11px;font-weight:700;letter-spacing:2px;padding:6px 16px;border-radius:100px;margin-bottom:16px;text-transform:uppercase;">新文章上線</div>
+    <h1 style="color:#0f172a;font-size:26px;font-weight:800;line-height:1.3;margin-bottom:8px;">老 J AI 實驗室</h1>
+    <p style="color:#475569;font-size:13px;">AI 自動化 · 工具實測 · 一人公司實戰</p>
   </div>
 
   <!-- Body -->
