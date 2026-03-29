@@ -45,8 +45,8 @@ export default function EbookBanner() {
             </div>
 
             {/* CTA button */}
-            <span className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-gray-900 font-bold text-sm px-6 py-2.5 rounded-full group-hover:from-yellow-400 group-hover:to-yellow-300 transition-all duration-300 shadow-md shadow-yellow-500/20">
-              免費了解更多 <ExternalLink className="w-4 h-4" />
+            <span className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-gray-900 font-bold text-sm px-6 py-2.5 rounded-full group-hover:from-yellow-400 group-hover:to-yellow-300 transition-all duration-300 shadow-md shadow-yellow-500/20 animate-pulse">
+              超早鳥優惠價 — 限時搶購中 <ExternalLink className="w-4 h-4" />
             </span>
           </div>
 
