@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { motion, useInView, animate } from 'motion/react';
 import { useToast } from '../context/ToastContext';
 import SEO from '../components/SEO';
+import EbookBanner from '../components/EbookBanner';
 
 const TOOL_ICON_MAP: Record<string, React.ReactNode> = {
   Music: <Music className="w-6 h-6" />,
@@ -436,6 +437,13 @@ export default function Home() {
             查看全部文章 <ArrowRight className="w-4 h-4" />
           </Link>
         </section>
+      )}
+
+      {/* ── Ebook Banner ──────────────────────────────────────────────────────── */}
+      {latestPosts.length > 0 && (
+        <div className="px-6 max-w-6xl mx-auto">
+          <EbookBanner />
+        </div>
       )}
 
       {/* ── Lead Magnet ───────────────────────────────────────────────────────── */}
