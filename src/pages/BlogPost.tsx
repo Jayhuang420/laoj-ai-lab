@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import { ArrowLeft, Clock, Eye, User, Folder, Tag, Share2 } from 'lucide-react';
 import SEO from '../components/SEO';
 import BlogSubscribe from '../components/BlogSubscribe';
+import EbookBanner from '../components/EbookBanner';
 
 interface BlogPostData {
   id: number;
@@ -322,6 +323,9 @@ export default function BlogPost() {
 
         {/* ── Subscribe CTA ──────────────────────────────────────────────────── */}
         <BlogSubscribe variant="card" />
+
+        {/* ── Ebook Banner ──────────────────────────────────────────────────── */}
+        <EbookBanner />
 
         {/* ── Share ──────────────────────────────────────────────────────────── */}
         <div className="flex items-center justify-between mt-8 pt-8 border-t border-gray-100">
