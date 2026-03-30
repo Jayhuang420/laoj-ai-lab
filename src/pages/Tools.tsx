@@ -207,6 +207,19 @@ export default function Tools() {
           顯示 {filtered.length} / {tools.length} 個工具
         </motion.p>
       )}
+
+      {/* ── Portaly Ebook Embed ───────────────────────────────────────────────── */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.5 }}
+        className="flex justify-center mt-16 mb-4">
+        <iframe
+          src="https://portaly.cc/embed/jay770420/product/PgnPFWo3OapiFQ7NURyP"
+          width="400"
+          height="620"
+          style={{ border: 0 }}
+          loading="lazy"
+          title="AI 被動收入電子書"
+        />
+      </motion.div>
     </div>
   );
 }
