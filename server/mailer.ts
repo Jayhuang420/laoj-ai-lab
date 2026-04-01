@@ -35,7 +35,7 @@ const step = (letter: string, title: string, body: string) =>
   </tr></table>`;
 
 function ebookHtml(email: string): string {
-  const appUrl = process.env.APP_URL || 'https://laoj.ai';
+  const appUrl = process.env.APP_URL || 'https://www.oldjailab.com';
   return `<!DOCTYPE html>
 <html lang="zh-TW" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -292,7 +292,7 @@ function ebookHtml(email: string): string {
 
 /* ── Inquiry Confirmation Email ────────────────────────────────────────────── */
 function inquiryConfirmationHtml(name: string): string {
-  const appUrl = process.env.APP_URL || 'https://laoj.ai';
+  const appUrl = process.env.APP_URL || 'https://www.oldjailab.com';
   return `<!DOCTYPE html>
 <html lang="zh-TW"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>諮詢已收到</title>
@@ -389,7 +389,7 @@ export async function sendAdminNotification(inquiry: InquiryInfo): Promise<void>
       <tr><td style="padding:10px 0;color:#6b7280;vertical-align:top;">訊息</td><td style="padding:10px 0;line-height:1.7;white-space:pre-wrap;">${inquiry.message}</td></tr>
     </table>
     <div style="margin-top:24px;text-align:center;">
-      <a href="${process.env.APP_URL || 'https://laoj.ai'}/admin" style="display:inline-block;background:#0f172a;color:#fff;padding:12px 28px;border-radius:100px;font-weight:700;font-size:13px;text-decoration:none;">前往後台管理 →</a>
+      <a href="${process.env.APP_URL || 'https://www.oldjailab.com'}/admin" style="display:inline-block;background:#0f172a;color:#fff;padding:12px 28px;border-radius:100px;font-weight:700;font-size:13px;text-decoration:none;">前往後台管理 →</a>
     </div>
   </div>
 </div></body></html>`;
