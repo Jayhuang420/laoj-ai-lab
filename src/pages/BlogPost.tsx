@@ -216,7 +216,7 @@ export default function BlogPost() {
     '@type': 'BlogPosting',
     headline: post.title,
     description: post.excerpt,
-    image: post.cover_image || undefined,
+    image: post.cover_image ? (post.cover_image.startsWith('http') ? post.cover_image : `https://www.oldjailab.com${post.cover_image}`) : undefined,
     articleBody,
     wordCount: plainText.length,
     author: { '@type': 'Person', name: post.author || '老J' },
@@ -252,7 +252,7 @@ export default function BlogPost() {
         description={post.excerpt || post.title}
         path={`/blog/${post.slug}`}
         ogType="article"
-        ogImage={post.cover_image || undefined}
+        ogImage={post.cover_image ? (post.cover_image.startsWith('http') ? post.cover_image : `https://www.oldjailab.com${post.cover_image}`) : undefined}
         jsonLd={[postJsonLd, breadcrumbJsonLd]}
         publishedTime={post.published_at || undefined}
         modifiedTime={post.updated_at || undefined}

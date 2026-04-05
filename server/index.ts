@@ -888,11 +888,12 @@ function getBlogPostSeo(slug: string): RouteSeo & { coverImage?: string; publish
     if (!post) return null;
     const plainText = (post.content || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
     const preview = plainText.slice(0, 300);
+    const absImage = post.cover_image ? (post.cover_image.startsWith('http') ? post.cover_image : `${SITE_URL}${post.cover_image}`) : '';
     return {
       title: `${post.title} — 老J AI 實驗室`,
       description: post.excerpt || preview.slice(0, 160),
       path: `/blog/${slug}`,
-      content: `<article><h1>${post.title}</h1><p>${post.excerpt || ''}</p><p>${preview}</p>
+      content: `<article><h1>${post.title}</h1>${absImage ? `<img src="${absImage}" alt="${post.title}" />` : ''}<p>${post.excerpt || ''}</p><p>${preview}</p><footer><span>作者：${post.author || '老J'}</span> · <span>分類：${post.category}</span> · <time datetime="${post.published_at}">${post.published_at}</time></footer>
         <nav><a href="/">首頁</a> &gt; <a href="/blog">部落格</a> &gt; ${post.title}</nav></article>`,
       coverImage: post.cover_image,
       publishedAt: post.published_at,
@@ -966,9 +967,29 @@ if (fs.existsSync(DIST_DIR)) {
         if (blogSeo.author) articleMeta.push(`<meta property="article:author" content="${blogSeo.author}" />`);
         if (blogSeo.category) articleMeta.push(`<meta property="article:section" content="${blogSeo.category}" />`);
         if (blogSeo.coverImage) {
-          result = result.replace(/<meta property="og:image" content="[^"]*" \/>/, `<meta property="og:image" content="${blogSeo.coverImage}" />`);
-          result = result.replace(/<meta name="twitter:image" content="[^"]*" \/>/, `<meta name="twitter:image" content="${blogSeo.coverImage}" />`);
+          const absImage = blogSeo.coverImage.startsWith('http') ? blogSeo.coverImage : `${SITE_URL}${blogSeo.coverImage}`;
+          result = result.replace(/<meta property="og:image" content="[^"]*" \/>/, `<meta property="og:image" content="${absImage}" />`);
+          result = result.replace(/<meta name="twitter:image" content="[^"]*" \/>/, `<meta name="twitter:image" content="${absImage}" />`);
+          articleMeta.push(`<meta property="og:image:width" content="1200" />`);
+          articleMeta.push(`<meta property="og:image:height" content="630" />`);
         }
+        // Inject server-side JSON-LD for blog posts (crawlers don't execute JS)
+        const absImg = blogSeo.coverImage ? (blogSeo.coverImage.startsWith('http') ? blogSeo.coverImage : `${SITE_URL}${blogSeo.coverImage}`) : `${SITE_URL}/og-image.png`;
+        const blogJsonLd = {
+          '@context': 'https://schema.org',
+          '@type': 'BlogPosting',
+          headline: blogSeo.title.replace(/ — 老J AI 實驗室$/, ''),
+          description: blogSeo.description,
+          image: absImg,
+          author: { '@type': 'Person', name: blogSeo.author || '老J' },
+          datePublished: blogSeo.publishedAt,
+          dateModified: blogSeo.modifiedAt,
+          url: `${SITE_URL}${blogSeo.path}`,
+          publisher: { '@type': 'Organization', name: '老J AI 實驗室', url: SITE_URL },
+          mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE_URL}${blogSeo.path}` },
+        };
+        articleMeta.push(`<script type="application/ld+json">${JSON.stringify(blogJsonLd)}</script>`);
+
         if (articleMeta.length) {
           result = result.replace('</head>', `    ${articleMeta.join('\n    ')}\n  </head>`);
         }
