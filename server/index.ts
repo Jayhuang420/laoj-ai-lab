@@ -679,6 +679,96 @@ app.get('/ads.txt', (_req, res) => {
   res.sendFile(path.join(seoDir, 'ads.txt'));
 });
 
+// ─── Ebook Banner (iframe embed for external tools) ─────────────────────────
+app.get('/ebook-banner', (_req, res) => {
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=3600');
+  res.setHeader('X-Frame-Options', 'ALLOWALL');
+  res.setHeader('Content-Security-Policy', "frame-ancestors *");
+  res.send(`<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>用 AI 打造你的第一個被動收入</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{background:transparent;font-family:'Helvetica Neue',Arial,'PingFang TC','Microsoft JhengHei',sans-serif;}
+  a{text-decoration:none;color:inherit;}
+  .banner{display:block;margin:0;border-radius:16px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.25);transition:all .3s cubic-bezier(.16,1,.3,1);}
+  .banner:hover{transform:translateY(-4px);box-shadow:0 20px 50px rgba(0,0,0,.35);}
+  .wrap{position:relative;background:linear-gradient(135deg,#030712 0%,#111827 50%,#030712 100%);padding:24px 28px;}
+  .accent{position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#ca8a04,#facc15,#ca8a04);}
+  .row{display:flex;align-items:center;gap:24px;}
+  .content{flex:1;min-width:0;}
+  .badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:1px;color:#facc15;background:rgba(250,204,21,.1);border:1px solid rgba(250,204,21,.3);border-radius:100px;padding:4px 12px;margin-bottom:12px;}
+  h3{font-size:22px;font-weight:900;color:#ffffff;line-height:1.25;margin-bottom:4px;}
+  h3 .gold{color:#facc15;}
+  .sub{font-size:13px;color:#9ca3af;margin-bottom:14px;}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+  .tag{font-size:11px;font-weight:600;color:#fde68a;border:1px solid rgba(250,204,21,.4);border-radius:100px;padding:4px 12px;}
+  .cta{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#eab308,#facc15);color:#111827;font-weight:700;font-size:13px;padding:10px 22px;border-radius:100px;box-shadow:0 4px 12px rgba(234,179,8,.3);animation:pulse 2s ease-in-out infinite;}
+  .cta svg{width:14px;height:14px;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.85;}}
+  .visual{width:170px;height:120px;position:relative;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .play{width:72px;height:72px;border-radius:18px;background:linear-gradient(135deg,#eab308,#ca8a04);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(234,179,8,.4);}
+  .play svg{width:32px;height:32px;color:#ffffff;margin-left:4px;}
+  .spark{position:absolute;border-radius:50%;background:#fde047;animation:twinkle 2s ease-in-out infinite;}
+  .s1{top:8px;right:28px;width:8px;height:8px;}
+  .s2{bottom:16px;left:12px;width:6px;height:6px;animation-delay:.3s;}
+  .s3{top:20px;left:34px;width:4px;height:4px;animation-delay:.7s;}
+  @keyframes twinkle{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(.8);}}
+  .arrow{position:absolute;top:-4px;right:-8px;width:48px;height:48px;color:#34d399;opacity:.7;}
+  .footer{margin-top:14px;padding-top:14px;border-top:1px solid rgba(55,65,81,.6);font-size:11px;color:#6b7280;}
+  .footer .author{color:#9ca3af;font-weight:600;}
+  .footer .dot{color:#4b5563;margin:0 8px;}
+  @media(max-width:640px){
+    .wrap{padding:20px 18px;}
+    .row{flex-direction:column;align-items:center;text-align:center;gap:16px;}
+    .content{text-align:center;}
+    .tags{justify-content:center;}
+    h3{font-size:19px;}
+    .visual{width:140px;height:100px;}
+    .play{width:60px;height:60px;}
+    .play svg{width:28px;height:28px;}
+  }
+</style>
+</head>
+<body>
+<a class="banner" href="https://ebook.oldjailab.com/" target="_blank" rel="noopener noreferrer">
+  <div class="wrap">
+    <div class="accent"></div>
+    <div class="row">
+      <div class="content">
+        <span class="badge">2026 普通人不露臉</span>
+        <h3>用 AI 打造<span class="gold">你的第一個被動收入</span></h3>
+        <p class="sub">完整被動收入攻略 — 從 0 打造被動月收入 2 萬</p>
+        <div class="tags">
+          <span class="tag">自動生成音樂</span>
+          <span class="tag">上架 YT 頻道營利</span>
+        </div>
+        <span class="cta">
+          超早鳥優惠價 — 限時搶購中
+          <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </span>
+      </div>
+      <div class="visual">
+        <div class="play"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+        <div class="spark s1"></div>
+        <div class="spark s2"></div>
+        <div class="spark s3"></div>
+        <svg class="arrow" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2 20 L10 10 L14 14 L22 4 M16 4 L22 4 L22 10"/></svg>
+      </div>
+    </div>
+    <div class="footer">
+      Written by <span class="author">老 J AI 實驗室</span><span class="dot">|</span>@chillnightAImusic
+    </div>
+  </div>
+</a>
+</body>
+</html>`);
+});
+
 app.get('/sitemap.xml', (_req, res) => {
   res.setHeader('Content-Type', 'application/xml; charset=utf-8');
   res.setHeader('Cache-Control', 'public, max-age=3600');
