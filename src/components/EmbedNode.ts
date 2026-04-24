@@ -72,7 +72,30 @@ const EmbedNode = Node.create<EmbedOptions>({
       dom.classList.add('embed-wrapper');
       dom.contentEditable = 'false';
       dom.innerHTML = node.attrs.html;
-      return { dom };
+      let currentHtml: string = node.attrs.html;
+      return {
+        dom,
+        // Keep the same DOM instance when the node's html attr is unchanged,
+        // so embedded iframes (YouTube etc.) aren't reloaded on every doc update.
+        update(updated) {
+          if (updated.type.name !== 'embed') return false;
+          const nextHtml: string = updated.attrs?.html ?? '';
+          if (nextHtml !== currentHtml) {
+            dom.innerHTML = nextHtml;
+            currentHtml = nextHtml;
+          }
+          return true;
+        },
+        // iframes (YouTube, FB, etc.) mutate their own subtree as they load.
+        // Without this, ProseMirror re-parses those mutations back into the
+        // document, which can spiral into a re-render loop and crash Chrome.
+        ignoreMutation() {
+          return true;
+        },
+        stopEvent() {
+          return true;
+        },
+      };
     };
   },
 

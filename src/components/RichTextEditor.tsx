@@ -185,7 +185,6 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
       {showEmbedModal && (
         <EmbedModal
           editor={editor}
-          onChange={onChange}
           onClose={() => setShowEmbedModal(false)}
         />
       )}
@@ -309,19 +308,32 @@ function VideoModal({ editor, onClose }: { editor: any; onClose: () => void }) {
   const [error, setError] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
 
+  // Only match clean URLs — reject pasted <iframe> blobs to avoid feeding
+  // raw HTML into setYoutubeVideo (which treats the whole string as `src`).
   const isYoutubeUrl = (u: string) =>
-    /(?:youtube\.com\/(?:watch|embed|shorts)|youtu\.be\/)/.test(u);
+    !/<[a-z]/i.test(u) &&
+    /^https?:\/\/(?:www\.|m\.)?(?:youtube\.com\/(?:watch|embed|shorts|v)|youtu\.be\/)/i.test(u);
+
+  // Pull the first src="..." URL out of an <iframe> embed snippet.
+  const extractIframeSrc = (s: string): string | null => {
+    const m = s.match(/<iframe[^>]*\ssrc=["']([^"']+)["'][^>]*>/i);
+    return m ? m[1] : null;
+  };
 
   const handleInsertYoutube = () => {
     const trimmed = url.trim();
     if (!trimmed) return;
-    if (isYoutubeUrl(trimmed)) {
-      editor.chain().focus().setYoutubeVideo({ src: trimmed }).run();
+    // If user pasted a full <iframe> embed, pull out the src first.
+    const candidate = /^<iframe\b/i.test(trimmed)
+      ? (extractIframeSrc(trimmed) || '')
+      : trimmed;
+    if (candidate && isYoutubeUrl(candidate)) {
+      editor.chain().focus().setYoutubeVideo({ src: candidate }).run();
       onClose();
-    } else {
-      // 非 YouTube 連結，當作一般影片網址插入 <video> 標籤
-      insertVideo(trimmed);
+      return;
     }
+    // Treat as plain video URL (HTML5 <video> tag)
+    insertVideo(candidate || trimmed);
   };
 
   const insertVideo = (videoUrl: string) => {
@@ -458,7 +470,7 @@ function VideoModal({ editor, onClose }: { editor: any; onClose: () => void }) {
 }
 
 /* ── Embed Modal ───────────────────────────────────────────────────────────── */
-function EmbedModal({ editor, onChange, onClose }: { editor: any; onChange: (html: string) => void; onClose: () => void }) {
+function EmbedModal({ editor, onClose }: { editor: any; onClose: () => void }) {
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
 
@@ -474,10 +486,6 @@ function EmbedModal({ editor, onChange, onClose }: { editor: any; onChange: (htm
       type: 'embed',
       attrs: { html: trimmed },
     });
-    // Force sync: manually trigger onChange with latest HTML
-    setTimeout(() => {
-      onChange(editor.getHTML());
-    }, 100);
     onClose();
   };
 
