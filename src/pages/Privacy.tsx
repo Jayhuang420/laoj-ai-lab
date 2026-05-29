@@ -124,8 +124,8 @@ export default function Privacy() {
             </p>
             <ul className="list-disc pl-6 text-gray-600 space-y-1">
               <li>Google 會使用廣告 Cookie 來根據使用者造訪本網站和/或網際網路上其他網站的記錄，投放適當的廣告。</li>
-              <li>使用者可以前往 <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline">Google 廣告設定</a> 選擇停用個人化廣告。</li>
-              <li>或者，您也可以造訪 <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline">www.aboutads.info</a> 選擇退出第三方廠商使用 Cookie 投放個人化廣告。</li>
+              <li>使用者可以前往 <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-fuchsia-600 hover:text-fuchsia-700 underline">Google 廣告設定</a> 選擇停用個人化廣告。</li>
+              <li>或者，您也可以造訪 <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer" className="text-fuchsia-600 hover:text-fuchsia-700 underline">www.aboutads.info</a> 選擇退出第三方廠商使用 Cookie 投放個人化廣告。</li>
             </ul>
           </section>
 
@@ -163,8 +163,8 @@ export default function Privacy() {
               本網站使用以下第三方服務，這些服務有各自的隱私權政策：
             </p>
             <ul className="list-disc pl-6 text-gray-600 space-y-1">
-              <li><strong>Google Analytics</strong>：用於網站流量分析。<a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline">Google 隱私權政策</a></li>
-              <li><strong>Google AdSense</strong>：用於展示廣告。<a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline">Google 廣告政策</a></li>
+              <li><strong>Google Analytics</strong>：用於網站流量分析。<a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-fuchsia-600 hover:text-fuchsia-700 underline">Google 隱私權政策</a></li>
+              <li><strong>Google AdSense</strong>：用於展示廣告。<a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer" className="text-fuchsia-600 hover:text-fuchsia-700 underline">Google 廣告政策</a></li>
             </ul>
           </section>
 
@@ -181,7 +181,7 @@ export default function Privacy() {
               <li><strong>退訂權</strong>：您可以隨時透過電子報中的「取消訂閱」連結退訂。</li>
             </ul>
             <p className="text-gray-600 leading-relaxed mt-3">
-              如需行使上述權利，請透過 <a href="mailto:jshao0420@gmail.com" className="text-blue-600 hover:text-blue-700 underline">jshao0420@gmail.com</a> 與我們聯繫。
+              如需行使上述權利，請透過 <a href="mailto:jshao0420@gmail.com" className="text-fuchsia-600 hover:text-fuchsia-700 underline">jshao0420@gmail.com</a> 與我們聯繫。
             </p>
           </section>
 
@@ -208,8 +208,8 @@ export default function Privacy() {
               若您對本隱私權政策有任何疑問或建議，歡迎透過以下方式與我們聯繫：
             </p>
             <ul className="list-disc pl-6 text-gray-600 space-y-1 mt-2">
-              <li>Email：<a href="mailto:jshao0420@gmail.com" className="text-blue-600 hover:text-blue-700 underline">jshao0420@gmail.com</a></li>
-              <li>合作洽談頁面：<Link to="/contact" className="text-blue-600 hover:text-blue-700 underline">www.oldjailab.com/contact</Link></li>
+              <li>Email：<a href="mailto:jshao0420@gmail.com" className="text-fuchsia-600 hover:text-fuchsia-700 underline">jshao0420@gmail.com</a></li>
+              <li>合作洽談頁面：<Link to="/contact" className="text-fuchsia-600 hover:text-fuchsia-700 underline">www.oldjailab.com/contact</Link></li>
             </ul>
           </section>
         </div>

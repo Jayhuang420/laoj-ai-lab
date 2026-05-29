@@ -102,7 +102,7 @@ export default function Blog() {
       {/* ── Header ──────────────────────────────────────────────────────────── */}
       <motion.div className="text-center mb-16" initial="initial" animate="animate"
         variants={{ initial: { opacity: 0 }, animate: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.1 } } }}>
-        <motion.p variants={fadeInUp} className="text-xs font-bold tracking-widest text-blue-600 uppercase mb-4">Blog</motion.p>
+        <motion.p variants={fadeInUp} className="text-xs font-bold tracking-widest text-fuchsia-600 uppercase mb-4">Blog</motion.p>
         <motion.h1 variants={fadeInUp} className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
           老 J 的實戰筆記
         </motion.h1>
@@ -153,7 +153,7 @@ export default function Blog() {
           className="text-center py-20">
           <p className="text-gray-400 mb-2">{posts.length === 0 ? '尚未發布任何文章' : '沒有符合條件的文章'}</p>
           {search && (
-            <button onClick={() => setSearch('')} className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+            <button onClick={() => setSearch('')} className="text-sm text-fuchsia-600 hover:text-fuchsia-700 font-medium">
               清除搜尋
             </button>
           )}
@@ -183,7 +183,7 @@ export default function Blog() {
                 {/* Content */}
                 <div className="p-6">
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg">
+                    <span className="inline-flex items-center gap-1 text-xs font-medium text-fuchsia-600 bg-fuchsia-50 px-2.5 py-1 rounded-lg">
                       <Folder className="w-3 h-3" /> {post.category}
                     </span>
                     <span className="text-xs text-gray-400 flex items-center gap-1">
@@ -191,7 +191,7 @@ export default function Blog() {
                     </span>
                   </div>
 
-                  <h2 className="font-bold text-lg text-slate-900 mb-2 line-clamp-2 group-hover:text-[#1E3A8A] transition-colors">
+                  <h2 className="font-bold text-lg text-slate-900 mb-2 line-clamp-2 group-hover:text-[#6D28D9] transition-colors">
                     {post.title}
                   </h2>
 
@@ -203,7 +203,7 @@ export default function Blog() {
                     <span className="text-xs text-gray-400 flex items-center gap-1">
                       <Eye className="w-3 h-3" /> {post.view_count} 次瀏覽
                     </span>
-                    <span className="text-sm font-medium text-slate-900 flex items-center gap-1 group-hover:text-[#1E3A8A] group-hover:gap-2 transition-all">
+                    <span className="text-sm font-medium text-slate-900 flex items-center gap-1 group-hover:text-[#6D28D9] group-hover:gap-2 transition-all">
                       閱讀更多 <ArrowRight className="w-4 h-4" />
                     </span>
                   </div>

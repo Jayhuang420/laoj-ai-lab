@@ -4,16 +4,16 @@ import { X, Download, Check, RefreshCw, Palette } from 'lucide-react';
 const W = 1200, H = 630;
 
 const CATEGORY_CONFIG: Record<string, { emoji: string; gradient: [string, string] }> = {
-  '工具介紹': { emoji: '🔧', gradient: ['#1E3A8A', '#2563eb'] },
-  '技術教學': { emoji: '💡', gradient: ['#0f172a', '#1e40af'] },
-  'AI 應用':  { emoji: '🤖', gradient: ['#1e293b', '#1E3A8A'] },
-  '創業心得': { emoji: '🚀', gradient: ['#1e3a5f', '#2563eb'] },
-  '案例分析': { emoji: '📊', gradient: ['#1a2744', '#1E3A8A'] },
-  '一般':     { emoji: '📝', gradient: ['#334155', '#1E3A8A'] },
+  '工具介紹': { emoji: '🔧', gradient: ['#5b21b6', '#7c3aed'] },
+  '技術教學': { emoji: '💡', gradient: ['#1e1b4b', '#6d28d9'] },
+  'AI 應用':  { emoji: '🤖', gradient: ['#2d1b69', '#6d28d9'] },
+  '創業心得': { emoji: '🚀', gradient: ['#4c1d95', '#7c3aed'] },
+  '案例分析': { emoji: '📊', gradient: ['#1e1b4b', '#7c3aed'] },
+  '一般':     { emoji: '📝', gradient: ['#3b0764', '#6d28d9'] },
 };
 
 const STYLE_PRESETS = [
-  { name: '經典深藍', gradients: [['#1E3A8A', '#2563eb'], ['#0f172a', '#1e40af']] },
+  { name: '品牌紫', gradients: [['#5b21b6', '#7c3aed'], ['#1e1b4b', '#6d28d9']] },
   { name: '暗夜黑金', gradients: [['#1a1a2e', '#16213e'], ['#0f0f23', '#1a1a2e']] },
   { name: '科技紫',   gradients: [['#2d1b69', '#5b21b6'], ['#1e1b4b', '#4338ca']] },
   { name: '深海綠',   gradients: [['#064e3b', '#059669'], ['#022c22', '#047857']] },

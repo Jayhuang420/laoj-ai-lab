@@ -12,8 +12,8 @@ const FOOTER_DEFAULTS: FooterData = {
   links: [
     { label: 'Email', url: 'mailto:jshao0420@gmail.com' },
     { label: '合作洽談', url: '/contact' },
-    { label: 'Threads', url: 'https://www.threads.net/@oldjailab' },
-    { label: 'FB粉專《老J AI實驗室》', url: 'https://www.facebook.com/oldjailab' },
+    { label: 'Threads', url: 'https://www.threads.com/@jay770420' },
+    { label: 'FB粉專《老J AI實驗室》', url: 'https://www.facebook.com/profile.php?id=61581582131837' },
     { label: '隱私權政策', url: '/privacy' },
   ],
 };
@@ -68,19 +68,19 @@ export default function Layout() {
     to === '/' ? location.pathname === '/' : location.pathname.startsWith(to);
 
   return (
-    <div className="min-h-screen bg-[#FDFCFB] text-[#1A1A1A] font-sans selection:bg-[#1E3A8A] selection:text-white flex flex-col">
+    <div className="min-h-screen bg-[#FBFAFF] text-[#1A1A1A] font-sans selection:bg-[#6D28D9] selection:text-white flex flex-col">
       {/* Scroll Progress Bar */}
       <motion.div
         style={{ scaleX }}
-        className="fixed top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 to-blue-500 origin-left z-[60]"
+        className="fixed top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-violet-500 to-fuchsia-500 origin-left z-[60]"
       />
 
       {/* Navigation */}
       <nav aria-label="主導覽列" className={`fixed w-full top-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-[#FDFCFB]/90 backdrop-blur-lg shadow-sm' : 'bg-[#FDFCFB]/80 backdrop-blur-md'
+        scrolled ? 'bg-[#FBFAFF]/90 backdrop-blur-lg shadow-sm' : 'bg-[#FBFAFF]/80 backdrop-blur-md'
       } border-b border-gray-100`}>
         <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link to="/" aria-label="老J AI 實驗室 - 回到首頁" className="font-bold text-xl tracking-tight hover:text-[#1E3A8A] transition-colors">
+          <Link to="/" aria-label="老J AI 實驗室 - 回到首頁" className="font-bold text-xl tracking-tight hover:text-[#6D28D9] transition-colors">
             老 J AI 實驗室
           </Link>
 
@@ -92,7 +92,7 @@ export default function Layout() {
                   {label}
                 </span>
                 <motion.span
-                  className="absolute bottom-0 left-0 h-0.5 bg-[#1E3A8A] rounded-full"
+                  className="absolute bottom-0 left-0 h-0.5 bg-[#6D28D9] rounded-full"
                   initial={false}
                   animate={{ width: isActive(to) ? '100%' : '0%' }}
                   transition={{ duration: 0.25 }}
@@ -102,7 +102,7 @@ export default function Layout() {
           </div>
 
           <div className="flex items-center gap-3">
-            <Link to="/contact" className="hidden md:block bg-[#1A1A1A] text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-[#1E3A8A] transition-colors">
+            <Link to="/contact" className="hidden md:block bg-[#1A1A1A] text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-[#6D28D9] transition-colors">
               免費諮詢
             </Link>
             {/* Hamburger */}
@@ -124,7 +124,7 @@ export default function Layout() {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.25, ease: 'easeInOut' }}
-              className="md:hidden overflow-hidden border-t border-gray-100 bg-[#FDFCFB]"
+              className="md:hidden overflow-hidden border-t border-gray-100 bg-[#FBFAFF]"
             >
               <div className="px-6 py-4 flex flex-col gap-2">
                 {navLinks.map(({ to, label }) => (
@@ -142,7 +142,7 @@ export default function Layout() {
                 ))}
                 <Link
                   to="/contact"
-                  className="mt-2 py-3 px-4 rounded-xl bg-[#1E3A8A] text-white text-sm font-medium text-center"
+                  className="mt-2 py-3 px-4 rounded-xl bg-[#6D28D9] text-white text-sm font-medium text-center"
                 >
                   免費諮詢
                 </Link>
@@ -200,7 +200,7 @@ export default function Layout() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="fixed bottom-6 left-6 z-50 w-11 h-11 bg-slate-900 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-[#1E3A8A] transition-colors"
+            className="fixed bottom-6 left-6 z-50 w-11 h-11 bg-slate-900 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-[#6D28D9] transition-colors"
             aria-label="回到頂部"
           >
             <ChevronUp className="w-5 h-5" />

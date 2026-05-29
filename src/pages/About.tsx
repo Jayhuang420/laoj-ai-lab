@@ -8,35 +8,36 @@ import SEO from '../components/SEO';
 const DEFAULTS = {
   intro: {
     name: '老 J',
-    role: 'AI 實驗室創辦人',
-    headline: '從教學影片設計師\n到 AI 自動化一人公司',
+    role: 'AI 音樂頻道變現實戰家',
+    headline: '從操盤百億的零售高管\n到靠 AI 音樂頻道領被動收入',
     bio: [
-      '我深知在資源有限的情況下，如何將未經證實的點子轉化為具備「產品市場媒合度（PMF）」的可規模化業務。',
-      '老 J AI 實驗室的成立，是為了分享那些我親身實踐過、真正能降低成本並帶來收益的 AI 工作流。我們拒絕虛榮功能，只專注於解決剛需。',
+      '我做了 12 年零售，管過上百間門市、扛過上億營收。但真正讓我做出「睡覺也在累積收入」的，不是管理經驗——而是一個我不露臉、不唱歌、連樂理都不懂也能經營的 YouTube 音樂頻道。',
+      '因為 AI 把遊戲規則改寫了。現在一個人就能用 Suno 量產原創音樂、用 AI 生成封面與 MV，養出一個會自動累積收益的頻道。我把零售練出的「選品」與「看數據」直覺套進去，結果比我想的還快——虛擬歌手「唯夏 VXYA」30 天就開通營利。',
+      '而且這不是只有我做得到。「ChillNight」每月穩定領被動分潤，我 4 月開課的學員也陸續開通營利。我經營老 J AI 實驗室，就是想把這套可複製的 SOP，交到更多想靠內容翻身的普通人手上。',
     ],
   },
   skills: {
     items: [
-      { name: '精實創業 / MVP 思維', percentage: 95 },
-      { name: 'AI 工作流自動化', percentage: 90 },
-      { name: '零售 & 電商品牌策略', percentage: 88 },
-      { name: 'PLG 商業化路徑設計', percentage: 82 },
-      { name: 'Prompt Engineering', percentage: 85 },
+      { name: '選題對標・找賺錢利基', percentage: 94 },
+      { name: 'Suno AI 原創音樂製作', percentage: 96 },
+      { name: 'AI 封面 / MV 視覺', percentage: 88 },
+      { name: 'YouTube 演算法 / SEO', percentage: 90 },
+      { name: '開通營利・多元變現', percentage: 92 },
     ],
   },
   principles: {
     items: [
-      { title: '問題導向', description: '拒絕虛榮功能。在回答任何建議前，必須先驗證這是否解決了客戶的「剛需」。' },
-      { title: '具體可執行', description: '所有的建議必須包含具體的行動步驟、推薦的 AI 協作工具或自動化工作流。' },
-      { title: '0 到 1 的速度感', description: '優先考慮 MVP 路徑，強調透過快速迭代獲取市場反饋，而非追求一次性的完美。' },
+      { title: '只教能變現的', description: '每個方法都對準一件事：怎麼讓頻道真的賺到錢。不教華而不實、做了也不會有收益的技巧。' },
+      { title: '具體可複製', description: '所有教學都附具體步驟、可直接套用的提示詞與工作流，零基礎照著做就會，不用自己摸索半年。' },
+      { title: '先營利、再放大', description: '優先最快看到第一筆收益的路徑，先開通 YouTube 營利，再疊加聯盟行銷與多頻道複製放大收入。' },
     ],
   },
   timeline: {
     items: [
       { year: '2011–2018', title: '零售業高階管理', description: '加入連鎖零售集團，從門市主管一路晉升至區域總監，操盤 150+ 門市、帶領 500+ 人團隊，年營收逾百億。' },
       { year: '2018–2022', title: '電商暨品牌數位轉型', description: '主導集團電商業務從零打造，整合 O2O 策略，打通線下數據鏈路，帶動整體業績年成長 40%+。' },
-      { year: '2022–2024', title: '投入 AI 工具開發', description: '開始研究 GPT、Claude 等大型語言模型的商業應用，建立多個自動化工作流，驗證 AI 變現可行性。' },
-      { year: '2024–Now', title: '老 J AI 實驗室創立', description: '整合 12 年管理實戰與 AI 開發經驗，打造「老 J AI 實驗室」，聚焦一人公司 AI 化與 PLG 商業化路徑。' },
+      { year: '2022–2024', title: '白天上班，晚上做 AI 副業', description: '下班後鑽研 AI 變現，部落格、短影音都試過卻沒起色；直到把「AI 音樂 + 不露臉頻道」組合起來，才跑出第一個真正會賺錢的模型。' },
+      { year: '2024–Now', title: '音樂頻道教學 & 老 J AI 實驗室', description: '養出唯夏 VXYA、ChillNight 等多個營利頻道，並開課教學。第一批 4 月學員零基礎起步，最快一個多月就開通 YouTube 營利。' },
     ],
   },
 };
@@ -75,16 +76,16 @@ export default function About() {
         '@type': 'Person',
         name: '老J',
         alternateName: 'Old J',
-        jobTitle: 'AI 實驗室創辦人',
-        description: '12年零售業高階管理經驗，專注 AI 自動化變現與一人公司商業化路徑設計。從百億級連鎖品牌操盤到 AI 自動化一人公司。',
+        jobTitle: 'AI 音樂頻道變現教學者 / AI 實驗室創辦人',
+        description: '12 年零售業高階管理經驗，轉型專注用 AI 打造不露臉 YouTube 音樂頻道變現。親手養出唯夏 VXYA、ChillNight 等營利頻道，並開課教學。',
         url: 'https://www.oldjailab.com/about',
         worksFor: {
           '@type': 'Organization',
           name: '老J AI 實驗室',
           url: 'https://www.oldjailab.com',
         },
-        knowsAbout: ['AI 自動化', '精實創業', 'PLG 商業化', 'Prompt Engineering', '零售管理', '電商策略'],
-        sameAs: ['https://twitter.com/laojailab', 'https://youtube.com/@laojailab'],
+        knowsAbout: ['AI 音樂製作', 'Suno', '不露臉 YouTube 頻道', 'YouTube 變現', 'AI 內容創作', '聯盟行銷'],
+        sameAs: ['https://www.youtube.com/@chillnightAImusic', 'https://www.youtube.com/@VXYA_officialmusic', 'https://www.threads.com/@jay770420'],
       },
     },
     {
@@ -100,8 +101,8 @@ export default function About() {
   return (
     <article className="py-20 px-6 max-w-6xl mx-auto">
       <SEO
-        title="關於老J — 從零售高管到 AI 自動化創業者"
-        description="老J：12年零售業高階管理經驗，從百億級連鎖品牌操盤到 AI 自動化一人公司。專注精實創業、AI 工作流自動化、PLG 商業化路徑設計。"
+        title="關於老J — 從零售高管到 AI 音樂頻道教學者"
+        description="老J：12 年零售業高階管理經驗，轉型用 AI 打造不露臉 YouTube 音樂頻道變現。親手養出唯夏 VXYA、ChillNight 等營利頻道，並開課教學，學員陸續開通營利。"
         path="/about"
         jsonLd={aboutJsonLd}
       />
@@ -110,7 +111,7 @@ export default function About() {
       <section aria-label="個人簡介" className="grid md:grid-cols-2 gap-16 items-start mb-24">
         <motion.div initial="initial" animate="animate"
           variants={{ initial:{opacity:0}, animate:{opacity:1,transition:{staggerChildren:0.1,delayChildren:0.1}} }}>
-          <motion.p variants={fadeInUp} className="text-xs font-bold tracking-widest text-emerald-600 uppercase mb-4">About Old J</motion.p>
+          <motion.p variants={fadeInUp} className="text-xs font-bold tracking-widest text-violet-600 uppercase mb-4">About Old J</motion.p>
           <motion.h1 variants={fadeInUp} className="text-4xl md:text-5xl font-bold tracking-tight mb-8 leading-tight">
             {(intro.headline || '從教學影片設計師\n到 AI 自動化一人公司').split('\n').map((line: string, i: number, arr: string[]) => (
               <React.Fragment key={i}>
@@ -126,12 +127,13 @@ export default function About() {
           ))}
 
           {/* Skills — Animated Circular Chips */}
-          <motion.div variants={fadeInUp} className="mt-6 relative">
+          <motion.div variants={fadeInUp} className="mt-8 relative">
+            <p className="text-sm font-bold text-slate-900 mb-4">這也是我會手把手教你的 5 件事：</p>
             <svg className="absolute w-0 h-0" aria-hidden="true">
               <defs>
                 <linearGradient id="skill-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#10b981" />
-                  <stop offset="100%" stopColor="#3b82f6" />
+                  <stop offset="0%" stopColor="#7c3aed" />
+                  <stop offset="100%" stopColor="#d946ef" />
                 </linearGradient>
               </defs>
             </svg>
@@ -147,7 +149,7 @@ export default function About() {
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
                     whileHover={{ y: -4, scale: 1.04 }}
-                    className="flex items-center gap-3 px-4 py-3 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md hover:border-emerald-200 transition-all cursor-default"
+                    className="flex items-center gap-3 px-4 py-3 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md hover:border-violet-200 transition-all cursor-default"
                   >
                     <div className="relative w-10 h-10 shrink-0">
                       <svg className="w-full h-full -rotate-90" viewBox="0 0 40 40">
@@ -203,7 +205,7 @@ export default function About() {
             <ul className="space-y-4">
               {principles.items.map((p: any, i: number) => (
                 <li key={i} className="flex gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-5 h-5 text-violet-500 shrink-0 mt-0.5" />
                   <div>
                     <div className="font-bold text-slate-900 text-sm">{p.title}</div>
                     <div className="text-xs text-gray-500 leading-relaxed mt-0.5">{p.description}</div>
@@ -218,8 +220,8 @@ export default function About() {
       {/* ── Timeline ──────────────────────────────────────────────────────────── */}
       <motion.section aria-labelledby="timeline-title" initial={{ opacity:0, y:24 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }} transition={{ duration:0.55 }}
         className="mb-24">
-        <p className="text-xs font-bold tracking-widest text-blue-600 uppercase mb-3">My Journey</p>
-        <h2 id="timeline-title" className="text-3xl font-bold tracking-tight mb-12">從零售巨頭到 AI 創業者</h2>
+        <p className="text-xs font-bold tracking-widest text-fuchsia-600 uppercase mb-3">My Journey</p>
+        <h2 id="timeline-title" className="text-3xl font-bold tracking-tight mb-12">從零售巨頭到 AI 音樂頻道實戰家</h2>
 
         <div className="relative pl-8 border-l-2 border-gray-100 space-y-10">
           {timeline.items.map((item: any, i: number) => (
@@ -230,7 +232,7 @@ export default function About() {
               transition={{ duration:0.45, delay: i * 0.08 }}
               className="relative"
             >
-              <div className="absolute -left-[2.85rem] w-10 h-10 bg-white border-2 border-gray-200 rounded-xl flex items-center justify-center text-slate-700 hover:border-[#1E3A8A] hover:text-[#1E3A8A] transition-colors">
+              <div className="absolute -left-[2.85rem] w-10 h-10 bg-white border-2 border-gray-200 rounded-xl flex items-center justify-center text-slate-700 hover:border-[#6D28D9] hover:text-[#6D28D9] transition-colors">
                 {TIMELINE_ICONS[i] || <Briefcase className="w-5 h-5" />}
               </div>
               <div className="bg-white border border-gray-100 rounded-2xl p-6 hover:border-gray-200 hover:shadow-sm transition-all ml-4">
@@ -246,12 +248,12 @@ export default function About() {
       {/* ── CTA ───────────────────────────────────────────────────────────────── */}
       <motion.section aria-label="行動呼籲" initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
         className="text-center bg-slate-50 rounded-3xl border border-gray-100 p-12">
-        <h3 className="text-2xl font-bold mb-4">準備好一起實戰了嗎？</h3>
-        <p className="text-gray-500 mb-8 max-w-md mx-auto text-sm">探索老 J 親自開發並驗證的 AI 工具，立即開始你的自動化變現之旅。</p>
-        <Link to="/tools"
-          className="inline-flex items-center gap-2 bg-slate-900 text-white px-8 py-4 rounded-full font-medium hover:bg-[#1E3A8A] hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
-          瀏覽所有 AI 工具 <ArrowRight className="w-4 h-4" />
-        </Link>
+        <h3 className="text-2xl font-bold mb-4">準備好打造你的音樂頻道了嗎？</h3>
+        <p className="text-gray-500 mb-8 max-w-md mx-auto text-sm">看我怎麼做、跟著學，從 0 衝刺你的第一個開通營利的 AI 音樂頻道。</p>
+        <a href="https://ebook.oldjailab.com/" target="_blank" rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 bg-slate-900 text-white px-8 py-4 rounded-full font-medium hover:bg-[#6D28D9] hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+          了解線上課程 <ArrowRight className="w-4 h-4" />
+        </a>
       </motion.section>
     </article>
   );

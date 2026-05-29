@@ -17,9 +17,9 @@ const ICON_MAP: Record<string, React.ReactNode> = {
 
 const CATEGORY_COLORS: Record<string, string> = {
   '內容創作': 'bg-violet-50 text-violet-600 border-violet-100',
-  '數據分析': 'bg-blue-50 text-blue-600 border-blue-100',
+  '數據分析': 'bg-fuchsia-50 text-fuchsia-600 border-fuchsia-100',
   '命理占卜': 'bg-amber-50 text-amber-600 border-amber-100',
-  '商業應用': 'bg-emerald-50 text-emerald-600 border-emerald-100',
+  '商業應用': 'bg-violet-50 text-violet-600 border-violet-100',
   '生活效率': 'bg-rose-50 text-rose-600 border-rose-100',
   '學習資源': 'bg-orange-50 text-orange-600 border-orange-100',
 };
@@ -72,7 +72,7 @@ export default function Tools() {
       '@context': 'https://schema.org',
       '@type': 'CollectionPage',
       name: 'AI 工具箱 — 老J AI 實驗室',
-      description: '實驗室嚴選、親測有效的高效率 AI 工具。涵蓋內容創作、數據分析、商業應用、生活效率等分類。',
+      description: '老J 經營 AI 音樂頻道與一人公司時親手打造的免費工具，涵蓋內容創作、數據分析、商業應用、生活效率等分類。',
       url: 'https://www.oldjailab.com/tools',
       mainEntity: {
         '@type': 'ItemList',
@@ -106,8 +106,8 @@ export default function Tools() {
   return (
     <div className="py-12 px-6 max-w-6xl mx-auto">
       <SEO
-        title="AI 工具箱 — 嚴選高效率 AI 變現工具"
-        description="老J AI 實驗室嚴選、親測有效的 AI 工具：歌詞產生器、彩券分析、命理占卜、記帳日記、AI 教學等。立即免費使用，開始你的自動化變現工作流。"
+        title="AI 工具箱 — 我做音樂頻道在用的免費工具"
+        description="老J 經營 AI 音樂頻道與一人公司時親手打造的免費工具：YT 歌詞產生器、對標頻道研究、影片轉鈴聲等，全部免費使用。"
         path="/tools"
         jsonLd={toolsJsonLd}
       />
@@ -115,7 +115,7 @@ export default function Tools() {
       {/* Header */}
       <motion.header initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.5 }} className="mb-10">
         <h1 className="text-4xl font-bold tracking-tight mb-3">AI 工具箱</h1>
-        <p className="text-lg text-gray-500 max-w-2xl">實驗室嚴選、親測有效的高效率 AI 工具。點擊進入各個工具，立即開始你的自動化變現工作流。</p>
+        <p className="text-lg text-gray-500 max-w-2xl">我自己經營 AI 音樂頻道、做一人公司時打造的小工具，順手做給大家免費用。點擊進入即可使用。</p>
       </motion.header>
 
       {/* Search + Filter Bar */}
@@ -184,9 +184,9 @@ export default function Tools() {
                   {tool.category}
                 </span>
               </div>
-              <h3 className="text-lg font-bold mb-3 group-hover:text-[#1E3A8A] transition-colors">{tool.title}</h3>
+              <h3 className="text-lg font-bold mb-3 group-hover:text-[#6D28D9] transition-colors">{tool.title}</h3>
               <p className="text-gray-500 text-sm leading-relaxed mb-6 flex-1">{tool.description}</p>
-              <div className="text-sm font-semibold flex items-center gap-1.5 text-slate-900 group-hover:text-[#1E3A8A] group-hover:gap-2.5 transition-all mt-auto">
+              <div className="text-sm font-semibold flex items-center gap-1.5 text-slate-900 group-hover:text-[#6D28D9] group-hover:gap-2.5 transition-all mt-auto">
                 開始使用 <ArrowRight className="w-4 h-4" />
               </div>
             </motion.a>

@@ -38,7 +38,7 @@ function renderMarkdown(md: string): string {
     // Images
     .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="rounded-xl my-6 max-w-full" />')
     // Links
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-700 underline underline-offset-2">$1</a>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-fuchsia-600 hover:text-fuchsia-700 underline underline-offset-2">$1</a>')
     // Headers
     .replace(/^#### (.+)$/gm, '<h4 class="text-lg font-bold text-slate-900 mt-8 mb-3">$1</h4>')
     .replace(/^### (.+)$/gm, '<h3 class="text-xl font-bold text-slate-900 mt-10 mb-4">$1</h3>')
@@ -53,7 +53,7 @@ function renderMarkdown(md: string): string {
     // Horizontal rule
     .replace(/^---$/gm, '<hr class="my-8 border-gray-200" />')
     // Blockquote
-    .replace(/^> (.+)$/gm, '<blockquote class="border-l-4 border-blue-400 bg-blue-50/50 pl-4 py-3 pr-4 my-6 text-gray-700 rounded-r-xl italic">$1</blockquote>')
+    .replace(/^> (.+)$/gm, '<blockquote class="border-l-4 border-fuchsia-400 bg-fuchsia-50/50 pl-4 py-3 pr-4 my-6 text-gray-700 rounded-r-xl italic">$1</blockquote>')
     // Unordered list
     .replace(/^[-*] (.+)$/gm, '<li class="ml-6 list-disc text-gray-600 mb-1.5">$1</li>')
     // Ordered list
@@ -199,7 +199,7 @@ export default function BlogPost() {
         <h1 className="text-4xl font-bold text-slate-900 mb-4">找不到文章</h1>
         <p className="text-gray-500 mb-8">這篇文章可能已被移除或尚未發布。</p>
         <Link to="/blog"
-          className="inline-flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-full font-medium hover:bg-[#1E3A8A] transition-colors">
+          className="inline-flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-full font-medium hover:bg-[#6D28D9] transition-colors">
           <ArrowLeft className="w-4 h-4" /> 返回部落格
         </Link>
       </div>
@@ -271,7 +271,7 @@ export default function BlogPost() {
 
           {/* Meta */}
           <div className="flex flex-wrap items-center gap-3 mb-5">
-            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full">
+            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-fuchsia-600 bg-fuchsia-50 px-3 py-1.5 rounded-full">
               <Folder className="w-3 h-3" /> {post.category}
             </span>
             <span className="text-xs text-gray-400 flex items-center gap-1.5">

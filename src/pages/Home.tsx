@@ -9,6 +9,9 @@ import { useToast } from '../context/ToastContext';
 import SEO from '../components/SEO';
 import EbookBanner from '../components/EbookBanner';
 
+/* Shared cubic-bezier easing (typed as a tuple so motion's Easing type accepts it) */
+const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
+
 const TOOL_ICON_MAP: Record<string, React.ReactNode> = {
   Music: <Music className="w-6 h-6" />,
   Youtube: <Youtube className="w-6 h-6" />,
@@ -25,52 +28,139 @@ const TOOL_ICON_MAP: Record<string, React.ReactNode> = {
 /* ── Defaults (fallback when API has no data) ─────────────────────────────── */
 const DEFAULTS = {
   hero: {
-    badgeText: '12年+ 零售業高階經理人 帶你如何使用AI 落地變現',
-    title: '不談空泛理論\n只教你打造',
-    titleHighlight: '高獲利 AI 事業',
-    subtitle: '專為「一人公司」設計的實戰指南。結合精實創業與 PLG 思維，將 AI 從生產力工具轉化為具備 PMF 的可規模化業務。',
-    ctaText: '探索 AI 實戰工具',
-    ctaSecondary: '領取變現全景地圖',
-    photoBadge: 'AI 變現實戰家',
-    trustBadges: '✓ 親身實戰驗證,✓ 一人公司適用,✓ 零廢話教學,✓ 每月持續更新',
+    badgeText: '12 年零售高管 · 親手養出 2 個營利中的 AI 音樂頻道',
+    title: '不露臉、不唱歌、不懂樂理\n用 AI 打造會自動賺錢的',
+    titleHighlight: '音樂頻道',
+    subtitle: '我已經驗證 2 次：虛擬歌手「唯夏 VXYA」30 天開通 YouTube 營利，「ChillNight」AI 音樂頻道每月領被動分潤。現在，我把整套可複製的 SOP 教給你。',
+    ctaText: '免費領取 AI 音樂變現指南',
+    ctaSecondary: '試聽代表作品',
+    photoBadge: 'AI 音樂變現實戰家',
+    trustBadges: '✓ 30 天開通營利,✓ 不需露臉出鏡,✓ 零樂理基礎,✓ 完整 SOP 複製',
+  },
+  works: {
+    label: '代表作品 · ORIGINAL WORKS',
+    sectionTitle: '點開就懂——這些都是 AI 做的原創音樂',
+    sectionSubtitle: '唯夏 VXYA × ChillNight 的原創 MV，每一首都是頻道實際在跑、實際在累積收益的內容。',
+    featuredId: 'V2qLxxpaZxo',
+    featuredTitle: '《辭雪樓》戲腔古典情歌 · 破 3 萬觀看',
+    items: [
+      { id: 'igtxFHoR-3k', title: '《夢蝶》', tag: '古典戲腔', cover: '/images/works/mengdie.jpg' },
+      { id: 'lC1DMjpd5Bs', title: '《破雲槍》', tag: '古風熱血戰歌', cover: '/images/works/poyunqiang.jpg' },
+      { id: '0GVhRwCAWi4', title: '《長風入喉》', tag: '古風熱血戰歌', cover: '/images/works/changfeng.jpg' },
+      { id: 'dOYDE3Lr2ds', title: '《舊戲辭》', tag: '古典戲腔', cover: '/images/works/jiuxici.jpg' },
+      { id: 'i_4_dEzL_vc', title: '《醉月仙》', tag: '仙俠浪漫情歌', cover: '/images/works/zuiyuexian.jpg' },
+    ],
+  },
+  channels: {
+    label: '真實戰績',
+    sectionTitle: '我不只教學，我自己就在做',
+    sectionSubtitle: '這兩個頻道都是我親手從 0 養起，現在仍在持續更新、持續產生收益。',
+    items: [
+      {
+        name: '唯夏 VXYA',
+        tag: 'AI 虛擬歌手 IP',
+        desc: '從 0 打造的古風虛擬歌手，30 天開通 YouTube 營利。出道戲腔單曲《辭雪樓》突破 3 萬觀看，建立完整音樂宇宙與粉絲社群。',
+        metric: '30 天',
+        metricLabel: '開通營利',
+        url: 'https://www.youtube.com/@VXYA_officialmusic',
+        accent: 'violet',
+        avatar: '/images/channels/vxya.jpg',
+      },
+      {
+        name: 'ChillNight AI Music',
+        tag: '不露臉純音樂頻道',
+        desc: '主打深夜放鬆、Trap、國風說唱的不露臉音樂頻道，用 AI 量產長片合輯與 Shorts，穩定累積 YouTube 廣告分潤。',
+        metric: 'NT$2萬+',
+        metricLabel: '月被動分潤',
+        url: 'https://www.youtube.com/@chillnightAImusic',
+        accent: 'fuchsia',
+        avatar: '/images/channels/chillnight.jpg',
+      },
+    ],
+  },
+  students: {
+    label: '學員實證',
+    sectionTitle: '不是只有我做得到，學員也跟著做出來了',
+    sectionSubtitle: '4 月開課的學員，零基礎跟著 SOP 操作，一個多月就看到成果。',
+    items: [
+      {
+        name: '流行引力 Pulse Gravity',
+        handle: '@PulseGravity',
+        avatar: '/images/channels/pulsegravity.jpg',
+        niche: '國風史詩電音 · 布袋戲戰鼓',
+        stat: '1,600+ 訂閱 · 129 部影片',
+        result: '4 月零基礎加入，5 月中開通 YouTube 營利，並已開放頻道會員。',
+        url: 'https://www.youtube.com/@PulseGravity',
+        accent: 'violet',
+      },
+      {
+        name: '光室謐靜',
+        handle: '@lightzen108',
+        avatar: '/images/channels/lightzen108.jpg',
+        niche: '療癒頻率音樂 · 助眠冥想',
+        stat: '450+ 訂閱 · 21 部影片',
+        result: '4 月加入，從 0 起步穩定產出，即將達成 YouTube 營利門檻。',
+        url: 'https://www.youtube.com/@lightzen108',
+        accent: 'fuchsia',
+      },
+    ],
+  },
+  course: {
+    label: '線上課程',
+    sectionTitle: '用 YouTube 打造你的第一條被動收入',
+    sectionSubtitle: '從 0 到開通營利的完整 SOP：選題對標 → Suno 生成音樂 → 影片製作 → 上架 YouTube → 台灣收款。每一步都有手把手教學，跟著做就能上手。',
+    priceLabel: '搶先優惠價',
+    price: 'NT$3,888',
+    priceOriginal: '定價 NT$9,950',
+    priceNote: '每兩個月階梯漲價，11/1 起恢復完整定價',
+    ctaText: '查看課程完整內容',
+    url: 'https://ebook.oldjailab.com/',
+    features: [
+      '從零到營利的完整 SOP 教學電子書',
+      'Suno 專用做歌詞小工具',
+      '專屬教學社群，操作有問題隨時問',
+      '手把手影片教學，邊看邊做',
+      '台灣收款完整教學（AdSense / PIN / 電匯）',
+      '未來新被動收入教學，免費更新',
+    ],
   },
   howItWorks: {
-    label: '運作方式',
-    sectionTitle: '三步驟打造 AI 變現引擎',
-    sectionSubtitle: '從驗證到規模化，一套可複製的系統性方法論。',
+    label: '可複製的系統',
+    sectionTitle: '3 步驟打造你的 AI 音樂變現頻道',
+    sectionSubtitle: '從選題到上架營利，一套我親自跑過兩次的標準流程。',
     steps: [
-      { icon: 'Target', title: '找到你的剛需痛點', description: '用精實創業思維，在開始前先驗證市場需求，避免打造沒人要的產品。' },
-      { icon: 'Cpu', title: '搭建 AI 自動化工作流', description: '從內容產出、客服到數據分析，讓 AI 擔任你的「虛擬團隊」，大幅降低人力成本。' },
-      { icon: 'TrendingUp', title: '快速迭代、放大獲利', description: '以 PLG 思維為核心，透過數據反饋持續優化，將成功的工作流複製並規模化。' },
+      { icon: 'Target', title: '選對賺錢的利基', description: '用數據判斷哪種音樂風格有流量、有廣告價值，先確認方向再動手，不做沒人聽的內容。' },
+      { icon: 'Cpu', title: 'AI 量產音樂與視覺', description: '用 Suno 生成原創音樂、AI 生成封面與 MV，一個人就能維持每日更新的產能。' },
+      { icon: 'TrendingUp', title: '上架營利、放大收益', description: '開通 YouTube 營利後，疊加聯盟行銷、音樂授權與品牌合作，把單一頻道變成多重收入。' },
     ],
   },
   leadMagnet: {
     label: '限時免費領取',
-    title: '《2026 AI 變現全景地圖》',
-    subtitle: '拆解從 0 到 1 的 AI 變現路徑，涵蓋必備工具清單、3 個立即可執行的自動化工作流，以及老 J 親測有效的選品策略。',
-    buttonText: '立即發送給我',
-    boxTitle: 'AI 變現全景地圖',
-    boxSubtitle: 'PDF 實戰指南',
+    title: '《2026 不露臉 AI 音樂頻道變現指南》',
+    subtitle: '完整拆解我兩個頻道的選題、製作、上架、營利流程，含 Suno 提示詞模板、封面 SOP，以及 90 天從 0 開通營利的行動清單。',
+    buttonText: '免費寄給我',
+    boxTitle: 'AI 音樂變現指南',
+    boxSubtitle: 'PDF 實戰手冊',
     privacyText: '承諾不發送垃圾郵件，隨時可取消訂閱。',
   },
   featuredTools: {
-    sectionTitle: '熱門 AI 變現工具',
-    sectionSubtitle: '針對不同技能與目標，提供具體可執行的 AI 賦能策略。',
+    sectionTitle: '免費 AI 工具箱',
+    sectionSubtitle: '我自己在用的小工具，順手做給大家免費用。',
     linkText: '查看所有 AI 工具',
   },
   stats: {
-    sectionTitle: '一人公司的實戰驗證',
-    sectionSubtitle: '在極簡的架構下，我們用數據說話。',
+    sectionTitle: '一人公司的變現實證',
+    sectionSubtitle: '不喊口號，用我自己的頻道數據說話。',
     items: [
-      { number: 300, suffix: '%', label: '內容產出效率提升', sub: '透過 AI 腳本與自動化剪輯' },
-      { number: 450, suffix: '%', label: '分潤收益成長', sub: '導入精準選品與自動推廣後' },
-      { number: 12, suffix: '+', label: '年零售業高階管理', sub: '涵蓋百億級連鎖品牌操盤' },
+      { number: 30, suffix: ' 天', label: '虛擬歌手開通營利', sub: '唯夏 VXYA・從 0 到 1' },
+      { number: 2, suffix: ' 萬+', label: '頻道月被動分潤', sub: 'ChillNight・YouTube 廣告' },
+      { number: 3, suffix: ' 萬+', label: '單曲最高觀看', sub: '《辭雪樓》戲腔情歌' },
     ],
   },
   ctaBanner: {
-    title: '準備好開始你的 AI 變現之旅了嗎？',
-    subtitle: '加入數百位正在用 AI 打造一人公司的創業者，立即領取你的第一份實戰地圖。',
-    buttonText: '立即加入',
+    title: '準備好打造你的第一個 AI 音樂頻道了嗎？',
+    subtitle: '加入社群，跟著正在用 AI 做不露臉頻道變現的創業者，領取你的第一份實戰指南。',
+    buttonText: '免費領取指南',
   },
 };
 
@@ -88,7 +178,7 @@ function Counter({ to, suffix = '' }: { to: number; suffix?: string }) {
     if (!inView || !ref.current) return;
     const controls = animate(0, to, {
       duration: 1.8,
-      ease: [0.16, 1, 0.3, 1],
+      ease: EASE,
       onUpdate: v => { if (ref.current) ref.current.textContent = Math.round(v).toString(); },
     });
     return controls.stop;
@@ -115,6 +205,10 @@ export default function Home() {
   }, []);
 
   const hero = { ...DEFAULTS.hero, ...content.hero };
+  const channels = { ...DEFAULTS.channels, ...content.channels, items: content.channels?.items || DEFAULTS.channels.items };
+  const works = { ...DEFAULTS.works, ...content.works, items: content.works?.items || DEFAULTS.works.items };
+  const students = { ...DEFAULTS.students, ...content.students, items: content.students?.items || DEFAULTS.students.items };
+  const course = { ...DEFAULTS.course, ...content.course, features: content.course?.features || DEFAULTS.course.features };
   const howItWorks = { ...DEFAULTS.howItWorks, ...content.howItWorks, steps: content.howItWorks?.steps || DEFAULTS.howItWorks.steps };
   const leadMagnet = { ...DEFAULTS.leadMagnet, ...content.leadMagnet };
   const featuredTools = { ...DEFAULTS.featuredTools, ...content.featuredTools };
@@ -158,7 +252,7 @@ export default function Home() {
     initial: { opacity: 0, y: 24 },
     whileInView: { opacity: 1, y: 0 },
     viewport: { once: true, margin: '-50px' },
-    transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
+    transition: { duration: 0.55, ease: EASE },
   };
 
   /* Parse hero title into lines + highlight */
@@ -173,8 +267,8 @@ export default function Home() {
     {
       '@context': 'https://schema.org',
       '@type': 'WebPage',
-      name: '老J AI 實驗室 — AI 變現教學與自動化工具',
-      description: '專為一人公司設計的 AI 變現實戰指南。結合精實創業與 PLG 思維，將 AI 從生產力工具轉化為可規模化業務。',
+      name: '老J AI 實驗室 — 教你用 AI 打造不露臉音樂頻道變現',
+      description: '不露臉、不唱歌、不懂樂理，也能用 AI 打造會自動賺錢的 YouTube 音樂頻道。老J 親手養出 2 個營利頻道：虛擬歌手唯夏 VXYA 與 ChillNight AI Music，分享完整可複製的變現 SOP。',
       url: 'https://www.oldjailab.com/',
       inLanguage: 'zh-TW',
       isPartOf: { '@type': 'WebSite', name: '老J AI 實驗室', url: 'https://www.oldjailab.com' },
@@ -250,30 +344,34 @@ export default function Home() {
     <>
       <SEO
         path="/"
-        description="不談空泛理論，只教你打造高獲利 AI 事業。老J AI 實驗室提供一人公司 AI 變現實戰指南、自動化工作流教學，結合 12 年零售管理與精實創業思維。"
+        description="不露臉、不唱歌、不懂樂理，也能用 AI 打造會自動賺錢的 YouTube 音樂頻道。老J 親手養出 2 個營利頻道（唯夏 VXYA、ChillNight AI Music），教你完整可複製的不露臉音樂頻道變現 SOP。"
         jsonLd={homeJsonLd}
       />
 
-      {/* ── Hero ──────────────────────────────────────────────────────────────── */}
+      {/* ── Hero ─ Night Studio ───────────────────────────────────────────────── */}
       <section
         ref={heroRef}
         aria-label="品牌主視覺"
-        className="relative pt-28 pb-16 lg:pt-36 lg:pb-20 px-6 overflow-hidden bg-slate-50"
+        className="relative pt-28 pb-24 lg:pt-36 lg:pb-32 px-6 overflow-hidden bg-[#0E0A1F] text-white"
       >
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] bg-[size:32px_32px] opacity-40 [mask-image:linear-gradient(to_bottom,white,transparent)]" />
+        {/* deep gradient wash */}
+        <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_-10%,#2a1458_0%,#160F33_38%,#0E0A1F_75%)]" />
+        {/* faint grid */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:34px_34px] [mask-image:radial-gradient(80%_60%_at_50%_30%,black,transparent)]" />
 
+        {/* mouse-follow spotlight */}
         <div
           className="absolute inset-0 pointer-events-none transition-opacity duration-300"
           style={{
-            background: `radial-gradient(600px circle at ${mousePos.x}% ${mousePos.y}%, rgba(52,211,153,0.12) 0%, rgba(96,165,250,0.08) 40%, transparent 70%)`,
+            background: `radial-gradient(600px circle at ${mousePos.x}% ${mousePos.y}%, rgba(168,85,247,0.22) 0%, rgba(217,70,239,0.12) 40%, transparent 70%)`,
           }}
         />
 
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[600px] pointer-events-none -z-10">
-          <motion.div animate={{ scale: [1,1.1,1], opacity:[0.4,0.6,0.4], x:[-50,50,-50] }} transition={{ duration: 10, repeat: Infinity, ease:'easeInOut' }}
-            className="absolute top-0 left-0 w-96 h-96 bg-emerald-200/60 rounded-full blur-3xl mix-blend-multiply" />
-          <motion.div animate={{ scale: [1,1.2,1], opacity:[0.3,0.5,0.3], x:[50,-50,50] }} transition={{ duration: 12, repeat: Infinity, ease:'easeInOut', delay:1 }}
-            className="absolute top-20 right-0 w-[30rem] h-[30rem] bg-blue-200/60 rounded-full blur-3xl mix-blend-multiply" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[600px] pointer-events-none">
+          <motion.div animate={{ scale: [1,1.1,1], opacity:[0.4,0.65,0.4], x:[-50,50,-50] }} transition={{ duration: 10, repeat: Infinity, ease:'easeInOut' }}
+            className="absolute top-0 left-0 w-96 h-96 bg-violet-600/40 rounded-full blur-3xl mix-blend-screen" />
+          <motion.div animate={{ scale: [1,1.2,1], opacity:[0.3,0.55,0.3], x:[50,-50,50] }} transition={{ duration: 12, repeat: Infinity, ease:'easeInOut', delay:1 }}
+            className="absolute top-20 right-0 w-[30rem] h-[30rem] bg-fuchsia-600/35 rounded-full blur-3xl mix-blend-screen" />
         </div>
 
         <style>{`
@@ -288,16 +386,16 @@ export default function Home() {
         <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16 relative z-10">
           {/* Left: Text Content */}
           <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left">
-            <div className="hero-fade inline-flex items-center gap-2 border border-slate-200/60 bg-white/80 backdrop-blur-md rounded-full px-5 py-2 text-xs font-bold tracking-wider text-slate-700 mb-8 shadow-sm hover:shadow-md transition-shadow"
+            <div className="hero-fade inline-flex items-center gap-2 border border-white/15 bg-white/10 backdrop-blur-md rounded-full px-5 py-2 text-xs font-bold tracking-wider text-slate-200 mb-8"
               style={{ animationDelay: '0.1s' }}>
               <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-fuchsia-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-fuchsia-500" />
               </span>
               {hero.badgeText}
             </div>
 
-            <h1 className="hero-fade text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold tracking-tight leading-[1.15] mb-8 text-slate-900"
+            <h1 className="hero-fade text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold tracking-tight leading-[1.15] mb-8 text-white"
               style={{ animationDelay: '0.25s' }}>
               {titleLines.map((line: string, i: number) => (
                 <React.Fragment key={i}>
@@ -306,66 +404,228 @@ export default function Home() {
                 </React.Fragment>
               ))}
               <span className="relative whitespace-nowrap inline-block mt-2 md:mt-0 ml-2">
-                <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-blue-600">{highlightText}</span>
-                <span className="absolute bottom-2 left-0 w-full h-3 md:h-4 bg-emerald-100/80 -z-10 origin-left"
+                <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-fuchsia-400">{highlightText}</span>
+                <span className="absolute bottom-2 left-0 w-full h-3 md:h-4 bg-fuchsia-500/30 -z-10 origin-left"
                   style={{ animation: 'heroUnderline 0.8s ease-out 0.8s both' }} />
               </span>
             </h1>
 
-            <p className="hero-fade text-lg md:text-xl text-slate-600 mb-10 max-w-2xl leading-relaxed font-medium"
+            <p className="hero-fade text-lg md:text-xl text-slate-300 mb-10 max-w-2xl leading-relaxed font-medium"
               style={{ animationDelay: '0.4s' }}>
               {hero.subtitle}
             </p>
 
             <div className="hero-fade flex flex-wrap justify-center lg:justify-start gap-4 items-center"
               style={{ animationDelay: '0.55s' }}>
-              <Link to="/tools" className="relative overflow-hidden group bg-slate-900 text-white px-8 py-4 rounded-full font-medium flex items-center gap-2 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-emerald-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <span className="relative flex items-center gap-2">{hero.ctaText} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" /></span>
-              </Link>
-              <a href="#lead-magnet" className="bg-white/80 backdrop-blur-md border border-slate-200 text-slate-900 px-8 py-4 rounded-full font-medium flex items-center gap-2 hover:bg-slate-50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <Play className="w-4 h-4 text-emerald-600" /> {hero.ctaSecondary}
+              <a href="#lead-magnet" className="group bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white px-8 py-4 rounded-full font-semibold flex items-center gap-2 shadow-lg shadow-fuchsia-500/25 hover:shadow-xl hover:shadow-fuchsia-500/40 hover:-translate-y-1 transition-all duration-300">
+                {hero.ctaText} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </a>
+              <a href="#works" className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-4 rounded-full font-medium flex items-center gap-2 hover:bg-white/15 hover:-translate-y-1 transition-all duration-300">
+                <Play className="w-4 h-4 fill-current text-fuchsia-300" /> {hero.ctaSecondary}
               </a>
             </div>
           </div>
 
-          {/* Right: Profile Photo */}
+          {/* Right: Profile Photo (spotlight) */}
           <div className="hero-scale relative shrink-0 order-first lg:order-last" style={{ animationDelay: '0.3s' }}>
             <div className="relative w-64 h-64 md:w-72 md:h-72 lg:w-80 lg:h-80">
               {/* Decorative glow */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-400/20 to-blue-400/20 blur-2xl scale-125" />
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-violet-500/40 to-fuchsia-500/40 blur-3xl scale-125" />
               {/* Gradient ring */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-400 to-blue-500 p-[3px] shadow-xl shadow-emerald-500/20">
-                <div className="w-full h-full rounded-full overflow-hidden bg-slate-100">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-violet-400 to-fuchsia-500 p-[3px] shadow-2xl shadow-fuchsia-500/30">
+                <div className="w-full h-full rounded-full overflow-hidden bg-[#160F33]">
                   <img
                     src="/images/hero-profile.jpg"
-                    alt="老J — AI 實驗室創辦人"
+                    alt="老J — AI 音樂頻道變現實戰家"
                     className="w-full h-full object-cover object-top scale-110"
                     loading="eager"
                   />
                 </div>
               </div>
               {/* Floating accent badge */}
-              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-white shadow-lg rounded-2xl px-4 py-2 border border-slate-100 whitespace-nowrap"
+              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-white shadow-lg rounded-2xl px-4 py-2 border border-white/10 whitespace-nowrap"
                 style={{ animation: 'heroBadgeBounce 3s ease-in-out infinite' }}>
-                <span className="text-sm font-bold text-slate-800">{hero.photoBadge}</span>
+                <span className="text-sm font-bold text-slate-900">{hero.photoBadge}</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="hero-fade relative z-10 mt-10 lg:mt-12 flex flex-wrap justify-center gap-x-8 gap-y-2 text-xs text-slate-500 font-medium"
+        <div className="hero-fade relative z-10 mt-10 lg:mt-12 flex flex-wrap justify-center gap-x-8 gap-y-2 text-xs text-slate-400 font-medium"
           style={{ animationDelay: '1s' }}>
           {trustBadges.map((t: string) => (
             <span key={t}>{t}</span>
           ))}
         </div>
+
+        {/* Equalizer motif */}
+        <div className="absolute bottom-0 left-0 right-0 flex items-end justify-center gap-1 h-20 opacity-30 pointer-events-none" aria-hidden="true">
+          {Array.from({ length: 56 }).map((_, i) => (
+            <span
+              key={i}
+              className="eq-bar w-1.5 rounded-t bg-gradient-to-t from-violet-500 to-fuchsia-400"
+              style={{
+                height: `${20 + ((i * 37) % 80)}%`,
+                animationDelay: `${(i % 12) * 0.11}s`,
+                animationDuration: `${0.8 + (i % 5) * 0.18}s`,
+              }}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* ── Works Wall ─ continues night studio ───────────────────────────────── */}
+      <section id="works" aria-labelledby="works-title" className="relative bg-[#0E0A1F] text-white px-6 py-16 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(90%_60%_at_50%_0%,#1d1240_0%,#0E0A1F_70%)]" />
+        <div className="relative z-10 max-w-6xl mx-auto">
+          <motion.div {...fadeInUp} className="mb-10 text-center">
+            <p className="text-xs font-bold tracking-widest text-fuchsia-400 uppercase mb-3">{works.label}</p>
+            <h2 id="works-title" className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white">{works.sectionTitle}</h2>
+            <p className="text-slate-400 max-w-xl mx-auto">{works.sectionSubtitle}</p>
+          </motion.div>
+
+          {/* Featured player */}
+          <motion.div {...fadeInUp} className="max-w-3xl mx-auto mb-8">
+            <div className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-fuchsia-900/30 aspect-video bg-black">
+              <iframe
+                className="w-full h-full"
+                src={`https://www.youtube-nocookie.com/embed/${works.featuredId}`}
+                title={works.featuredTitle}
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+            <p className="text-center text-sm text-slate-400 mt-3">{works.featuredTitle}</p>
+          </motion.div>
+
+          {/* Cover grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {works.items.map((w: any, i: number) => (
+              <motion.a
+                key={i}
+                href={`https://www.youtube.com/watch?v=${w.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                {...fadeInUp}
+                transition={{ duration: 0.5, delay: i * 0.08, ease: EASE }}
+                className="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:-translate-y-1 hover:border-fuchsia-400/40 transition-all duration-300"
+              >
+                <div className="aspect-video overflow-hidden">
+                  <img src={w.cover} alt={w.title} loading="lazy"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                </div>
+                <div className="absolute inset-x-0 top-0 aspect-video flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
+                  <span className="w-11 h-11 rounded-full bg-white/90 text-slate-900 flex items-center justify-center">
+                    <Play className="w-5 h-5 fill-current ml-0.5" />
+                  </span>
+                </div>
+                <div className="p-3">
+                  <div className="text-sm font-semibold truncate text-white">{w.title}</div>
+                  <div className="text-xs text-slate-400">{w.tag}</div>
+                </div>
+              </motion.a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Proof Channels ────────────────────────────────────────────────────── */}
+      <section id="channels" aria-labelledby="channels-title" className="py-14 px-6 max-w-6xl mx-auto border-t border-gray-100">
+        <motion.div {...fadeInUp} className="mb-10 text-center">
+          <p className="text-xs font-bold tracking-widest text-violet-600 uppercase mb-3">{channels.label}</p>
+          <h2 id="channels-title" className="text-3xl md:text-4xl font-bold tracking-tight mb-4">{channels.sectionTitle}</h2>
+          <p className="text-gray-500 max-w-xl mx-auto">{channels.sectionSubtitle}</p>
+        </motion.div>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          {channels.items.map((c: any, i: number) => (
+            <motion.a
+              key={i}
+              href={c.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              {...fadeInUp}
+              transition={{ duration: 0.55, delay: i * 0.12, ease: EASE }}
+              className="group relative flex flex-col p-8 rounded-3xl bg-white border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+            >
+              <div className={`absolute -right-16 -top-16 w-48 h-48 rounded-full blur-3xl opacity-20 transition-opacity duration-300 group-hover:opacity-40 ${c.accent === 'fuchsia' ? 'bg-fuchsia-400' : 'bg-violet-400'}`} />
+              <div className="relative z-10 flex items-center gap-3 mb-5">
+                <div className="relative shrink-0">
+                  <img src={c.avatar} alt={c.name} className="w-14 h-14 rounded-2xl object-cover shadow-sm" loading="lazy" />
+                  <span className={`absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-full flex items-center justify-center text-white ${c.accent === 'fuchsia' ? 'bg-fuchsia-500' : 'bg-violet-500'}`}>
+                    <Youtube className="w-3.5 h-3.5" />
+                  </span>
+                </div>
+                <div>
+                  <div className="font-bold text-lg text-slate-900">{c.name}</div>
+                  <div className="text-xs font-medium text-gray-500">{c.tag}</div>
+                </div>
+              </div>
+              <p className="relative z-10 text-sm text-gray-600 leading-relaxed mb-6 flex-1">{c.desc}</p>
+              <div className="relative z-10 flex items-end justify-between">
+                <div>
+                  <div className="text-3xl font-extrabold tracking-tight text-amber-500">{c.metric}</div>
+                  <div className="text-xs font-medium text-gray-500">{c.metricLabel}</div>
+                </div>
+                <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-900 group-hover:gap-2.5 transition-all">
+                  前往頻道 <ArrowRight className="w-4 h-4" />
+                </span>
+              </div>
+            </motion.a>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Student Results ───────────────────────────────────────────────────── */}
+      <section id="students" aria-labelledby="students-title" className="py-14 px-6 max-w-6xl mx-auto border-t border-gray-100">
+        <motion.div {...fadeInUp} className="mb-10 text-center">
+          <p className="text-xs font-bold tracking-widest text-violet-600 uppercase mb-3">{students.label}</p>
+          <h2 id="students-title" className="text-3xl md:text-4xl font-bold tracking-tight mb-4">{students.sectionTitle}</h2>
+          <p className="text-gray-500 max-w-xl mx-auto">{students.sectionSubtitle}</p>
+        </motion.div>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          {students.items.map((s: any, i: number) => (
+            <motion.div
+              key={i}
+              {...fadeInUp}
+              transition={{ duration: 0.55, delay: i * 0.12, ease: EASE }}
+              className="group flex flex-col p-7 rounded-3xl bg-white border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+            >
+              <div className="flex items-center gap-4 mb-4">
+                <div className="relative shrink-0">
+                  <img src={s.avatar} alt={s.name} className={`w-16 h-16 rounded-full object-cover ring-2 ${s.accent === 'fuchsia' ? 'ring-fuchsia-100' : 'ring-violet-100'}`} loading="lazy" />
+                  <span className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-white ${s.accent === 'fuchsia' ? 'bg-fuchsia-500' : 'bg-violet-500'}`}>
+                    <Youtube className="w-3.5 h-3.5" />
+                  </span>
+                </div>
+                <div className="min-w-0">
+                  <div className="font-bold text-lg text-slate-900 truncate">{s.name}</div>
+                  <div className="text-xs font-medium text-gray-500">{s.handle} · {s.niche}</div>
+                  <div className="text-xs text-gray-400 mt-0.5">{s.stat}</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-2 rounded-2xl bg-violet-50/70 border border-violet-100 px-4 py-3 mb-5">
+                <CheckCircle2 className="w-4 h-4 text-violet-600 shrink-0 mt-0.5" />
+                <p className="text-sm text-slate-700 leading-relaxed font-medium">{s.result}</p>
+              </div>
+              <a href={s.url} target="_blank" rel="noopener noreferrer"
+                className="mt-auto inline-flex items-center gap-1.5 text-sm font-semibold text-slate-900 group-hover:gap-2.5 transition-all">
+                看學員頻道 <ArrowRight className="w-4 h-4" />
+              </a>
+            </motion.div>
+          ))}
+        </div>
+        <motion.p {...fadeInUp} className="text-center text-xs text-gray-400 mt-6 max-w-2xl mx-auto">
+          ※ 以上為實際學員頻道，成果因個人投入時間與執行程度而異，非保證收益。
+        </motion.p>
       </section>
 
       {/* ── How It Works ──────────────────────────────────────────────────────── */}
       <section aria-labelledby="how-it-works-title" className="py-14 px-6 max-w-6xl mx-auto border-t border-gray-100">
         <motion.div {...fadeInUp} className="mb-10 text-center">
-          <p className="text-xs font-bold tracking-widest text-emerald-600 uppercase mb-3">{howItWorks.label}</p>
+          <p className="text-xs font-bold tracking-widest text-violet-600 uppercase mb-3">{howItWorks.label}</p>
           <h2 id="how-it-works-title" className="text-3xl md:text-4xl font-bold tracking-tight mb-4">{howItWorks.sectionTitle}</h2>
           <p className="text-gray-500 max-w-xl mx-auto">{howItWorks.sectionSubtitle}</p>
         </motion.div>
@@ -373,10 +633,10 @@ export default function Home() {
         <div className="grid md:grid-cols-3 gap-8 relative">
           <div className="hidden md:block absolute top-10 left-[calc(16.6%+2rem)] right-[calc(16.6%+2rem)] h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
           {howItWorks.steps.map((s: any, i: number) => (
-            <motion.div key={i} {...fadeInUp} transition={{ duration: 0.55, delay: i * 0.12, ease:[0.16,1,0.3,1] }}
+            <motion.div key={i} {...fadeInUp} transition={{ duration: 0.55, delay: i * 0.12, ease:EASE }}
               className="relative flex flex-col items-center text-center p-8 rounded-3xl bg-white border border-gray-100 hover:border-slate-300 hover:shadow-md transition-all group">
-              <div className="absolute -top-4 left-8 text-[10px] font-black tracking-widest text-gray-300 group-hover:text-emerald-500 transition-colors">{String(i + 1).padStart(2, '0')}</div>
-              <div className="w-14 h-14 rounded-2xl bg-slate-900 text-white flex items-center justify-center mb-5 group-hover:bg-gradient-to-br group-hover:from-emerald-500 group-hover:to-blue-500 transition-all duration-300 shadow-sm">
+              <div className="absolute -top-4 left-8 text-[10px] font-black tracking-widest text-gray-300 group-hover:text-violet-500 transition-colors">{String(i + 1).padStart(2, '0')}</div>
+              <div className="w-14 h-14 rounded-2xl bg-slate-900 text-white flex items-center justify-center mb-5 group-hover:bg-gradient-to-br group-hover:from-violet-500 group-hover:to-fuchsia-500 transition-all duration-300 shadow-sm">
                 {ICON_MAP[s.icon] || <Target className="w-7 h-7" />}
               </div>
               <h3 className="text-lg font-bold mb-3">{s.title}</h3>
@@ -386,21 +646,55 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Course Offer ──────────────────────────────────────────────────────── */}
+      <section id="course" aria-labelledby="course-title" className="py-14 px-6 max-w-6xl mx-auto border-t border-gray-100">
+        <motion.div {...fadeInUp}
+          className="rounded-[2rem] overflow-hidden bg-gradient-to-br from-[#160F33] to-[#6D28D9] text-white relative">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:28px_28px]" />
+          <div className="relative z-10 p-10 md:p-14 flex flex-col lg:flex-row gap-10 lg:gap-14">
+            <div className="flex-1">
+              <p className="text-amber-400 text-xs font-bold tracking-widest uppercase mb-3">{course.label}</p>
+              <h2 id="course-title" className="text-3xl md:text-4xl font-bold tracking-tight mb-4">{course.sectionTitle}</h2>
+              <p className="text-slate-300 leading-relaxed text-sm mb-6 max-w-xl">{course.sectionSubtitle}</p>
+              <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-3">
+                {course.features.map((f: string, i: number) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-slate-200">
+                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" /> {f}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="lg:w-72 shrink-0 flex flex-col justify-center">
+              <div className="rounded-3xl bg-white/10 border border-white/15 backdrop-blur-sm p-7 text-center">
+                <div className="text-xs font-medium text-amber-300 mb-1">{course.priceLabel}</div>
+                <div className="text-4xl font-extrabold tracking-tight mb-1">{course.price}</div>
+                <div className="text-sm text-slate-400 line-through mb-5">{course.priceOriginal}</div>
+                <a href={course.url} target="_blank" rel="noopener noreferrer"
+                  className="block w-full bg-amber-400 text-slate-900 font-bold py-4 rounded-full hover:bg-amber-300 transition-all shadow-lg shadow-amber-500/20">
+                  {course.ctaText}
+                </a>
+                <p className="text-[11px] text-slate-400 mt-3 leading-relaxed">{course.priceNote}</p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
       {/* ── Latest Blog Posts ──────────────────────────────────────────────────── */}
       {latestPosts.length > 0 && (
         <section aria-labelledby="latest-posts-title" className="py-14 px-6 max-w-6xl mx-auto border-t border-gray-100">
           <motion.div {...fadeInUp} className="flex items-end justify-between mb-10">
             <div>
-              <p className="text-xs font-bold tracking-widest text-blue-600 uppercase mb-2">Blog</p>
+              <p className="text-xs font-bold tracking-widest text-fuchsia-600 uppercase mb-2">Blog</p>
               <h2 id="latest-posts-title" className="text-3xl font-bold tracking-tight">最新文章</h2>
             </div>
-            <Link to="/blog" className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-slate-900 hover:text-[#1E3A8A] transition-colors">
+            <Link to="/blog" className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-slate-900 hover:text-[#6D28D9] transition-colors">
               查看全部文章 <ArrowRight className="w-4 h-4" />
             </Link>
           </motion.div>
           <div className="grid md:grid-cols-3 gap-6">
             {latestPosts.map((post, i) => (
-              <motion.article key={post.id} {...fadeInUp} transition={{ duration: 0.5, delay: 0.1 * (i + 1), ease: [0.16, 1, 0.3, 1] }}>
+              <motion.article key={post.id} {...fadeInUp} transition={{ duration: 0.5, delay: 0.1 * (i + 1), ease: EASE }}>
                 <Link to={`/blog/${post.slug}`}
                   className="group block bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-gray-200 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
                   {post.cover_image ? (
@@ -415,14 +709,14 @@ export default function Home() {
                   )}
                   <div className="p-6">
                     <div className="flex items-center gap-3 mb-3">
-                      <span className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg">
+                      <span className="inline-flex items-center gap-1 text-xs font-medium text-fuchsia-600 bg-fuchsia-50 px-2.5 py-1 rounded-lg">
                         <Folder className="w-3 h-3" /> {post.category}
                       </span>
                       <span className="text-xs text-gray-400 flex items-center gap-1">
                         <Clock className="w-3 h-3" /> {post.published_at ? new Date(post.published_at).toLocaleDateString('zh-TW') : ''}
                       </span>
                     </div>
-                    <h3 className="font-bold text-lg text-slate-900 mb-2 line-clamp-2 group-hover:text-[#1E3A8A] transition-colors">
+                    <h3 className="font-bold text-lg text-slate-900 mb-2 line-clamp-2 group-hover:text-[#6D28D9] transition-colors">
                       {post.title}
                     </h3>
                     {post.excerpt && (
@@ -433,7 +727,7 @@ export default function Home() {
               </motion.article>
             ))}
           </div>
-          <Link to="/blog" className="sm:hidden flex items-center justify-center gap-2 mt-6 text-sm font-medium text-slate-900 hover:text-[#1E3A8A] transition-colors">
+          <Link to="/blog" className="sm:hidden flex items-center justify-center gap-2 mt-6 text-sm font-medium text-slate-900 hover:text-[#6D28D9] transition-colors">
             查看全部文章 <ArrowRight className="w-4 h-4" />
           </Link>
         </section>
@@ -449,10 +743,10 @@ export default function Home() {
       {/* ── Lead Magnet ───────────────────────────────────────────────────────── */}
       <section id="lead-magnet" aria-label="免費下載 AI 變現全景地圖" className="py-6 px-6 max-w-6xl mx-auto">
         <motion.div {...fadeInUp}
-          className="bg-gradient-to-br from-slate-900 to-[#1E3A8A] rounded-[2rem] p-10 md:p-14 flex flex-col md:flex-row items-center justify-between gap-10 relative overflow-hidden">
+          className="bg-gradient-to-br from-slate-900 to-[#6D28D9] rounded-[2rem] p-10 md:p-14 flex flex-col md:flex-row items-center justify-between gap-10 relative overflow-hidden">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:24px_24px]" />
           <div className="max-w-xl relative z-10">
-            <p className="text-emerald-400 text-xs font-bold tracking-widest uppercase mb-3">{leadMagnet.label}</p>
+            <p className="text-violet-400 text-xs font-bold tracking-widest uppercase mb-3">{leadMagnet.label}</p>
             <h2 className="text-3xl font-bold mb-4 tracking-tight text-white">{leadMagnet.title}</h2>
             <p className="text-slate-300 mb-8 leading-relaxed text-sm">{leadMagnet.subtitle}</p>
             <form onSubmit={handleSubscribe} aria-label="訂閱電子報" className="flex flex-col sm:flex-row gap-3">
@@ -470,7 +764,7 @@ export default function Home() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="bg-white text-slate-900 px-8 py-4 rounded-full font-bold hover:bg-emerald-400 hover:text-white transition-all whitespace-nowrap text-sm disabled:opacity-60 disabled:cursor-not-allowed"
+                className="bg-amber-400 text-slate-900 px-8 py-4 rounded-full font-bold hover:bg-amber-300 transition-all whitespace-nowrap text-sm disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-amber-500/20"
               >
                 {submitting ? '發送中…' : leadMagnet.buttonText}
               </button>
@@ -482,7 +776,7 @@ export default function Home() {
               href="https://line.me/ti/g2/WBNqN2jcZTzcmIPz1J5LyhEsrjn7mVrosUJHHg?utm_source=invitation&utm_medium=link_copy&utm_campaign=default"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 mt-4 bg-white/10 border border-white/20 text-white px-6 py-3 rounded-full font-medium hover:bg-emerald-500 hover:border-emerald-500 transition-all text-sm"
+              className="inline-flex items-center gap-2 mt-4 bg-white/10 border border-white/20 text-white px-6 py-3 rounded-full font-medium hover:bg-violet-500 hover:border-violet-500 transition-all text-sm"
             >
               <Users className="w-4 h-4" /> 加入社群
             </a>
@@ -507,7 +801,7 @@ export default function Home() {
         </motion.div>
         <div className="grid md:grid-cols-2 gap-6">
           {apiTools.slice(0, 4).map((tool, i) => (
-            <motion.div key={tool.id ?? i} {...fadeInUp} transition={{ duration: 0.5, delay: 0.1 * (i + 1), ease:[0.16,1,0.3,1] }}
+            <motion.div key={tool.id ?? i} {...fadeInUp} transition={{ duration: 0.5, delay: 0.1 * (i + 1), ease:EASE }}
               className="group p-8 rounded-3xl border border-gray-100 hover:border-gray-300 hover:shadow-md transition-all bg-white hover:-translate-y-1">
               <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center mb-6 text-[#1A1A1A] group-hover:bg-[#1A1A1A] group-hover:text-white transition-all duration-300">
                 {TOOL_ICON_MAP[tool.icon_name] || <Wrench className="w-6 h-6" />}
@@ -515,14 +809,14 @@ export default function Home() {
               <h3 className="text-xl font-bold mb-3">{tool.title}</h3>
               <p className="text-gray-600 text-sm leading-relaxed mb-6">{tool.description}</p>
               <a href={tool.url} target="_blank" rel="noopener noreferrer"
-                className="text-sm font-medium flex items-center gap-1 text-[#1E3A8A] group-hover:gap-2 transition-all">
+                className="text-sm font-medium flex items-center gap-1 text-[#6D28D9] group-hover:gap-2 transition-all">
                 立即使用工具 <ArrowRight className="w-4 h-4" />
               </a>
             </motion.div>
           ))}
         </div>
         <motion.div {...fadeInUp} className="mt-8 text-center">
-          <Link to="/tools" className="inline-flex items-center gap-2 text-[#1A1A1A] font-medium border-b border-[#1A1A1A] pb-1 hover:text-[#1E3A8A] hover:border-[#1E3A8A] transition-colors">
+          <Link to="/tools" className="inline-flex items-center gap-2 text-[#1A1A1A] font-medium border-b border-[#1A1A1A] pb-1 hover:text-[#6D28D9] hover:border-[#6D28D9] transition-colors">
             {featuredTools.linkText} <ArrowRight className="w-4 h-4" />
           </Link>
         </motion.div>
@@ -538,7 +832,7 @@ export default function Home() {
           {statsData.items.map((s: any, i: number) => (
             <motion.div key={i} {...fadeInUp} transition={{ delay: 0.1 * (i + 1) }}
               className="text-center p-8 rounded-3xl bg-white border border-gray-100 hover:border-slate-200 hover:shadow-sm transition-all group">
-              <div className="text-5xl font-light tracking-tighter mb-2 text-[#1A1A1A] group-hover:text-[#1E3A8A] transition-colors">
+              <div className="text-5xl font-light tracking-tighter mb-2 text-[#1A1A1A] group-hover:text-[#6D28D9] transition-colors">
                 <Counter to={s.number} suffix={s.suffix} />
               </div>
               <div className="text-sm font-bold text-gray-900 mb-1">{s.label}</div>
@@ -552,23 +846,23 @@ export default function Home() {
       <section aria-label="合作洽談" className="py-10 px-6 max-w-6xl mx-auto">
         <motion.div {...fadeInUp}
           className="rounded-3xl bg-slate-900 text-white p-10 md:p-14 relative overflow-hidden">
-          <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(52,211,153,0.08),rgba(96,165,250,0.08))]" />
+          <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(124,58,237,0.08),rgba(217,70,239,0.08))]" />
           <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 md:gap-12">
             <div className="flex-1 text-center md:text-left">
               <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center mb-6 mx-auto md:mx-0">
                 <Rocket className="w-6 h-6" />
               </div>
               <h2 className="text-3xl font-bold tracking-tight mb-4">
-                想讓 AI 幫你的事業加速？
+                想更快讓你的音樂頻道開通營利？
               </h2>
               <p className="text-gray-300 leading-relaxed max-w-lg">
-                不管是自動化工作流、品牌轉型還是商業模式設計，老 J 都能幫你找到最適合的 AI 解法。預約一次免費諮詢，讓我們聊聊你的需求。
+                不管是頻道定位、AI 製作流程還是變現結構設計，老 J 都能幫你少走半年彎路。預約一次免費諮詢，聊聊你的頻道。
               </p>
             </div>
             <div className="flex-shrink-0">
               <Link
                 to="/contact"
-                className="inline-flex items-center gap-2 bg-white text-slate-900 px-10 py-4 rounded-full font-medium hover:bg-emerald-50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                className="inline-flex items-center gap-2 bg-white text-slate-900 px-10 py-4 rounded-full font-medium hover:bg-violet-50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
               >
                 立即預約免費諮詢 <ArrowRight className="w-4 h-4" />
               </Link>
@@ -581,7 +875,7 @@ export default function Home() {
       <section aria-label="加入行動呼籲" className="py-10 px-6 max-w-6xl mx-auto mb-6">
         <motion.div {...fadeInUp}
           className="rounded-3xl border border-gray-100 bg-slate-50 p-10 md:p-14 text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(52,211,153,0.04),rgba(96,165,250,0.04))]" />
+          <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(124,58,237,0.04),rgba(217,70,239,0.04))]" />
           <div className="relative z-10">
             <div className="w-12 h-12 bg-slate-900 text-white rounded-2xl flex items-center justify-center mx-auto mb-6">
               <Zap className="w-6 h-6" />
@@ -589,7 +883,7 @@ export default function Home() {
             <h2 className="text-3xl font-bold tracking-tight mb-4">{ctaBanner.title}</h2>
             <p className="text-gray-600 mb-8 max-w-xl mx-auto">{ctaBanner.subtitle}</p>
             <div className="flex flex-wrap justify-center gap-4">
-              <a href="#lead-magnet" className="inline-flex items-center gap-2 bg-slate-900 text-white px-10 py-4 rounded-full font-medium hover:bg-[#1E3A8A] hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <a href="#lead-magnet" className="inline-flex items-center gap-2 bg-slate-900 text-white px-10 py-4 rounded-full font-medium hover:bg-[#6D28D9] hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 <Users className="w-4 h-4" /> {ctaBanner.buttonText}
               </a>
               <a

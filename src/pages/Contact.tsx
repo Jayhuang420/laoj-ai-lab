@@ -11,11 +11,11 @@ const fadeInUp = {
 };
 
 const SERVICE_OPTIONS = [
-  'AI 工作流自動化',
-  '品牌數位轉型策略',
-  '電商策略規劃',
-  '一人公司 AI 化',
-  'PLG 商業化路徑設計',
+  '線上課程諮詢',
+  '1 對 1 頻道顧問 / 頻道健診',
+  '虛擬歌手 IP 合作',
+  '品牌合作 / 商演 / 音樂授權',
+  '企業 AI 內容導入',
   '其他',
 ];
 
@@ -33,14 +33,14 @@ const JSON_LD = [
     '@context': 'https://schema.org',
     '@type': 'ContactPage',
     name: '合作洽談 — 老J AI 實驗室',
-    description: '與老 J 預約免費諮詢，討論 AI 工作流自動化、品牌轉型、電商策略等合作方案。',
+    description: '與老 J 預約免費諮詢，討論 AI 音樂頻道線上課程、頻道顧問、虛擬歌手 IP 與品牌合作方案。',
     url: 'https://www.oldjailab.com/contact',
     mainEntity: {
       '@type': 'Organization',
       name: '老J AI 實驗室',
       url: 'https://www.oldjailab.com',
       email: 'jshao0420@gmail.com',
-      description: '專為一人公司設計的 AI 變現實戰顧問。',
+      description: '教你用 AI 打造不露臉 YouTube 音樂頻道變現。',
     },
   },
   {
@@ -99,8 +99,8 @@ export default function Contact() {
   return (
     <>
       <SEO
-        title="合作洽談"
-        description="與老 J 預約免費諮詢，討論 AI 工作流自動化、品牌數位轉型、電商策略、一人公司 AI 化等合作方案。填寫表單，1-2 個工作天內回覆。"
+        title="合作洽談 — 課程諮詢 / 頻道顧問 / 品牌合作"
+        description="與老 J 預約免費諮詢：AI 音樂頻道線上課程、1 對 1 頻道顧問、虛擬歌手 IP 與品牌合作。填寫表單，1-2 個工作天內回覆。"
         path="/contact"
         jsonLd={JSON_LD}
       />
@@ -108,14 +108,14 @@ export default function Contact() {
       {/* ── Hero ──────────────────────────────────────────────────────── */}
       <section className="pt-16 pb-8 px-6 max-w-4xl mx-auto text-center">
         <motion.div {...fadeInUp}>
-          <span className="inline-block px-4 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold tracking-wide mb-6">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-violet-50 text-violet-700 text-xs font-semibold tracking-wide mb-6">
             免費諮詢
           </span>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-            讓 AI 幫你的事業加速
+            想開始你的 AI 音樂頻道嗎？
           </h1>
           <p className="text-gray-500 text-lg max-w-2xl mx-auto leading-relaxed">
-            不管是自動化工作流、品牌數位轉型還是商業模式設計，老 J 都能幫你找到最適合的 AI 解法。填寫以下表單，我會在 1-2 個工作天內回覆你。
+            不管是課程諮詢、頻道定位健診、虛擬歌手 IP 還是品牌合作，老 J 都能幫你少走半年彎路。填寫以下表單，我會在 1-2 個工作天內回覆你。
           </p>
         </motion.div>
       </section>
@@ -128,8 +128,8 @@ export default function Contact() {
             animate={{ opacity: 1, scale: 1 }}
             className="text-center py-20 px-8 rounded-3xl bg-white border border-gray-100"
           >
-            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle2 className="w-8 h-8 text-emerald-600" />
+            <div className="w-16 h-16 bg-violet-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle2 className="w-8 h-8 text-violet-600" />
             </div>
             <h2 className="text-2xl font-bold mb-3">諮詢已送出！</h2>
             <p className="text-gray-500 max-w-md mx-auto mb-8">
@@ -138,7 +138,7 @@ export default function Contact() {
             </p>
             <a
               href="/"
-              className="inline-flex items-center gap-2 bg-slate-900 text-white px-8 py-3 rounded-full text-sm font-medium hover:bg-[#1E3A8A] transition-colors"
+              className="inline-flex items-center gap-2 bg-slate-900 text-white px-8 py-3 rounded-full text-sm font-medium hover:bg-[#6D28D9] transition-colors"
             >
               回到首頁 <ArrowRight className="w-4 h-4" />
             </a>
@@ -251,7 +251,7 @@ export default function Contact() {
                 rows={5}
                 value={form.message}
                 onChange={handleChange}
-                placeholder="請描述你目前的痛點或需求，例如：目前想導入 AI 自動化客服，但不確定從哪裡開始⋯⋯"
+                placeholder="請描述你目前的狀況或想諮詢的問題，例如：我想做不露臉音樂頻道但不知道從哪開始、或想了解課程內容⋯⋯"
                 className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400 bg-white transition-all resize-none"
               />
             </div>
@@ -263,7 +263,7 @@ export default function Contact() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full flex items-center justify-center gap-2 bg-slate-900 text-white py-4 rounded-xl font-medium text-sm hover:bg-[#1E3A8A] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2 bg-slate-900 text-white py-4 rounded-xl font-medium text-sm hover:bg-[#6D28D9] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {submitting ? (
                 '送出中…'

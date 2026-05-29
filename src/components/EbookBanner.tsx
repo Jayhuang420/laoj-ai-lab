@@ -63,7 +63,7 @@ export default function EbookBanner() {
             <div className="absolute bottom-4 left-4 w-1.5 h-1.5 bg-yellow-300 rounded-full animate-pulse delay-300" />
             <div className="absolute top-6 left-10 w-1 h-1 bg-yellow-200 rounded-full animate-pulse delay-700" />
             {/* Rising arrow */}
-            <svg className="absolute -right-2 top-0 w-12 h-12 text-emerald-400 opacity-60" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+            <svg className="absolute -right-2 top-0 w-12 h-12 text-violet-400 opacity-60" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M2 20 L10 10 L14 14 L22 4 M16 4 L22 4 L22 10" />
             </svg>
           </div>
