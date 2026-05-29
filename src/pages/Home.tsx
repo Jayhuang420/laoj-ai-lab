@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Youtube, ShoppingBag, Mail, CheckCircle2, Play,
          Zap, Target, TrendingUp, Users, MousePointer, Cpu, Rocket,
          Music, Dices, Hash, Sparkles, Utensils, BookOpen, Lightbulb, Wrench,
-         Clock, Folder, Eye } from 'lucide-react';
+         Clock, Folder, Eye, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, useInView, animate } from 'motion/react';
 import { useToast } from '../context/ToastContext';
@@ -124,6 +124,27 @@ const DEFAULTS = {
       '未來新被動收入教學，免費更新',
     ],
   },
+  revenueProof: {
+    label: '真實收益實證',
+    sectionTitle: '不是喊口號，是真的有進帳',
+    sectionSubtitle: '以下皆為真實後台截圖，非模擬數據。多元收入管道持續累積中。',
+    items: [
+      { img: '/images/proof/revenue_yt.jpg', title: 'YouTube 廣告收益', amount: 'US$500–945 / 月', tag: 'YouTube AdSense' },
+      { img: '/images/proof/revenue_shopee.jpg', title: '蝦皮分潤收益', amount: 'NT$1.7 萬+ / 月', tag: 'Shopee Affiliate' },
+      { img: '/images/proof/revenue_portaly.jpg', title: '虛擬 IP 周邊販售', amount: 'NT$5,357', tag: 'Portaly 金流' },
+    ],
+    note: '※ 以上為老J 本人頻道與品牌的真實後台截圖；個人成果會因投入與執行而異，不代表保證收益。',
+  },
+  faq: {
+    label: '常見問題 · FAQ',
+    sectionTitle: '開始前，你可能會問的 4 件事',
+    items: [
+      { q: 'AI 音樂頻道現在做，會不會太晚、太飽和了？', a: '音樂是「聽不膩」的剛需內容，市場每天都在長。重點不是早晚，而是有沒有用對標＋數據選對還沒被吃下的利基——我 4 月開課的學員，一個多月就開通營利。' },
+      { q: 'AI 生成的音樂能營利嗎？版權、被檢舉怎麼辦？', a: '只要用合規工具生成原創音樂、不挪用他人素材，就能正常開通 YouTube 營利。課程會完整教你版權合規、原創聲明與避免被誤判的做法。' },
+      { q: '要花多少錢、多久才看到第一筆收益？', a: 'AI 工具月成本台幣幾百元（Suno 等）。時間因人而異，但跟著 SOP 走、頻道達到 YouTube 營利門檻後就會開始累積收益；我的學員最快一個多月開通。' },
+      { q: '我有正職、零基礎、不懂音樂，每天要花多久？', a: '整套流程設計成「下班後 1–2 小時可操作」。不需露臉、不需唱歌、不需樂理——AI 負責生成音樂與視覺，你負責選題與上架。' },
+    ],
+  },
   howItWorks: {
     label: '可複製的系統',
     sectionTitle: '3 步驟打造你的 AI 音樂變現頻道',
@@ -209,6 +230,8 @@ export default function Home() {
   const works = { ...DEFAULTS.works, ...content.works, items: content.works?.items || DEFAULTS.works.items };
   const students = { ...DEFAULTS.students, ...content.students, items: content.students?.items || DEFAULTS.students.items };
   const course = { ...DEFAULTS.course, ...content.course, features: content.course?.features || DEFAULTS.course.features };
+  const revenueProof = { ...DEFAULTS.revenueProof, ...content.revenueProof, items: content.revenueProof?.items || DEFAULTS.revenueProof.items };
+  const faq = { ...DEFAULTS.faq, ...content.faq, items: content.faq?.items || DEFAULTS.faq.items };
   const howItWorks = { ...DEFAULTS.howItWorks, ...content.howItWorks, steps: content.howItWorks?.steps || DEFAULTS.howItWorks.steps };
   const leadMagnet = { ...DEFAULTS.leadMagnet, ...content.leadMagnet };
   const featuredTools = { ...DEFAULTS.featuredTools, ...content.featuredTools };
@@ -274,8 +297,8 @@ export default function Home() {
       isPartOf: { '@type': 'WebSite', name: '老J AI 實驗室', url: 'https://www.oldjailab.com' },
       about: {
         '@type': 'Thing',
-        name: 'AI 變現',
-        description: '利用人工智慧技術為一人公司和創業者創造收益的方法論',
+        name: 'AI 音樂頻道變現',
+        description: '用 AI 打造不露臉 YouTube 音樂頻道並開通營利的可複製方法',
       },
       mainEntity: {
         '@type': 'ItemList',
@@ -292,7 +315,7 @@ export default function Home() {
     {
       '@context': 'https://schema.org',
       '@type': 'Offer',
-      name: '2026 AI 變現全景地圖',
+      name: '2026 不露臉 AI 音樂頻道變現指南',
       description: leadMagnet.subtitle,
       price: '0',
       priceCurrency: 'TWD',
@@ -303,40 +326,11 @@ export default function Home() {
     {
       '@context': 'https://schema.org',
       '@type': 'FAQPage',
-      mainEntity: [
-        {
-          '@type': 'Question',
-          name: '老J AI 實驗室是什麼？',
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: '老J AI 實驗室是專為一人公司設計的 AI 變現實戰平台，由擁有 12 年零售高階管理經驗的老J創立，提供 AI 自動化工作流教學、精實創業思維與 PLG 商業化路徑設計。',
-          },
-        },
-        {
-          '@type': 'Question',
-          name: '老J AI 實驗室提供哪些 AI 工具？',
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: '實驗室提供多種免費 AI 工具，包含 YT 音樂頻道歌詞產生器、台灣彩券分析器、紫微斗數/塔羅牌占卜、餐飲業點餐系統、記帳工具等，全部經老J親身實測。',
-          },
-        },
-        {
-          '@type': 'Question',
-          name: '如何開始用 AI 打造一人公司？',
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: '老J的三步驟方法論：1. 找到剛需痛點——用精實創業思維驗證市場需求。2. 搭建 AI 自動化工作流——讓 AI 擔任虛擬團隊。3. 快速迭代、放大獲利——透過 PLG 思維持續優化並規模化。',
-          },
-        },
-        {
-          '@type': 'Question',
-          name: '可以預約免費諮詢嗎？',
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: '可以！透過合作洽談頁面填寫表單即可預約免費諮詢，服務包含 AI 工作流自動化、品牌數位轉型、電商策略規劃等，1-2 個工作天內回覆。',
-          },
-        },
-      ],
+      mainEntity: faq.items.map((f: any) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
     },
   ];
 
@@ -646,6 +640,31 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Revenue Proof ─────────────────────────────────────────────────────── */}
+      <section id="revenue" aria-labelledby="revenue-title" className="py-14 px-6 max-w-6xl mx-auto border-t border-gray-100">
+        <motion.div {...fadeInUp} className="mb-10 text-center">
+          <p className="text-xs font-bold tracking-widest text-fuchsia-600 uppercase mb-3">{revenueProof.label}</p>
+          <h2 id="revenue-title" className="text-3xl md:text-4xl font-bold tracking-tight mb-4">{revenueProof.sectionTitle}</h2>
+          <p className="text-gray-500 max-w-xl mx-auto">{revenueProof.sectionSubtitle}</p>
+        </motion.div>
+        <div className="grid md:grid-cols-3 gap-6">
+          {revenueProof.items.map((r: any, i: number) => (
+            <motion.div key={i} {...fadeInUp} transition={{ duration: 0.5, delay: i * 0.1, ease: EASE }}
+              className="rounded-3xl border border-gray-100 bg-white overflow-hidden hover:shadow-md transition-all">
+              <div className="h-44 bg-slate-900/5 flex items-center justify-center overflow-hidden p-3">
+                <img src={r.img} alt={r.title} loading="lazy" className="max-h-full max-w-full object-contain rounded-lg" />
+              </div>
+              <div className="p-6">
+                <div className="text-xs font-medium text-gray-400 mb-1">{r.tag}</div>
+                <div className="font-bold text-slate-900 mb-1">{r.title}</div>
+                <div className="text-2xl font-extrabold text-amber-500">{r.amount}</div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+        <motion.p {...fadeInUp} className="text-center text-xs text-gray-400 mt-6 max-w-2xl mx-auto">{revenueProof.note}</motion.p>
+      </section>
+
       {/* ── Course Offer ──────────────────────────────────────────────────────── */}
       <section id="course" aria-labelledby="course-title" className="py-14 px-6 max-w-6xl mx-auto border-t border-gray-100">
         <motion.div {...fadeInUp}
@@ -869,6 +888,26 @@ export default function Home() {
             </div>
           </div>
         </motion.div>
+      </section>
+
+      {/* ── FAQ ───────────────────────────────────────────────────────────────── */}
+      <section id="faq" aria-labelledby="faq-title" className="py-14 px-6 max-w-3xl mx-auto border-t border-gray-100">
+        <motion.div {...fadeInUp} className="mb-8 text-center">
+          <p className="text-xs font-bold tracking-widest text-violet-600 uppercase mb-3">{faq.label}</p>
+          <h2 id="faq-title" className="text-3xl md:text-4xl font-bold tracking-tight">{faq.sectionTitle}</h2>
+        </motion.div>
+        <div className="space-y-3">
+          {faq.items.map((f: any, i: number) => (
+            <motion.details key={i} {...fadeInUp} transition={{ duration: 0.45, delay: i * 0.06, ease: EASE }}
+              className="group rounded-2xl border border-gray-200 bg-white px-6 py-4 open:shadow-sm open:border-violet-200 transition-all">
+              <summary className="flex items-center justify-between gap-4 cursor-pointer list-none [&::-webkit-details-marker]:hidden font-bold text-slate-900">
+                {f.q}
+                <ChevronDown className="w-5 h-5 text-violet-500 shrink-0 transition-transform group-open:rotate-180" />
+              </summary>
+              <p className="mt-3 text-sm text-gray-600 leading-relaxed">{f.a}</p>
+            </motion.details>
+          ))}
+        </div>
       </section>
 
       {/* ── CTA Banner ────────────────────────────────────────────────────────── */}
