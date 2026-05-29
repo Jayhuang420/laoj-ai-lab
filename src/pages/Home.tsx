@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Youtube, ShoppingBag, Mail, CheckCircle2, Play,
          Zap, Target, TrendingUp, Users, MousePointer, Cpu, Rocket,
          Music, Dices, Hash, Sparkles, Utensils, BookOpen, Lightbulb, Wrench,
-         Clock, Folder, Eye, ChevronDown } from 'lucide-react';
+         Clock, Folder, Eye, ChevronDown, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { motion, useInView, animate } from 'motion/react';
+import { motion, AnimatePresence, useInView, animate } from 'motion/react';
 import { useToast } from '../context/ToastContext';
 import SEO from '../components/SEO';
 import EbookBanner from '../components/EbookBanner';
@@ -158,7 +158,13 @@ const DEFAULTS = {
   leadMagnet: {
     label: '限時免費領取',
     title: '《2026 不露臉 AI 音樂頻道變現指南》',
-    subtitle: '完整拆解我兩個頻道的選題、製作、上架、營利流程，含 Suno 提示詞模板、封面 SOP，以及 90 天從 0 開通營利的行動清單。',
+    subtitle: '完整拆解我兩個頻道的選題、製作、上架、營利流程。輸入 Email，立即免費寄到你的信箱。',
+    bullets: [
+      'AI 音樂頻道選題：3 分鐘判斷利基有沒有錢途',
+      'Suno 出歌提示詞模板，複製就能生成原創音樂',
+      '頻道封面 / MV 視覺的 AI 製作 SOP',
+      '90 天從 0 到開通 YouTube 營利的行動清單',
+    ],
     buttonText: '免費寄給我',
     boxTitle: 'AI 音樂變現指南',
     boxSubtitle: 'PDF 實戰手冊',
@@ -217,12 +223,22 @@ export default function Home() {
   const [content, setContent] = useState<Record<string, any>>({});
   const [apiTools, setApiTools] = useState<any[]>([]);
   const [latestPosts, setLatestPosts] = useState<any[]>([]);
+  const [showBar, setShowBar] = useState(false);
+  const [barDismissed, setBarDismissed] = useState(false);
 
   /* Fetch dynamic content + tools + blog posts */
   useEffect(() => {
     fetch('/api/content/home').then(r => r.ok ? r.json() : {}).then(setContent).catch(() => {});
     fetch('/api/tools').then(r => r.ok ? r.json() : []).then((data: any[]) => { if (data.length) setApiTools(data); }).catch(() => {});
     fetch('/api/blog').then(r => r.ok ? r.json() : []).then((data: any[]) => setLatestPosts(data.slice(0, 3))).catch(() => {});
+  }, []);
+
+  /* Sticky course CTA visibility */
+  useEffect(() => {
+    const onScroll = () => setShowBar(window.scrollY > 700);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   const hero = { ...DEFAULTS.hero, ...content.hero };
@@ -233,7 +249,7 @@ export default function Home() {
   const revenueProof = { ...DEFAULTS.revenueProof, ...content.revenueProof, items: content.revenueProof?.items || DEFAULTS.revenueProof.items };
   const faq = { ...DEFAULTS.faq, ...content.faq, items: content.faq?.items || DEFAULTS.faq.items };
   const howItWorks = { ...DEFAULTS.howItWorks, ...content.howItWorks, steps: content.howItWorks?.steps || DEFAULTS.howItWorks.steps };
-  const leadMagnet = { ...DEFAULTS.leadMagnet, ...content.leadMagnet };
+  const leadMagnet = { ...DEFAULTS.leadMagnet, ...content.leadMagnet, bullets: content.leadMagnet?.bullets || DEFAULTS.leadMagnet.bullets };
   const featuredTools = { ...DEFAULTS.featuredTools, ...content.featuredTools };
   const statsData = { ...DEFAULTS.stats, ...content.stats, items: content.stats?.items || DEFAULTS.stats.items };
   const ctaBanner = { ...DEFAULTS.ctaBanner, ...content.ctaBanner };
@@ -767,7 +783,14 @@ export default function Home() {
           <div className="max-w-xl relative z-10">
             <p className="text-violet-400 text-xs font-bold tracking-widest uppercase mb-3">{leadMagnet.label}</p>
             <h2 className="text-3xl font-bold mb-4 tracking-tight text-white">{leadMagnet.title}</h2>
-            <p className="text-slate-300 mb-8 leading-relaxed text-sm">{leadMagnet.subtitle}</p>
+            <p className="text-slate-300 mb-5 leading-relaxed text-sm">{leadMagnet.subtitle}</p>
+            <ul className="mb-7 space-y-2">
+              {leadMagnet.bullets.map((b: string, i: number) => (
+                <li key={i} className="flex items-start gap-2 text-sm text-slate-200">
+                  <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" /> {b}
+                </li>
+              ))}
+            </ul>
             <form onSubmit={handleSubscribe} aria-label="訂閱電子報" className="flex flex-col sm:flex-row gap-3">
               <label htmlFor="subscribe-email" className="sr-only">Email 地址</label>
               <input
@@ -800,13 +823,20 @@ export default function Home() {
               <Users className="w-4 h-4" /> 加入社群
             </a>
           </div>
-          <div className="w-full md:w-52 aspect-square bg-white/10 border border-white/20 rounded-3xl flex items-center justify-center p-8 relative z-10 shrink-0">
-            <div className="text-center">
-              <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Mail className="w-7 h-7 text-white" />
+          <div className="w-full md:w-52 shrink-0 relative z-10">
+            <div className="aspect-[3/4] rounded-2xl bg-gradient-to-br from-white to-slate-100 shadow-2xl shadow-black/30 p-5 flex flex-col rotate-2 hover:rotate-0 transition-transform duration-300">
+              <div className="text-[10px] font-extrabold text-fuchsia-600 tracking-widest mb-2">FREE PDF</div>
+              <div className="font-bold text-slate-900 text-sm leading-snug mb-3">{leadMagnet.boxTitle}</div>
+              <div className="space-y-1.5 flex-1">
+                <div className="h-1.5 w-full bg-slate-200 rounded" />
+                <div className="h-1.5 w-5/6 bg-slate-200 rounded" />
+                <div className="h-1.5 w-full bg-slate-200 rounded" />
+                <div className="h-1.5 w-2/3 bg-slate-200 rounded" />
+                <div className="h-1.5 w-4/5 bg-slate-200 rounded" />
               </div>
-              <div className="font-bold text-white text-sm">{leadMagnet.boxTitle}</div>
-              <div className="text-xs text-slate-400 mt-1">{leadMagnet.boxSubtitle}</div>
+              <div className="mt-3 inline-flex items-center gap-1 text-[10px] text-slate-400 font-medium">
+                <BookOpen className="w-3 h-3" /> {leadMagnet.boxSubtitle}
+              </div>
             </div>
           </div>
         </motion.div>
@@ -937,6 +967,43 @@ export default function Home() {
           </div>
         </motion.div>
       </section>
+
+      {/* ── Sticky Course CTA ─────────────────────────────────────────────────── */}
+      <AnimatePresence>
+        {showBar && !barDismissed && (
+          <motion.div
+            initial={{ y: 90, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 90, opacity: 0 }}
+            transition={{ duration: 0.35, ease: EASE }}
+            className="fixed bottom-20 sm:bottom-5 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-1.5rem)] max-w-xl"
+          >
+            <div className="flex items-center gap-3 rounded-2xl bg-[#160F33]/95 backdrop-blur-md border border-white/10 shadow-2xl shadow-fuchsia-900/40 pl-4 pr-3 py-3">
+              <div className="min-w-0 flex-1">
+                <div className="text-[11px] text-fuchsia-300 font-medium">線上課程 · 搶先優惠</div>
+                <div className="text-sm text-white font-bold truncate">
+                  用 YouTube 打造被動收入 · <span className="text-amber-400">{course.price}</span>
+                </div>
+              </div>
+              <a
+                href={course.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 bg-amber-400 text-slate-900 text-sm font-bold px-4 py-2.5 rounded-full hover:bg-amber-300 transition-colors whitespace-nowrap"
+              >
+                了解課程
+              </a>
+              <button
+                onClick={() => setBarDismissed(true)}
+                aria-label="關閉課程提示"
+                className="shrink-0 text-slate-400 hover:text-white transition-colors p-1"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
