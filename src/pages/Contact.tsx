@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Send, CheckCircle2, ArrowRight, Briefcase, Mail, User, Building, MessageSquare } from 'lucide-react';
+import { Send, CheckCircle2, ArrowRight, Briefcase, Mail, User, MessageSquare } from 'lucide-react';
 import SEO from '../components/SEO';
 
 const fadeInUp = {
@@ -17,15 +17,6 @@ const SERVICE_OPTIONS = [
   '品牌合作 / 商演 / 音樂授權',
   '企業 AI 內容導入',
   '其他',
-];
-
-const BUDGET_OPTIONS = [
-  '5 萬以下',
-  '5-10 萬',
-  '10-30 萬',
-  '30-50 萬',
-  '50 萬以上',
-  '再討論',
 ];
 
 const JSON_LD = [
@@ -149,7 +140,7 @@ export default function Contact() {
             {...fadeInUp}
             className="bg-white rounded-3xl border border-gray-100 p-8 md:p-12 shadow-sm"
           >
-            <div className="grid md:grid-cols-2 gap-6 mb-6">
+            <div className="grid md:grid-cols-2 gap-5 mb-5">
               {/* 姓名 */}
               <div>
                 <label htmlFor="name" className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 mb-2">
@@ -183,57 +174,22 @@ export default function Contact() {
                   className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400 bg-white transition-all"
                 />
               </div>
-
-              {/* 公司名稱 */}
-              <div>
-                <label htmlFor="company" className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 mb-2">
-                  <Building className="w-3.5 h-3.5 text-gray-400" /> 公司名稱
-                </label>
-                <input
-                  id="company"
-                  name="company"
-                  type="text"
-                  value={form.company}
-                  onChange={handleChange}
-                  placeholder="你的公司或品牌名稱（選填）"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400 bg-white transition-all"
-                />
-              </div>
-
-              {/* 服務類型 */}
-              <div>
-                <label htmlFor="service_type" className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 mb-2">
-                  <Briefcase className="w-3.5 h-3.5 text-gray-400" /> 服務類型
-                </label>
-                <select
-                  id="service_type"
-                  name="service_type"
-                  value={form.service_type}
-                  onChange={handleChange}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400 bg-white transition-all appearance-none"
-                >
-                  <option value="">請選擇服務類型</option>
-                  {SERVICE_OPTIONS.map(opt => (
-                    <option key={opt} value={opt}>{opt}</option>
-                  ))}
-                </select>
-              </div>
             </div>
 
-            {/* 預算範圍 */}
-            <div className="mb-6">
-              <label htmlFor="budget" className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 mb-2">
-                <Briefcase className="w-3.5 h-3.5 text-gray-400" /> 預算範圍
+            {/* 想諮詢的服務 */}
+            <div className="mb-5">
+              <label htmlFor="service_type" className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 mb-2">
+                <Briefcase className="w-3.5 h-3.5 text-gray-400" /> 想諮詢的服務
               </label>
               <select
-                id="budget"
-                name="budget"
-                value={form.budget}
+                id="service_type"
+                name="service_type"
+                value={form.service_type}
                 onChange={handleChange}
                 className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400 bg-white transition-all appearance-none"
               >
-                <option value="">請選擇預算範圍（選填）</option>
-                {BUDGET_OPTIONS.map(opt => (
+                <option value="">請選擇服務類型</option>
+                {SERVICE_OPTIONS.map(opt => (
                   <option key={opt} value={opt}>{opt}</option>
                 ))}
               </select>
