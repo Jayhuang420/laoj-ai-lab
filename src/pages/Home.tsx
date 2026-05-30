@@ -31,7 +31,7 @@ const DEFAULTS = {
     badgeText: '12 年零售高管 · 親手養出 2 個營利中的 AI 音樂頻道',
     title: '不露臉、不唱歌、不懂樂理\n用 AI 打造會自動賺錢的',
     titleHighlight: '音樂頻道',
-    subtitle: '我已經驗證 2 次：虛擬歌手「唯夏 VXYA」30 天開通 YouTube 營利，「ChillNight」AI 音樂頻道每月領被動分潤。現在，我把整套可複製的 SOP 教給你。',
+    subtitle: '我已經驗證 2 次：AI 音樂廠牌「唯夏 VXYA Music」30 天開通 YouTube 營利，「ChillNight」每月領被動分潤。現在，我把整套可複製的 SOP 教給你。',
     ctaText: '免費領取 AI 音樂變現指南',
     ctaSecondary: '試聽代表作品',
     photoBadge: 'AI 音樂變現實戰家',
@@ -40,7 +40,7 @@ const DEFAULTS = {
   works: {
     label: '代表作品 · ORIGINAL WORKS',
     sectionTitle: '點開就懂——這些都是 AI 做的原創音樂',
-    sectionSubtitle: '唯夏 VXYA × ChillNight 的原創 MV，每一首都是頻道實際在跑、實際在累積收益的內容。',
+    sectionSubtitle: '唯夏 VXYA Music × ChillNight 的原創 MV，每一首都是頻道實際在跑、實際在累積收益的內容。',
     featuredId: 'V2qLxxpaZxo',
     featuredTitle: '《辭雪樓》戲腔古典情歌 · 破 3 萬觀看',
     items: [
@@ -57,9 +57,9 @@ const DEFAULTS = {
     sectionSubtitle: '這兩個頻道都是我親手從 0 養起，現在仍在持續更新、持續產生收益。',
     items: [
       {
-        name: '唯夏 VXYA',
-        tag: 'AI 虛擬歌手 IP',
-        desc: '從 0 打造的古風虛擬歌手，30 天開通 YouTube 營利。出道戲腔單曲《辭雪樓》突破 3 萬觀看，建立完整音樂宇宙與粉絲社群。',
+        name: '唯夏 VXYA Music',
+        tag: 'AI 音樂廠牌・旗下多位虛擬歌手',
+        desc: '我從 0 打造的 AI 音樂廠牌，頻道 30 天開通 YouTube 營利。旗艦歌手「唯夏」單曲《辭雪樓》破 3 萬觀看，旗下持續擴張更多虛擬歌手。',
         metric: '30 天',
         metricLabel: '開通營利',
         url: 'https://www.youtube.com/@VXYA_officialmusic',
