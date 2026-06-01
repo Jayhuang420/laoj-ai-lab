@@ -1,5 +1,29 @@
 # 變更紀錄
 
+## [2026-06-02] — Email 深色模式、Notion 名單分流、表單精簡
+
+### Email 深色模式修正（commit 3b1cce6）
+- 免費指南交付信強制淺色配色，避免 iPhone（Apple Mail）深色模式反轉白底
+- 加 `<meta name="supported-color-schemes" content="light">`、`:root{color-scheme:only light}`
+  與 `@media (prefers-color-scheme:dark)` 媒體查詢；`<body>` 補 `color-scheme:only light`
+
+### Notion 名單改寫入「課程銷售名單」三表（commit 3b1cce6 官網 / 73d9f97 銷售站）
+- 新建母分類頁「🎓 課程銷售名單」，下含三張各自獨立的表：
+  - 免費領取名單（官網 `/api/subscribe` + 銷售站 `/api/portaly-lead` 共用，以「來源」區分）
+  - $490 自學版訂單（銷售站 `bank-order` plan=self）
+  - $3,888 完整版訂單（銷售站 `bank-order` plan=full/upgrade）
+- 名單與訂單 schema 對齊：統一加「時間」屬性；移除舊「方案/興趣分群/備註」欄位
+- 官網 `NOTION_SUBSCRIBERS_DB_ID` 指向新「免費領取名單」，日期屬性「訂閱時間」→「時間」
+
+### 免費指南表單精簡（commit b73b111）
+- 移除「聯絡電話」欄位；改為「稱呼（必填）＋ Email（必填）」
+- 前端加 Email 格式檢查；`/api/subscribe` 後端 Email 改為必填（移除電話擇一/純電話分支）
+
+### 部署備註
+- 以上皆經 `develop → main`（快轉，非 force）部署
+- 部署時再次遇 Zeabur「映像拉取失敗（ImagePull）」；Zeabur 客服確認為映像 registry 下載映像層的
+  上游網路短暫逾時、與程式/主機無關，資料磁碟（獨立 volume）不受影響，重新部署即可恢復
+
 ## [2026-06-01] — 品牌音樂化改版上線
 
 ### SEO 修復（commit 6d62d52）
