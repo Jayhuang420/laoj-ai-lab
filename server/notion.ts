@@ -2,6 +2,8 @@ import { Client } from '@notionhq/client';
 
 const NOTION_TOKEN = process.env.NOTION_TOKEN;
 const NOTION_DB_ID = process.env.NOTION_DB_ID;
+// 官網免費指南名單 DB（與諮詢 DB 同一個 Notion 整合）
+const NOTION_SUBSCRIBERS_DB_ID = process.env.NOTION_SUBSCRIBERS_DB_ID || '3725ba27e0b38159894dc20920cda900';
 
 let notion: Client | null = null;
 
@@ -85,6 +87,30 @@ export async function createNotionInquiry(inquiry: InquiryData): Promise<string 
   } catch (err: any) {
     console.error('[notion] 寫入失敗:', err.message);
     if (err.body) console.error('[notion] 詳細錯誤:', JSON.stringify(err.body));
+    return null;
+  }
+}
+
+/** 將「領取免費指南/訂閱」的潛在用戶寫入官網名單 DB */
+export async function createNotionSubscriber(email: string, source: string, createdAt?: string): Promise<string | null> {
+  if (!notion) return null;
+  try {
+    const sourceName = source === '部落格訂閱' ? '部落格訂閱' : '官網免費指南';
+    const nameGuess = (email.split('@')[0] || email).slice(0, 80);
+    const response = await notion.pages.create({
+      parent: { database_id: NOTION_SUBSCRIBERS_DB_ID },
+      properties: {
+        '姓名': { title: [{ text: { content: nameGuess } }] },
+        'Email': { email },
+        '來源': { select: { name: sourceName } },
+        '狀態': { select: { name: '已寄指南' } },
+        '訂閱時間': { date: { start: toISO(createdAt || '') } },
+      },
+    });
+    console.log(`[notion] 已建立名單頁面: ${response.id}`);
+    return response.id;
+  } catch (err: any) {
+    console.error('[notion] 名單寫入失敗:', err.message);
     return null;
   }
 }

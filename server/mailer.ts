@@ -36,6 +36,45 @@ const step = (letter: string, title: string, body: string) =>
 
 function ebookHtml(email: string): string {
   const appUrl = process.env.APP_URL || 'https://www.oldjailab.com';
+  const pdfUrl = process.env.GUIDE_PDF_URL || 'https://ebook.oldjailab.com/free-guide.pdf';
+  const courseUrl = 'https://ebook.oldjailab.com/';
+  void email;
+  return `<!DOCTYPE html>
+<html lang="zh-TW"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="color-scheme" content="light"/><title>《2026 不露臉 AI 音樂頻道變現指南》</title></head>
+<body style="margin:0;background:#f0f4f8;font-family:'Helvetica Neue',Arial,'PingFang TC','Microsoft JhengHei',sans-serif;color:#1a1a1a;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f4f8;padding:32px 0;"><tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 40px rgba(0,0,0,.08);">
+      <tr><td style="background:linear-gradient(135deg,#160F33,#6D28D9);padding:36px 40px;text-align:center;">
+        <div style="color:#F0ABFC;font-size:12px;font-weight:700;letter-spacing:2px;">老 J AI 實驗室 · 免費指南</div>
+        <h1 style="color:#ffffff;font-size:23px;margin:10px 0 0;line-height:1.4;">你的免費指南到了 🎁</h1>
+        <div style="color:#D9CFF0;font-size:14px;margin-top:8px;">《2026 不露臉 AI 音樂頻道變現指南》</div>
+      </td></tr>
+      <tr><td style="padding:34px 40px;">
+        <p style="font-size:15px;line-height:1.9;color:#374151;margin:0 0 8px;">嗨，謝謝你的訂閱！這份指南帶你看懂——不露臉、不唱歌、不懂樂理，也能用 AI 做音樂頻道，從 0 訂閱到開通 YouTube 營利的整條路。</p>
+        <div style="text-align:center;margin:26px 0 18px;">
+          <a href="${pdfUrl}" style="display:inline-block;background:linear-gradient(135deg,#7C3AED,#D946EF);color:#ffffff;font-weight:700;font-size:16px;text-decoration:none;padding:16px 42px;border-radius:100px;">📥 下載免費指南 PDF</a>
+        </div>
+        <table width="100%" cellpadding="0" cellspacing="0" style="background:#FAF7FF;border:1px solid #EDE6FB;border-radius:12px;"><tr><td style="padding:20px 22px;">
+          <div style="font-size:13px;font-weight:700;color:#6D28D9;margin-bottom:8px;">這份指南包含</div>
+          <div style="font-size:14px;color:#374151;line-height:2;">✓ 不露臉 AI 音樂頻道的完整變現路徑圖<br/>✓ Suno 出歌、選題與封面 / MV 視覺製作重點<br/>✓ 30 天從 0 到開通 YouTube 營利的行動清單</div>
+        </td></tr></table>
+        <table width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #eee;margin-top:26px;"><tr><td style="padding-top:24px;text-align:center;">
+          <div style="font-size:13px;color:#9ca3af;margin-bottom:6px;">想直接照做、少走彎路？</div>
+          <div style="font-size:17px;font-weight:700;color:#1a1a1a;margin-bottom:14px;">完整課程：用 AI 打造你的第一個音樂頻道被動收入</div>
+          <a href="${courseUrl}" style="display:inline-block;border:1.5px solid #6D28D9;color:#6D28D9;font-weight:700;font-size:14px;text-decoration:none;padding:11px 28px;border-radius:100px;">看課程完整內容 &rarr;</a>
+        </td></tr></table>
+      </td></tr>
+      <tr><td style="background:#0E0A1F;padding:22px 40px;text-align:center;">
+        <div style="color:#A99FC4;font-size:12px;line-height:1.8;">你收到這封信，是因為你在 <a href="${appUrl}" style="color:#F0ABFC;text-decoration:none;">老 J AI 實驗室</a> 領取了免費指南。<br/>&copy; ${new Date().getFullYear()} 老 J AI 實驗室</div>
+      </td></tr>
+    </table>
+  </td></tr></table>
+</body></html>`;
+}
+
+// 舊版《2026 AI 變現全景地圖》信件 — 已停用，保留備查
+function ebookHtml_legacy(email: string): string {
+  const appUrl = process.env.APP_URL || 'https://www.oldjailab.com';
   return `<!DOCTYPE html>
 <html lang="zh-TW" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -508,7 +547,7 @@ export async function sendEbookEmail(to: string): Promise<void> {
   await transporter.sendMail({
     from: `"${fromName}" <${process.env.SMTP_USER}>`,
     to,
-    subject: '🎁 《2026 AI 變現全景地圖》已送達 — 老 J AI 實驗室',
+    subject: '🎁 《2026 不露臉 AI 音樂頻道變現指南》已送達 — 老 J AI 實驗室',
     html: ebookHtml(to),
   });
 

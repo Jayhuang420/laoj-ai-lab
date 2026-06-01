@@ -116,12 +116,12 @@ const DEFAULTS = {
     ctaText: '查看課程完整內容',
     url: 'https://ebook.oldjailab.com/',
     features: [
-      '從零到營利的完整 SOP 教學電子書',
-      'Suno 專用做歌詞小工具',
-      '專屬教學社群，操作有問題隨時問',
-      '手把手影片教學，邊看邊做',
-      '台灣收款完整教學（AdSense / PIN / 電匯）',
-      '未來新被動收入教學，免費更新',
+      '從零到營利的完整 SOP 教學電子書（價值 $1,990）',
+      'Suno 專用做歌詞小工具（價值 $990）',
+      '專屬教學社群，操作有問題隨時問（價值 $1,990）',
+      '手把手影片教學，邊看邊做（價值 $990）',
+      '台灣收款完整教學 AdSense / PIN / 電匯（價值 $990）',
+      '未來新被動收入教學，免費更新（價值 $2,990）',
     ],
   },
   revenueProof: {
@@ -486,6 +486,34 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── 痛點 / 適合誰 ─────────────────────────────────────────────────────── */}
+      <section aria-labelledby="fit-title" className="py-16 px-6 max-w-5xl mx-auto">
+        <div className="text-center mb-10">
+          <p className="text-xs font-bold tracking-widest text-fuchsia-600 uppercase mb-2">這是為你準備的</p>
+          <h2 id="fit-title" className="text-2xl md:text-3xl font-bold tracking-tight">如果你也卡在這些地方</h2>
+        </div>
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="rounded-2xl border border-gray-100 bg-white p-7 shadow-sm">
+            <div className="text-sm font-bold text-slate-400 mb-4">你是不是也曾經……</div>
+            <ul className="space-y-3 text-[15px] text-slate-700 leading-relaxed">
+              <li className="flex gap-3"><span className="text-rose-400 font-bold">✕</span><span>部落格、短影音都試過，流量卻一直起不來</span></li>
+              <li className="flex gap-3"><span className="text-rose-400 font-bold">✕</span><span>想做被動收入，卻不知道從哪一步開始</span></li>
+              <li className="flex gap-3"><span className="text-rose-400 font-bold">✕</span><span>不想露臉、沒有才藝，覺得自己「做不了內容」</span></li>
+              <li className="flex gap-3"><span className="text-rose-400 font-bold">✕</span><span>只有下班後一兩小時，怕投入了卻沒成果</span></li>
+            </ul>
+          </div>
+          <div className="rounded-2xl border border-violet-100 bg-gradient-to-br from-violet-50 to-fuchsia-50 p-7">
+            <div className="text-sm font-bold text-violet-600 mb-4">那這套方法正好適合你</div>
+            <ul className="space-y-3 text-[15px] text-slate-700 leading-relaxed">
+              <li className="flex gap-3"><span className="text-violet-500 font-bold">✓</span><span>想用下班時間，打造會累積的內容資產</span></li>
+              <li className="flex gap-3"><span className="text-violet-500 font-bold">✓</span><span>零基礎、不懂樂理、不想露臉都 OK</span></li>
+              <li className="flex gap-3"><span className="text-violet-500 font-bold">✓</span><span>願意照 SOP 一步步做，而不是只想快速致富</span></li>
+              <li className="flex gap-3"><span className="text-violet-500 font-bold">✓</span><span>想要一條已被驗證、可複製的路，少走彎路</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
       {/* ── Works Wall ─ continues night studio ───────────────────────────────── */}
       <section id="works" aria-labelledby="works-title" className="relative bg-[#0E0A1F] text-white px-6 py-16 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(90%_60%_at_50%_0%,#1d1240_0%,#0E0A1F_70%)]" />
@@ -715,6 +743,32 @@ export default function Home() {
             </div>
           </div>
         </motion.div>
+      </section>
+
+      {/* ── 安心保證 / 風險逆轉 ───────────────────────────────────────────────── */}
+      <section aria-labelledby="guarantee-title" className="py-10 px-6 max-w-5xl mx-auto">
+        <div className="rounded-3xl border border-emerald-100 bg-emerald-50/60 p-8 md:p-10 text-center">
+          <div className="text-xs font-bold tracking-widest text-emerald-600 uppercase mb-3">安心入手 · 0 壓力</div>
+          <h2 id="guarantee-title" className="text-2xl md:text-3xl font-bold tracking-tight mb-3">先免費試，覺得有料再決定</h2>
+          <p className="text-slate-600 leading-relaxed max-w-2xl mx-auto mb-8">不用一開始就掏錢冒險——先領免費指南，覺得這套打法對你有用，再考慮完整課程。買了之後也不是丟著不管：</p>
+          <div className="grid sm:grid-cols-3 gap-5 text-left max-w-3xl mx-auto">
+            <div className="bg-white rounded-2xl p-5 border border-emerald-100">
+              <div className="text-emerald-600 font-bold text-sm mb-1">先試再買</div>
+              <p className="text-sm text-slate-600 leading-relaxed">免費指南先看，判斷適不適合你，零風險。</p>
+            </div>
+            <div className="bg-white rounded-2xl p-5 border border-emerald-100">
+              <div className="text-emerald-600 font-bold text-sm mb-1">卡關有人答</div>
+              <p className="text-sm text-slate-600 leading-relaxed">專屬社群陪你做，操作卡住隨時發問。</p>
+            </div>
+            <div className="bg-white rounded-2xl p-5 border border-emerald-100">
+              <div className="text-emerald-600 font-bold text-sm mb-1">持續更新</div>
+              <p className="text-sm text-slate-600 leading-relaxed">未來新的被動收入教學，免費拿。</p>
+            </div>
+          </div>
+          <div className="mt-8">
+            <a href="/#lead-magnet" className="inline-block bg-[#6D28D9] text-white font-bold text-sm px-7 py-3.5 rounded-full hover:bg-[#5b21b6] transition-colors">先免費領取指南 &rarr;</a>
+          </div>
+        </div>
       </section>
 
       {/* 最新文章區塊已移除（依需求精簡首頁） */}

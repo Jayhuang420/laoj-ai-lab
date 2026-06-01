@@ -102,9 +102,9 @@ export default function Layout() {
           </div>
 
           <div className="flex items-center gap-3">
-            <Link to="/contact" className="hidden md:block bg-[#1A1A1A] text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-[#6D28D9] transition-colors">
-              免費諮詢
-            </Link>
+            <a href="/#lead-magnet" className="hidden md:block bg-[#1A1A1A] text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-[#6D28D9] transition-colors">
+              免費領取指南
+            </a>
             {/* Hamburger */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
@@ -140,12 +140,12 @@ export default function Layout() {
                     {label}
                   </Link>
                 ))}
-                <Link
-                  to="/contact"
+                <a
+                  href="/#lead-magnet"
                   className="mt-2 py-3 px-4 rounded-xl bg-[#6D28D9] text-white text-sm font-medium text-center"
                 >
-                  免費諮詢
-                </Link>
+                  免費領取指南
+                </a>
               </div>
             </motion.div>
           )}

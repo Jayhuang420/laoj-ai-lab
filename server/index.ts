@@ -7,7 +7,7 @@ import bcrypt from 'bcryptjs';
 import multer from 'multer';
 import db from './db.js';
 import { sendEbookEmail, sendInquiryConfirmation, sendAdminNotification, sendNewPostNotification } from './mailer.js';
-import { createNotionInquiry, updateNotionStatus, isNotionEnabled } from './notion.js';
+import { createNotionInquiry, updateNotionStatus, isNotionEnabled, createNotionSubscriber } from './notion.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -138,9 +138,11 @@ app.post('/api/subscribe', (req, res) => {
   try {
     const normalizedEmail = email.toLowerCase().trim();
     db.prepare('INSERT INTO subscribers (email, source) VALUES (?, ?)').run(normalizedEmail, finalSource);
+    // 同步寫入官網免費指南名單（Notion，best-effort）
+    createNotionSubscriber(normalizedEmail, finalSource).catch((err: Error) => console.error('[notion] 名單寫入失敗:', err.message));
     const msg = finalSource === '部落格訂閱'
       ? '訂閱成功！有新文章時我們會寄信通知你。'
-      : '🎉 訂閱成功！《AI 變現全景地圖》將發送至您的信箱。';
+      : '🎉 訂閱成功！《2026 不露臉 AI 音樂頻道變現指南》PDF 將發送至您的信箱。';
     res.json({ success: true, message: msg });
     // 變現指南訂閱者才寄電子書
     if (finalSource === '2026變現指南') {
