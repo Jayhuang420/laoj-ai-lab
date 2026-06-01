@@ -1,5 +1,16 @@
 import nodemailer from 'nodemailer';
+import crypto from 'crypto';
 import 'dotenv/config';
+
+// 取消訂閱連結（與 server/index.ts 的 unsubToken 使用相同密鑰推導，確保 token 一致）
+function unsubToken(email: string): string {
+  const secret = process.env.UNSUB_SECRET || crypto.createHash('sha256').update(process.env.SMTP_PASS || 'laoj-unsub-secret').digest('hex');
+  return crypto.createHmac('sha256', secret).update(email.toLowerCase()).digest('hex').slice(0, 24);
+}
+function unsubUrl(email: string): string {
+  const base = (process.env.APP_URL || 'https://www.oldjailab.com').replace(/\/$/, '');
+  return `${base}/api/unsubscribe?e=${encodeURIComponent(email)}&t=${unsubToken(email)}`;
+}
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'smtp.gmail.com',
@@ -34,11 +45,12 @@ const step = (letter: string, title: string, body: string) =>
     </td>
   </tr></table>`;
 
-function ebookHtml(email: string): string {
+function ebookHtml(email: string, name?: string): string {
   const appUrl = process.env.APP_URL || 'https://www.oldjailab.com';
   const pdfUrl = process.env.GUIDE_PDF_URL || 'https://ebook.oldjailab.com/free-guide.pdf';
   const courseUrl = 'https://ebook.oldjailab.com/';
-  void email;
+  const unsub = unsubUrl(email);
+  const greetName = (name && name.trim()) ? name.trim() : '';
   return `<!DOCTYPE html>
 <html lang="zh-TW"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="color-scheme" content="light"/><title>《2026 不露臉 AI 音樂頻道變現指南》</title></head>
 <body style="margin:0;background:#f0f4f8;font-family:'Helvetica Neue',Arial,'PingFang TC','Microsoft JhengHei',sans-serif;color:#1a1a1a;">
@@ -50,7 +62,7 @@ function ebookHtml(email: string): string {
         <div style="color:#D9CFF0;font-size:14px;margin-top:8px;">《2026 不露臉 AI 音樂頻道變現指南》</div>
       </td></tr>
       <tr><td style="padding:34px 40px;">
-        <p style="font-size:15px;line-height:1.9;color:#374151;margin:0 0 8px;">嗨，謝謝你的訂閱！這份指南帶你看懂——不露臉、不唱歌、不懂樂理，也能用 AI 做音樂頻道，從 0 訂閱到開通 YouTube 營利的整條路。</p>
+        <p style="font-size:15px;line-height:1.9;color:#374151;margin:0 0 8px;">嗨${greetName}，謝謝你的訂閱！這份指南帶你看懂——不露臉、不唱歌、不懂樂理，也能用 AI 做音樂頻道，從 0 訂閱到開通 YouTube 營利的整條路。</p>
         <div style="text-align:center;margin:26px 0 18px;">
           <a href="${pdfUrl}" style="display:inline-block;background:linear-gradient(135deg,#7C3AED,#D946EF);color:#ffffff;font-weight:700;font-size:16px;text-decoration:none;padding:16px 42px;border-radius:100px;">📥 下載免費指南 PDF</a>
         </div>
@@ -65,7 +77,7 @@ function ebookHtml(email: string): string {
         </td></tr></table>
       </td></tr>
       <tr><td style="background:#0E0A1F;padding:22px 40px;text-align:center;">
-        <div style="color:#A99FC4;font-size:12px;line-height:1.8;">你收到這封信，是因為你在 <a href="${appUrl}" style="color:#F0ABFC;text-decoration:none;">老 J AI 實驗室</a> 領取了免費指南。<br/>&copy; ${new Date().getFullYear()} 老 J AI 實驗室</div>
+        <div style="color:#A99FC4;font-size:12px;line-height:1.8;">你收到這封信，是因為你在 <a href="${appUrl}" style="color:#F0ABFC;text-decoration:none;">老 J AI 實驗室</a> 領取了免費指南。我們承諾不發送垃圾訊息。<br/>&copy; ${new Date().getFullYear()} 老 J AI 實驗室　·　<a href="${unsub}" style="color:#C9BEEA;text-decoration:underline;">取消訂閱</a></div>
       </td></tr>
     </table>
   </td></tr></table>
@@ -535,7 +547,7 @@ export async function sendNewPostNotification(to: string, post: NewPostInfo): Pr
 }
 
 /* ── Ebook Email ──────────────────────────────────────────────────────────── */
-export async function sendEbookEmail(to: string): Promise<void> {
+export async function sendEbookEmail(to: string, name?: string): Promise<void> {
   if (!process.env.SMTP_USER || !process.env.SMTP_PASS ||
       process.env.SMTP_USER === 'your@gmail.com') {
     console.warn('[mailer] SMTP 未設定，跳過寄信。請在 .env 填入 SMTP_USER 與 SMTP_PASS。');
@@ -548,7 +560,7 @@ export async function sendEbookEmail(to: string): Promise<void> {
     from: `"${fromName}" <${process.env.SMTP_USER}>`,
     to,
     subject: '🎁 《2026 不露臉 AI 音樂頻道變現指南》已送達 — 老 J AI 實驗室',
-    html: ebookHtml(to),
+    html: ebookHtml(to, name),
   });
 
   console.log(`[mailer] 電子書已寄送至 ${to}`);

@@ -7,7 +7,7 @@ import bcrypt from 'bcryptjs';
 import multer from 'multer';
 import db from './db.js';
 import { sendEbookEmail, sendInquiryConfirmation, sendAdminNotification, sendNewPostNotification } from './mailer.js';
-import { createNotionInquiry, updateNotionStatus, isNotionEnabled, createNotionSubscriber } from './notion.js';
+import { createNotionInquiry, updateNotionStatus, isNotionEnabled, createNotionSubscriber, markNotionUnsubscribed } from './notion.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -128,25 +128,49 @@ app.put('/api/admin/account', adminAuth, (req, res) => {
 
 // ─── Public: Subscribe ────────────────────────────────────────────────────────
 app.post('/api/subscribe', (req, res) => {
-  const { email, source } = req.body ?? {};
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  const { email, name, phone, source } = req.body ?? {};
+  const trimmedName = String(name || '').trim();
+  const rawEmail = String(email || '').trim();
+  const trimmedPhone = String(phone || '').trim();
+  // 稱呼必填
+  if (!trimmedName) {
+    res.status(400).json({ error: '請填寫你的稱呼。' });
+    return;
+  }
+  // Email 與電話擇一必填
+  if (!rawEmail && !trimmedPhone) {
+    res.status(400).json({ error: '請至少填寫 Email 或聯絡電話其中一項。' });
+    return;
+  }
+  // 若有填 Email 則須格式正確
+  if (rawEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rawEmail)) {
     res.status(400).json({ error: '請輸入有效的 Email 地址。' });
     return;
   }
   const validSources = ['2026變現指南', '部落格訂閱'];
   const finalSource = validSources.includes(source) ? source : '2026變現指南';
+  const normalizedEmail = rawEmail.toLowerCase();
+
+  // 只留電話、未填 Email：寫入名單供後續聯繫（無法寄 PDF）
+  if (!normalizedEmail) {
+    createNotionSubscriber({ name: trimmedName, phone: trimmedPhone, source: finalSource })
+      .catch((err: Error) => console.error('[notion] 名單寫入失敗:', err.message));
+    res.json({ success: true, message: '✅ 已收到你的資料！由於未提供 Email，我們會用電話與你聯繫並提供指南。' });
+    return;
+  }
+
+  // 有 Email：寫入 subscribers + Notion + 寄 PDF
   try {
-    const normalizedEmail = email.toLowerCase().trim();
-    db.prepare('INSERT INTO subscribers (email, source) VALUES (?, ?)').run(normalizedEmail, finalSource);
-    // 同步寫入官網免費指南名單（Notion，best-effort）
-    createNotionSubscriber(normalizedEmail, finalSource).catch((err: Error) => console.error('[notion] 名單寫入失敗:', err.message));
+    db.prepare('INSERT INTO subscribers (email, name, phone, source) VALUES (?, ?, ?, ?)')
+      .run(normalizedEmail, trimmedName || null, trimmedPhone || null, finalSource);
+    createNotionSubscriber({ email: normalizedEmail, name: trimmedName, phone: trimmedPhone, source: finalSource })
+      .catch((err: Error) => console.error('[notion] 名單寫入失敗:', err.message));
     const msg = finalSource === '部落格訂閱'
       ? '訂閱成功！有新文章時我們會寄信通知你。'
       : '🎉 訂閱成功！《2026 不露臉 AI 音樂頻道變現指南》PDF 將發送至您的信箱。';
     res.json({ success: true, message: msg });
-    // 變現指南訂閱者才寄電子書
     if (finalSource === '2026變現指南') {
-      sendEbookEmail(normalizedEmail).catch((err: Error) =>
+      sendEbookEmail(normalizedEmail, trimmedName).catch((err: Error) =>
         console.error('[mailer] 寄送失敗:', err.message)
       );
     }
@@ -154,8 +178,37 @@ app.post('/api/subscribe', (req, res) => {
     if (e.code === 'SQLITE_CONSTRAINT_UNIQUE') {
       res.status(409).json({ error: '此 Email 已訂閱過了，感謝您的支持！' });
     } else {
+      console.error('[subscribe]', e.message);
       res.status(500).json({ error: '伺服器錯誤，請稍後再試。' });
     }
+  }
+});
+
+// ─── 取消訂閱 ────────────────────────────────────────────────────────────────
+function unsubToken(email: string): string {
+  const secret = process.env.UNSUB_SECRET || crypto.createHash('sha256').update(process.env.SMTP_PASS || 'laoj-unsub-secret').digest('hex');
+  return crypto.createHmac('sha256', secret).update(email.toLowerCase()).digest('hex').slice(0, 24);
+}
+export function unsubscribeUrl(email: string): string {
+  const base = (process.env.APP_URL || 'https://www.oldjailab.com').replace(/\/$/, '');
+  return `${base}/api/unsubscribe?e=${encodeURIComponent(email)}&t=${unsubToken(email)}`;
+}
+app.get('/api/unsubscribe', (req, res) => {
+  const email = String(req.query.e || '').toLowerCase().trim();
+  const token = String(req.query.t || '');
+  const page = (title: string, msg: string) => `<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title></head><body style="font-family:'PingFang TC','Microsoft JhengHei',sans-serif;background:#f0f4f8;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0"><div style="background:#fff;border-radius:16px;padding:40px;max-width:440px;text-align:center;box-shadow:0 4px 40px rgba(0,0,0,.08)"><h1 style="font-size:22px;color:#1a1a1a;margin:0 0 12px">${title}</h1><p style="color:#6b7280;line-height:1.8;margin:0 0 22px">${msg}</p><a href="https://www.oldjailab.com" style="color:#6D28D9;font-weight:700;text-decoration:none">回到老 J AI 實驗室 &rarr;</a></div></body></html>`;
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  if (!email || token !== unsubToken(email)) {
+    res.status(400).send(page('連結無效', '此取消訂閱連結無效或已失效。'));
+    return;
+  }
+  try {
+    db.prepare('DELETE FROM subscribers WHERE email = ?').run(email);
+    markNotionUnsubscribed(email).catch(() => {});
+    console.log(`[unsubscribe] ${email}`);
+    res.send(page('已取消訂閱 ✓', `<strong>${email}</strong> 已成功取消訂閱，之後不會再收到我們的信件。`));
+  } catch {
+    res.status(500).send(page('系統錯誤', '取消訂閱時發生錯誤，請稍後再試。'));
   }
 });
 

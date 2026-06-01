@@ -92,26 +92,45 @@ export async function createNotionInquiry(inquiry: InquiryData): Promise<string 
 }
 
 /** 將「領取免費指南/訂閱」的潛在用戶寫入官網名單 DB */
-export async function createNotionSubscriber(email: string, source: string, createdAt?: string): Promise<string | null> {
+export async function createNotionSubscriber(opts: { email?: string; name?: string; phone?: string; source: string; createdAt?: string }): Promise<string | null> {
   if (!notion) return null;
   try {
+    const { email, name, phone, source, createdAt } = opts;
     const sourceName = source === '部落格訂閱' ? '部落格訂閱' : '官網免費指南';
-    const nameGuess = (email.split('@')[0] || email).slice(0, 80);
-    const response = await notion.pages.create({
-      parent: { database_id: NOTION_SUBSCRIBERS_DB_ID },
-      properties: {
-        '姓名': { title: [{ text: { content: nameGuess } }] },
-        'Email': { email },
-        '來源': { select: { name: sourceName } },
-        '狀態': { select: { name: '已寄指南' } },
-        '訂閱時間': { date: { start: toISO(createdAt || '') } },
-      },
-    });
+    const displayName = (name || (email ? email.split('@')[0] : '') || phone || '訪客').slice(0, 80);
+    const properties: Record<string, any> = {
+      '姓名': { title: [{ text: { content: displayName } }] },
+      '來源': { select: { name: sourceName } },
+      '狀態': { select: { name: email ? '已寄指南' : '待聯繫' } },
+      '訂閱時間': { date: { start: toISO(createdAt || '') } },
+    };
+    if (email) properties['Email'] = { email };
+    if (phone) properties['電話'] = { phone_number: phone };
+    const response = await notion.pages.create({ parent: { database_id: NOTION_SUBSCRIBERS_DB_ID }, properties });
     console.log(`[notion] 已建立名單頁面: ${response.id}`);
     return response.id;
   } catch (err: any) {
     console.error('[notion] 名單寫入失敗:', err.message);
     return null;
+  }
+}
+
+/** 取消訂閱：在名單 DB 找到該 Email 的頁面並標記為「退訂」 */
+export async function markNotionUnsubscribed(email: string): Promise<boolean> {
+  if (!notion) return false;
+  try {
+    const q = await notion.databases.query({
+      database_id: NOTION_SUBSCRIBERS_DB_ID,
+      filter: { property: 'Email', email: { equals: email } },
+      page_size: 5,
+    });
+    for (const pg of (q.results || [])) {
+      await notion.pages.update({ page_id: pg.id, properties: { '狀態': { select: { name: '退訂' } } } });
+    }
+    return true;
+  } catch (err: any) {
+    console.error('[notion] 退訂標記失敗:', err.message);
+    return false;
   }
 }
 

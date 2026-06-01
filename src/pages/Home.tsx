@@ -217,6 +217,8 @@ function Counter({ to, suffix = '' }: { to: number; suffix?: string }) {
 export default function Home() {
   const { showToast } = useToast();
   const [email, setEmail] = useState('');
+  const [leadName, setLeadName] = useState('');
+  const [leadPhone, setLeadPhone] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const heroRef = useRef<HTMLElement>(null);
@@ -272,16 +274,17 @@ export default function Home() {
   /* Email subscribe */
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!leadName.trim()) { showToast('請填寫你的稱呼。', 'error'); return; }
+    if (!email.trim() && !leadPhone.trim()) { showToast('Email 與聯絡電話請至少填一項。', 'error'); return; }
     setSubmitting(true);
     try {
       const res = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, source: '2026變現指南' }),
+        body: JSON.stringify({ email, name: leadName, phone: leadPhone, source: '2026變現指南' }),
       });
       const data = await res.json();
-      if (res.ok) { showToast(data.message, 'success'); setEmail(''); }
+      if (res.ok) { showToast(data.message, 'success'); setEmail(''); setLeadName(''); setLeadPhone(''); }
       else showToast(data.error, 'error');
     } catch { showToast('網路錯誤，請稍後再試。', 'error'); }
     finally { setSubmitting(false); }
@@ -791,25 +794,43 @@ export default function Home() {
                 </li>
               ))}
             </ul>
-            <form onSubmit={handleSubscribe} aria-label="訂閱電子報" className="flex flex-col sm:flex-row gap-3">
-              <label htmlFor="subscribe-email" className="sr-only">Email 地址</label>
+            <form onSubmit={handleSubscribe} aria-label="領取免費指南" className="space-y-3">
               <input
-                id="subscribe-email"
+                type="text"
+                value={leadName}
+                onChange={e => setLeadName(e.target.value)}
+                placeholder="你的稱呼（必填）"
+                aria-label="你的稱呼"
+                required
+                autoComplete="name"
+                className="w-full bg-white/10 border border-white/20 text-white placeholder-slate-400 rounded-full px-6 py-4 focus:outline-none focus:border-white/60 focus:bg-white/15 transition-all text-sm"
+              />
+              <input
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                placeholder="輸入你的 Email"
-                required
+                placeholder="Email（填了才能立即收到 PDF）"
+                aria-label="Email"
                 autoComplete="email"
-                className="flex-1 bg-white/10 border border-white/20 text-white placeholder-slate-400 rounded-full px-6 py-4 focus:outline-none focus:border-white/60 focus:bg-white/15 transition-all text-sm"
+                className="w-full bg-white/10 border border-white/20 text-white placeholder-slate-400 rounded-full px-6 py-4 focus:outline-none focus:border-white/60 focus:bg-white/15 transition-all text-sm"
+              />
+              <input
+                type="tel"
+                value={leadPhone}
+                onChange={e => setLeadPhone(e.target.value)}
+                placeholder="聯絡電話（與 Email 擇一填）"
+                aria-label="聯絡電話"
+                autoComplete="tel"
+                className="w-full bg-white/10 border border-white/20 text-white placeholder-slate-400 rounded-full px-6 py-4 focus:outline-none focus:border-white/60 focus:bg-white/15 transition-all text-sm"
               />
               <button
                 type="submit"
                 disabled={submitting}
-                className="bg-amber-400 text-slate-900 px-8 py-4 rounded-full font-bold hover:bg-amber-300 transition-all whitespace-nowrap text-sm disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-amber-500/20"
+                className="w-full bg-amber-400 text-slate-900 px-8 py-4 rounded-full font-bold hover:bg-amber-300 transition-all text-sm disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-amber-500/20"
               >
                 {submitting ? '發送中…' : leadMagnet.buttonText}
               </button>
+              <p className="text-xs text-slate-400 text-center">稱呼必填；Email 與電話至少填一項（填 Email 才能立即收到 PDF）</p>
             </form>
             <p className="text-xs text-slate-500 mt-4 flex items-center gap-1">
               <CheckCircle2 className="w-3 h-3" /> {leadMagnet.privacyText}

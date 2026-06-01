@@ -104,6 +104,11 @@ db.exec(`
   );
 `);
 
+// 既有 subscribers 表補上 name / phone 欄位（idempotent，欄位已存在則略過）
+for (const col of ['name TEXT', 'phone TEXT']) {
+  try { db.exec(`ALTER TABLE subscribers ADD COLUMN ${col}`); } catch { /* 欄位已存在 */ }
+}
+
 // Seed initial tools if empty
 const toolCount = (db.prepare('SELECT COUNT(*) as count FROM tools').get() as { count: number }).count;
 if (toolCount === 0) {
