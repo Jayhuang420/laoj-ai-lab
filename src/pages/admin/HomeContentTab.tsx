@@ -44,7 +44,7 @@ const DEFAULTS = {
     items: [
       { number: 300, suffix: '%', label: '內容產出效率提升', sub: '透過 AI 腳本與自動化剪輯' },
       { number: 450, suffix: '%', label: '分潤收益成長', sub: '導入精準選品與自動推廣後' },
-      { number: 12, suffix: '+', label: '年零售業高階管理', sub: '涵蓋百億級連鎖品牌操盤' },
+      { number: 12, suffix: '+', label: '年零售業高階管理', sub: '操盤管理連鎖品牌門市' },
     ],
   },
   ctaBanner: {
