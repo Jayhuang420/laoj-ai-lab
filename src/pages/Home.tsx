@@ -954,7 +954,7 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* ── Sticky Course CTA ─────────────────────────────────────────────────── */}
+      {/* ── Sticky 免費指南 CTA（冷流量先導向免費磁鐵，不直接推課程）──────────────── */}
       <AnimatePresence>
         {showBar && !barDismissed && (
           <motion.div
@@ -966,18 +966,16 @@ export default function Home() {
           >
             <div className="flex items-center gap-3 rounded-2xl bg-[#160F33]/95 backdrop-blur-md border border-white/10 shadow-2xl shadow-fuchsia-900/40 pl-4 pr-3 py-3">
               <div className="min-w-0 flex-1">
-                <div className="text-[11px] text-fuchsia-300 font-medium">線上課程 · 搶先優惠</div>
+                <div className="text-[11px] text-fuchsia-300 font-medium">限時免費 · 入門指南</div>
                 <div className="text-sm text-white font-bold truncate">
-                  用 YouTube 打造被動收入 · <span className="text-amber-400">{course.price}</span>
+                  不露臉 AI 音樂頻道變現指南 · <span className="text-amber-400">免費</span>
                 </div>
               </div>
               <a
-                href={course.url}
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#lead-magnet"
                 className="shrink-0 bg-amber-400 text-slate-900 text-sm font-bold px-4 py-2.5 rounded-full hover:bg-amber-300 transition-colors whitespace-nowrap"
               >
-                了解課程
+                免費領取
               </a>
               <button
                 onClick={() => setBarDismissed(true)}
