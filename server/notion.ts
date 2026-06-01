@@ -2,8 +2,8 @@ import { Client } from '@notionhq/client';
 
 const NOTION_TOKEN = process.env.NOTION_TOKEN;
 const NOTION_DB_ID = process.env.NOTION_DB_ID;
-// 官網免費指南名單 DB（與諮詢 DB 同一個 Notion 整合）
-const NOTION_SUBSCRIBERS_DB_ID = process.env.NOTION_SUBSCRIBERS_DB_ID || '3725ba27e0b38159894dc20920cda900';
+// 「課程銷售名單」大類下的「免費領取名單」DB（與諮詢 DB 同一個 Notion 整合）
+const NOTION_SUBSCRIBERS_DB_ID = process.env.NOTION_SUBSCRIBERS_DB_ID || '3725ba27-e0b3-813c-a494-faee5d83b86f';
 
 let notion: Client | null = null;
 
@@ -102,7 +102,7 @@ export async function createNotionSubscriber(opts: { email?: string; name?: stri
       '姓名': { title: [{ text: { content: displayName } }] },
       '來源': { select: { name: sourceName } },
       '狀態': { select: { name: email ? '已寄指南' : '待聯繫' } },
-      '訂閱時間': { date: { start: toISO(createdAt || '') } },
+      '時間': { date: { start: toISO(createdAt || '') } },
     };
     if (email) properties['Email'] = { email };
     if (phone) properties['電話'] = { phone_number: phone };

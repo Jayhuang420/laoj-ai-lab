@@ -52,8 +52,8 @@ function ebookHtml(email: string, name?: string): string {
   const unsub = unsubUrl(email);
   const greetName = (name && name.trim()) ? name.trim() : '';
   return `<!DOCTYPE html>
-<html lang="zh-TW"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="color-scheme" content="light"/><title>《2026 不露臉 AI 音樂頻道變現指南》</title></head>
-<body style="margin:0;background:#f0f4f8;font-family:'Helvetica Neue',Arial,'PingFang TC','Microsoft JhengHei',sans-serif;color:#1a1a1a;">
+<html lang="zh-TW"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="color-scheme" content="light"/><meta name="supported-color-schemes" content="light"/><title>《2026 不露臉 AI 音樂頻道變現指南》</title><style>:root{color-scheme:only light;supported-color-schemes:only light;}@media (prefers-color-scheme:dark){body,table,td,div,h1,p,span{color-scheme:only light !important;}}</style></head>
+<body style="margin:0;background:#f0f4f8;color-scheme:only light;font-family:'Helvetica Neue',Arial,'PingFang TC','Microsoft JhengHei',sans-serif;color:#1a1a1a;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f4f8;padding:32px 0;"><tr><td align="center">
     <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 40px rgba(0,0,0,.08);">
       <tr><td style="background:linear-gradient(135deg,#160F33,#6D28D9);padding:36px 40px;text-align:center;">
