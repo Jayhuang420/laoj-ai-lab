@@ -1040,7 +1040,10 @@ if (fs.existsSync(DIST_DIR)) {
     if (!seo) {
       const blogMatch = pathname.match(/^\/blog\/(.+)$/);
       if (blogMatch) {
-        blogSeo = getBlogPostSeo(blogMatch[1]);
+        // req.path 為百分比編碼，DB slug 為解碼後（含中文），需先解碼才對得上
+        let slug = blogMatch[1];
+        try { slug = decodeURIComponent(slug); } catch { /* 保留原值 */ }
+        blogSeo = getBlogPostSeo(slug);
         seo = blogSeo;
       }
     }
