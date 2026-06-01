@@ -137,13 +137,13 @@ app.post('/api/subscribe', (req, res) => {
     res.status(400).json({ error: '請填寫你的稱呼。' });
     return;
   }
-  // Email 與電話擇一必填
-  if (!rawEmail && !trimmedPhone) {
-    res.status(400).json({ error: '請至少填寫 Email 或聯絡電話其中一項。' });
+  // Email 必填
+  if (!rawEmail) {
+    res.status(400).json({ error: '請填寫你的 Email。' });
     return;
   }
-  // 若有填 Email 則須格式正確
-  if (rawEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rawEmail)) {
+  // Email 格式須正確
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rawEmail)) {
     res.status(400).json({ error: '請輸入有效的 Email 地址。' });
     return;
   }
@@ -151,15 +151,7 @@ app.post('/api/subscribe', (req, res) => {
   const finalSource = validSources.includes(source) ? source : '2026變現指南';
   const normalizedEmail = rawEmail.toLowerCase();
 
-  // 只留電話、未填 Email：寫入名單供後續聯繫（無法寄 PDF）
-  if (!normalizedEmail) {
-    createNotionSubscriber({ name: trimmedName, phone: trimmedPhone, source: finalSource })
-      .catch((err: Error) => console.error('[notion] 名單寫入失敗:', err.message));
-    res.json({ success: true, message: '✅ 已收到你的資料！由於未提供 Email，我們會用電話與你聯繫並提供指南。' });
-    return;
-  }
-
-  // 有 Email：寫入 subscribers + Notion + 寄 PDF
+  // 寫入 subscribers + Notion + 寄 PDF
   try {
     db.prepare('INSERT INTO subscribers (email, name, phone, source) VALUES (?, ?, ?, ?)')
       .run(normalizedEmail, trimmedName || null, trimmedPhone || null, finalSource);

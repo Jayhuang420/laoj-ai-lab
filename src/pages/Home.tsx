@@ -218,7 +218,6 @@ export default function Home() {
   const { showToast } = useToast();
   const [email, setEmail] = useState('');
   const [leadName, setLeadName] = useState('');
-  const [leadPhone, setLeadPhone] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const heroRef = useRef<HTMLElement>(null);
@@ -275,16 +274,17 @@ export default function Home() {
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!leadName.trim()) { showToast('請填寫你的稱呼。', 'error'); return; }
-    if (!email.trim() && !leadPhone.trim()) { showToast('Email 與聯絡電話請至少填一項。', 'error'); return; }
+    if (!email.trim()) { showToast('請填寫你的 Email。', 'error'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) { showToast('Email 格式不正確，請再確認。', 'error'); return; }
     setSubmitting(true);
     try {
       const res = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name: leadName, phone: leadPhone, source: '2026變現指南' }),
+        body: JSON.stringify({ email, name: leadName, source: '2026變現指南' }),
       });
       const data = await res.json();
-      if (res.ok) { showToast(data.message, 'success'); setEmail(''); setLeadName(''); setLeadPhone(''); }
+      if (res.ok) { showToast(data.message, 'success'); setEmail(''); setLeadName(''); }
       else showToast(data.error, 'error');
     } catch { showToast('網路錯誤，請稍後再試。', 'error'); }
     finally { setSubmitting(false); }
@@ -809,18 +809,10 @@ export default function Home() {
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                placeholder="Email（填了才能立即收到 PDF）"
+                placeholder="你的 Email（必填，立即收到 PDF）"
                 aria-label="Email"
+                required
                 autoComplete="email"
-                className="w-full bg-white/10 border border-white/20 text-white placeholder-slate-400 rounded-full px-6 py-4 focus:outline-none focus:border-white/60 focus:bg-white/15 transition-all text-sm"
-              />
-              <input
-                type="tel"
-                value={leadPhone}
-                onChange={e => setLeadPhone(e.target.value)}
-                placeholder="聯絡電話（與 Email 擇一填）"
-                aria-label="聯絡電話"
-                autoComplete="tel"
                 className="w-full bg-white/10 border border-white/20 text-white placeholder-slate-400 rounded-full px-6 py-4 focus:outline-none focus:border-white/60 focus:bg-white/15 transition-all text-sm"
               />
               <button
@@ -830,7 +822,7 @@ export default function Home() {
               >
                 {submitting ? '發送中…' : leadMagnet.buttonText}
               </button>
-              <p className="text-xs text-slate-400 text-center">稱呼必填；Email 與電話至少填一項（填 Email 才能立即收到 PDF）</p>
+              <p className="text-xs text-slate-400 text-center">稱呼與 Email 為必填，送出後立即將 PDF 寄到你的信箱</p>
             </form>
             <p className="text-xs text-slate-500 mt-4 flex items-center gap-1">
               <CheckCircle2 className="w-3 h-3" /> {leadMagnet.privacyText}
