@@ -47,7 +47,7 @@ const step = (letter: string, title: string, body: string) =>
 
 function ebookHtml(email: string, name?: string): string {
   const appUrl = process.env.APP_URL || 'https://www.oldjailab.com';
-  const pdfUrl = process.env.GUIDE_PDF_URL || 'https://ebook.oldjailab.com/free-guide.pdf';
+  const pdfUrl = process.env.GUIDE_PDF_URL || 'https://drive.google.com/uc?export=download&id=1D2yNb2tlZOjcF3WkVcoICGLi5ALom11l';
   const courseUrl = 'https://ebook.oldjailab.com/';
   const unsub = unsubUrl(email);
   const greetName = (name && name.trim()) ? name.trim() : '';
