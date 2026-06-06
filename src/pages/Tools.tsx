@@ -208,9 +208,9 @@ export default function Tools() {
         </motion.p>
       )}
 
-      {/* ── Portaly Ebook Embed ───────────────────────────────────────────────── */}
+      {/* ── Portaly Embeds ────────────────────────────────────────────────────── */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.5 }}
-        className="flex justify-center mt-16 mb-4">
+        className="flex flex-col sm:flex-row justify-center items-start gap-8 mt-16 mb-4">
         <iframe
           src="https://portaly.cc/embed/jay770420/product/PgnPFWo3OapiFQ7NURyP"
           width="400"
@@ -218,6 +218,14 @@ export default function Tools() {
           style={{ border: 0 }}
           loading="lazy"
           title="AI 被動收入電子書"
+        />
+        <iframe
+          src="https://portaly.cc/embed/jay770420/product/2sjks8kDdOgkrfhuEQPN"
+          width="400"
+          height="620"
+          style={{ border: 0 }}
+          loading="lazy"
+          title="AI 自學版課程"
         />
       </motion.div>
     </div>
