@@ -9,6 +9,7 @@ import { useToast } from '../context/ToastContext';
 import SEO from '../components/SEO';
 import EbookBanner from '../components/EbookBanner';
 import { DEFAULTS } from '../content/homeDefaults';
+import { fetchJsonSafe } from '../lib/fetchJson';
 
 /* Shared cubic-bezier easing (typed as a tuple so motion's Easing type accepts it) */
 const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
@@ -66,9 +67,9 @@ export default function Home() {
 
   /* Fetch dynamic content + tools + blog posts */
   useEffect(() => {
-    fetch('/api/content/home').then(r => r.ok ? r.json() : {}).then(setContent).catch(() => {});
-    fetch('/api/tools').then(r => r.ok ? r.json() : []).then((data: any[]) => { if (data.length) setApiTools(data); }).catch(() => {});
-    fetch('/api/blog').then(r => r.ok ? r.json() : []).then((data: any[]) => setLatestPosts(data.slice(0, 3))).catch(() => {});
+    fetchJsonSafe<Record<string, any>>('/api/content/home', {}).then(setContent);
+    fetchJsonSafe<any[]>('/api/tools', []).then(data => { if (data.length) setApiTools(data); });
+    fetchJsonSafe<any[]>('/api/blog', []).then(data => setLatestPosts(data.slice(0, 3)));
   }, []);
 
   /* Sticky course CTA visibility */

@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ArrowLeft, Clock, Eye, User, Folder, Tag, Share2 } from 'lucide-react';
+import { ArrowLeft, Clock, Eye, User, Folder, Tag, Share2, RefreshCw } from 'lucide-react';
 import SEO from '../components/SEO';
 import BlogSubscribe from '../components/BlogSubscribe';
 import EbookBanner from '../components/EbookBanner';
+import { fetchJson } from '../lib/fetchJson';
 
 interface BlogPostData {
   id: number;
@@ -77,20 +78,24 @@ export default function BlogPost() {
   const [post, setPost] = useState<BlogPostData | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [error, setError] = useState(false);
 
-  useEffect(() => {
+  const loadPost = () => {
     if (!slug) return;
     setLoading(true);
     setNotFound(false);
-    fetch(`/api/blog/${slug}`)
-      .then(r => {
-        if (!r.ok) { setNotFound(true); return null; }
-        return r.json();
-      })
+    setError(false);
+    fetchJson<BlogPostData>(`/api/blog/${slug}`, { treatAsEmpty: [404] })
       .then(data => { if (data) setPost(data); })
-      .catch(() => setNotFound(true))
+      .catch((err: { status?: number }) => {
+        // 404 = 文章不存在；其他（逾時 / 5xx / 網路）= 可重試的錯誤
+        if (err?.status === 404) setNotFound(true);
+        else setError(true);
+      })
       .finally(() => setLoading(false));
-  }, [slug]);
+  };
+
+  useEffect(() => { loadPost(); }, [slug]);
 
   const contentHtml = useMemo(() => {
     if (!post?.content) return '';
@@ -186,6 +191,27 @@ export default function BlogPost() {
           <div className="h-4 bg-gray-50 rounded w-full" />
           <div className="h-4 bg-gray-50 rounded w-5/6" />
           <div className="h-4 bg-gray-50 rounded w-4/6" />
+        </div>
+      </div>
+    );
+  }
+
+  /* ── 載入失敗（逾時 / 伺服器忙線，可重試）─────────────────────────────────── */
+  if (error) {
+    return (
+      <div className="py-20 px-6 max-w-3xl mx-auto text-center">
+        <SEO title="文章載入失敗" path={`/blog/${slug}`} noindex />
+        <h1 className="text-3xl font-bold text-slate-900 mb-3">文章載入失敗</h1>
+        <p className="text-gray-500 mb-8">可能是網路或伺服器短暫忙線，請稍候再試。</p>
+        <div className="flex items-center justify-center gap-3">
+          <button onClick={loadPost}
+            className="inline-flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-full font-medium hover:bg-[#6D28D9] transition-colors">
+            <RefreshCw className="w-4 h-4" /> 重新載入
+          </button>
+          <Link to="/blog"
+            className="inline-flex items-center gap-2 border border-gray-200 text-slate-700 px-6 py-3 rounded-full font-medium hover:border-gray-300 transition-colors">
+            <ArrowLeft className="w-4 h-4" /> 返回部落格
+          </Link>
         </div>
       </div>
     );

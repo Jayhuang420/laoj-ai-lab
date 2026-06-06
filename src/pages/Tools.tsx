@@ -3,6 +3,7 @@ import { Music, Hash, Dices, Sparkles, Utensils, BookOpen, Lightbulb, Wrench,
          ArrowRight, Search, LayoutGrid } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import SEO from '../components/SEO';
+import { fetchJsonSafe } from '../lib/fetchJson';
 
 const ICON_MAP: Record<string, React.ReactNode> = {
   Music: <Music className="w-6 h-6" />,
@@ -51,10 +52,8 @@ export default function Tools() {
   const [query, setQuery] = useState('');
 
   useEffect(() => {
-    fetch('/api/tools')
-      .then(r => r.ok ? r.json() : [])
-      .then((data: any[]) => { if (data.length > 0) setTools(data); })
-      .catch(() => {});
+    fetchJsonSafe<any[]>('/api/tools', [])
+      .then((data: any[]) => { if (data.length > 0) setTools(data); });
   }, []);
 
   const categories = [ALL, ...Array.from(new Set(tools.map(t => t.category)))];

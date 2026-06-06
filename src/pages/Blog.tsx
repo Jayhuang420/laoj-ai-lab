@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Clock, Eye, ArrowRight, Search, Tag, Folder } from 'lucide-react';
+import { Clock, Eye, ArrowRight, Search, Tag, Folder, RefreshCw } from 'lucide-react';
 import SEO from '../components/SEO';
 import BlogSubscribe from '../components/BlogSubscribe';
+import { fetchJson } from '../lib/fetchJson';
 
 interface BlogPost {
   id: number;
@@ -28,16 +29,20 @@ const fadeInUp = {
 export default function Blog() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('全部');
 
-  useEffect(() => {
-    fetch('/api/blog')
-      .then(r => r.ok ? r.json() : [])
+  const loadPosts = () => {
+    setLoading(true);
+    setError(false);
+    fetchJson<BlogPost[]>('/api/blog')
       .then(setPosts)
-      .catch(() => {})
+      .catch(() => setError(true))
       .finally(() => setLoading(false));
-  }, []);
+  };
+
+  useEffect(() => { loadPosts(); }, []);
 
   /* ── Derive Categories ──────────────────────────────────────────────────── */
   const categories = ['全部', ...Array.from(new Set(posts.map(p => p.category)))];
@@ -148,6 +153,16 @@ export default function Blog() {
             </div>
           ))}
         </div>
+      ) : error ? (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          className="text-center py-20">
+          <p className="text-gray-500 mb-1 font-medium">文章載入失敗</p>
+          <p className="text-sm text-gray-400 mb-5">可能是網路或伺服器短暫忙線，請稍候再試。</p>
+          <button onClick={loadPosts}
+            className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-slate-900 text-white text-sm font-medium hover:bg-slate-700 transition-colors">
+            <RefreshCw className="w-4 h-4" /> 重新載入
+          </button>
+        </motion.div>
       ) : filtered.length === 0 ? (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           className="text-center py-20">
