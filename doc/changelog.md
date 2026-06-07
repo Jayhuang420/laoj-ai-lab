@@ -1,5 +1,9 @@
 # 變更紀錄
 
+## [Unreleased] — Discord 名單通知
+- 有人領取免費指南／訂閱（`/api/subscribe`）時，除寫入 Notion 名單外，同步發 Discord webhook 通知（新檔 `server/discord.ts`，env `DISCORD_WEBHOOK_URL`）。
+- 注意：Discord 走 Cloudflare 會擋預設程式 UA 回 403，通知請求帶正常 User-Agent；未設環境變數時靜默略過、不影響主流程。
+
 ## [2026-06-02] — Email 深色模式、Notion 名單分流、表單精簡
 
 ### Email 深色模式修正（commit 3b1cce6）

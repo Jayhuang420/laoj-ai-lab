@@ -8,6 +8,7 @@ import multer from 'multer';
 import db from './db.js';
 import { sendEbookEmail, sendInquiryConfirmation, sendAdminNotification, sendNewPostNotification } from './mailer.js';
 import { createNotionInquiry, updateNotionStatus, isNotionEnabled, createNotionSubscriber, markNotionUnsubscribed } from './notion.js';
+import { notifyDiscordLead } from './discord.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -157,6 +158,12 @@ app.post('/api/subscribe', (req, res) => {
       .run(normalizedEmail, trimmedName || null, trimmedPhone || null, finalSource);
     createNotionSubscriber({ email: normalizedEmail, name: trimmedName, phone: trimmedPhone, source: finalSource })
       .catch((err: Error) => console.error('[notion] 名單寫入失敗:', err.message));
+    notifyDiscordLead({
+      name: trimmedName,
+      email: normalizedEmail,
+      phone: trimmedPhone,
+      source: finalSource === '部落格訂閱' ? '官網部落格訂閱' : '官網免費指南',
+    }).catch((err: Error) => console.error('[discord]', err.message));
     const msg = finalSource === '部落格訂閱'
       ? '訂閱成功！有新文章時我們會寄信通知你。'
       : '🎉 訂閱成功！《2026 不露臉 AI 音樂頻道變現指南》PDF 將發送至您的信箱。';
